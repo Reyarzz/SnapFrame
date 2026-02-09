@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Check, CreditCard, Zap, Star, Shield } from 'lucide-react';
+import { X, Sparkles, Check, CreditCard, Zap, Shield } from 'lucide-react';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -106,20 +106,18 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
             {/* Price */}
             <div className="text-center mb-8">
               <div className="inline-flex items-baseline gap-1">
-                <span className="text-sm text-white/30 line-through">$29.99</span>
                 <span className="text-5xl font-black text-white">$9</span>
                 <span className="text-2xl font-bold text-white">.99</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">One-time payment • No subscription</p>
+              <p className="text-xs text-white/30 mt-1">One-time payment • Yours forever</p>
             </div>
 
             {/* Features */}
             <div className="space-y-3 mb-8">
               {[
-                { icon: <Zap className="w-4 h-4 text-amber-400" />, text: 'No watermark on exports' },
-                { icon: <Star className="w-4 h-4 text-brand-400" />, text: 'All premium backgrounds & frames' },
-                { icon: <Shield className="w-4 h-4 text-green-400" />, text: 'Lifetime access to future updates' },
-                { icon: <CreditCard className="w-4 h-4 text-pink-400" />, text: 'Priority support' },
+                { icon: <Zap className="w-4 h-4 text-amber-400" />, text: 'Clean exports — no watermark' },
+                { icon: <Shield className="w-4 h-4 text-green-400" />, text: 'All future updates included' },
+                { icon: <CreditCard className="w-4 h-4 text-pink-400" />, text: '30-day money-back guarantee' },
               ].map((feature, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm text-white/70">
                   {feature.icon}
@@ -172,7 +170,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
             </div>
 
             <p className="text-center text-xs text-white/20 mt-4">
-              Secure payment via Gumroad • 30-day money-back guarantee
+              Secure payment via Gumroad
             </p>
           </div>
         )}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import html2canvas from 'html2canvas-pro';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { DEFAULT_STATE, EditorState } from './presets';
 import DropZone from './components/DropZone';
 import CanvasPreview from './components/CanvasPreview';
@@ -112,7 +112,7 @@ const App: React.FC = () => {
   }, [handleImageLoad]);
 
   return (
-    <div className="noise">
+    <div className="noise w-full min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-40 glass">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
@@ -159,22 +159,14 @@ const App: React.FC = () => {
       {!state.image && <HeroSection onScrollToEditor={scrollToEditor} />}
 
       {/* Editor */}
-      <div ref={editorRef} className={`${state.image ? 'pt-20' : ''}`}>
-        <section className="max-w-7xl mx-auto px-4 py-12">
+      <div ref={editorRef} className={`w-full ${state.image ? 'pt-20' : ''}`}>
+        <section className="flex flex-col items-center w-full px-4 py-12">
           {!state.image ? (
-            <div className="py-12">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-2" id="editor">
-                  Start Here
-                </h2>
-                <p className="text-white/40">
-                  Drop an image or paste from clipboard to get started
-                </p>
-              </div>
+            <div className="w-full max-w-2xl py-12">
               <DropZone onImageLoad={handleImageLoad} />
             </div>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6">
               {/* Canvas preview area */}
               <div className="flex-1 min-w-0">
                 <div className="sticky top-20">
@@ -217,72 +209,93 @@ const App: React.FC = () => {
         </section>
       </div>
 
-      {/* Social proof section */}
+      {/* How it works */}
       {!state.image && (
-        <section className="py-20 px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-3">
-                Why creators love SnapFrame
-              </h2>
-              <p className="text-white/40 max-w-xl mx-auto">
-                Join thousands of developers, designers, and marketers who make their content shine
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: 'Lightning Fast',
-                  desc: 'Drop an image, pick a style, export. Done in under 5 seconds.',
-                  gradient: 'from-amber-500/10 to-orange-500/10',
-                  borderColor: 'ring-amber-500/20',
-                  emoji: '⚡',
-                },
-                {
-                  title: 'Gorgeous Results',
-                  desc: '20+ hand-crafted gradients, device frames, and shadow presets.',
-                  gradient: 'from-brand-500/10 to-pink-500/10',
-                  borderColor: 'ring-brand-500/20',
-                  emoji: '✨',
-                },
-                {
-                  title: 'No Design Skills',
-                  desc: 'Beautiful screenshots without Photoshop. Just drag, drop, and share.',
-                  gradient: 'from-green-500/10 to-emerald-500/10',
-                  borderColor: 'ring-green-500/20',
-                  emoji: '🎨',
-                },
-              ].map((card, i) => (
-                <div
-                  key={i}
-                  className={`rounded-2xl p-6 bg-gradient-to-br ${card.gradient} ring-1 ${card.borderColor}
-                    hover:scale-105 transition-all duration-300`}
-                >
-                  <div className="text-3xl mb-4">{card.emoji}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
-                  <p className="text-sm text-white/50">{card.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Testimonial */}
-            <div className="mt-16 text-center">
-              <div className="inline-block  max-w-lg rounded-2xl p-8 bg-white/[0.03] ring-1 ring-white/10">
-                <p className="text-white/60 italic mb-4">
-                  "I used to spend 10 minutes in Figma for every screenshot. Now it takes me 5 seconds with SnapFrame. Absolute game changer."
+        <>
+          <section className="flex flex-col items-center py-24 px-4">
+            <div className="w-full max-w-5xl">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-white mb-3">
+                  Three steps. That's it.
+                </h2>
+                <p className="text-white/40 max-w-md mx-auto">
+                  No account, no learning curve, no waiting.
                 </p>
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-pink-500" />
-                  <div className="text-left">
-                    <div className="text-sm font-semibold text-white/80">Sarah Chen</div>
-                    <div className="text-xs text-white/30">Developer Advocate</div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-12">
+                {[
+                  {
+                    step: '1',
+                    title: 'Drop your screenshot',
+                    desc: 'Drag and drop any image, or paste directly from your clipboard with Ctrl+V.',
+                  },
+                  {
+                    step: '2',
+                    title: 'Pick a style',
+                    desc: 'Choose from 20+ gradient backgrounds, add device frames, shadows, rounded corners.',
+                  },
+                  {
+                    step: '3',
+                    title: 'Export',
+                    desc: 'Download as PNG, JPEG, or WebP at 2x resolution. Ready to share anywhere.',
+                  },
+                ].map((item, i) => (
+                  <div key={i} className="text-center">
+                    <div className="w-11 h-11 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center mx-auto mb-5">
+                      <span className="text-sm font-bold text-white/60">{item.step}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
+                    <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          {/* Features */}
+          <section className="flex flex-col items-center py-20 px-4 border-t border-white/5">
+            <div className="w-full max-w-3xl text-center">
+              <h2 className="text-2xl font-bold text-white mb-8">
+                All included, all free
+              </h2>
+
+              <div className="flex flex-wrap justify-center gap-3">
+                {[
+                  '20+ gradients', 'Custom colors', 'Browser frames', 'macOS frames',
+                  'iPhone mockup', 'Shadows', 'Rounded corners', '3D tilt',
+                  'Text overlay', 'Canvas presets', 'PNG / JPEG / WebP', '2x resolution',
+                ].map((label, i) => (
+                  <span key={i} className="px-4 py-2 rounded-full text-sm text-white/50 bg-white/[0.03] ring-1 ring-white/[0.06]">
+                    {label}
+                  </span>
+                ))}
+              </div>
+
+              <p className="text-white/25 text-sm mt-6">
+                Pay once to remove the watermark. That's it.
+              </p>
+            </div>
+          </section>
+
+          {/* Final CTA */}
+          <section className="flex flex-col items-center py-24 px-4">
+            <div className="w-full max-w-md text-center">
+              <button
+                onClick={scrollToEditor}
+                className="group px-8 py-4 rounded-2xl font-bold text-white text-lg
+                  bg-gradient-to-r from-brand-500 to-pink-500 hover:from-brand-600 hover:to-pink-600
+                  transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/25 hover:scale-105
+                  inline-flex items-center gap-3"
+              >
+                <Sparkles className="w-5 h-5" />
+                Try It Free
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <p className="text-white/20 text-xs mt-4">No signup required</p>
+            </div>
+          </section>
+        </>
       )}
 
       <Footer />
