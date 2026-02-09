@@ -11,21 +11,73 @@ export interface FrameStyle {
   icon: string;
 }
 
+export interface AspectPreset {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  label: string;
+}
+
 export interface EditorState {
   image: string | null;
   fileName: string;
+  // Background
   background: string;
   backgroundId: string;
+  customBgColor1: string;
+  customBgColor2: string;
+  bgAngle: number;
+  bgPattern: string; // 'none' | 'dots' | 'grid' | 'lines' | 'cross' | 'diagonal'
+  bgPatternOpacity: number;
+  bgNoise: number;
+  // Layout
   padding: number;
   borderRadius: number;
+  aspectRatio: string; // 'auto' | '16:9' | '4:3' | '1:1' | '9:16' | 'og' | 'twitter' | 'linkedin'
+  // Effects
   shadow: number;
   shadowColor: string;
   frame: string;
+  tiltX: number;
+  tiltY: number;
   scale: number;
   rotation: number;
+  // Image adjustments
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  blur: number;
+  // Border
+  borderWidth: number;
+  borderColor: string;
+  // Text overlay
+  titleText: string;
+  titleSize: number;
+  titleColor: string;
+  titleFont: string;
+  titlePosition: string; // 'above' | 'below' | 'center'
+  subtitleText: string;
+  subtitleSize: number;
+  subtitleColor: string;
+  // Misc
   watermark: boolean;
   isPro: boolean;
+  // Reflection
+  reflection: boolean;
 }
+
+export const ASPECT_PRESETS: AspectPreset[] = [
+  { id: 'auto', name: 'Auto', width: 0, height: 0, label: 'Auto' },
+  { id: '16:9', name: '16:9', width: 1920, height: 1080, label: 'Widescreen' },
+  { id: '4:3', name: '4:3', width: 1600, height: 1200, label: 'Standard' },
+  { id: '1:1', name: '1:1', width: 1080, height: 1080, label: 'Square' },
+  { id: '9:16', name: '9:16', width: 1080, height: 1920, label: 'Story' },
+  { id: 'og', name: 'OG', width: 1200, height: 630, label: 'Open Graph' },
+  { id: 'twitter', name: 'Twitter', width: 1600, height: 900, label: 'Twitter Card' },
+  { id: 'linkedin', name: 'LinkedIn', width: 1200, height: 627, label: 'LinkedIn Post' },
+  { id: 'ph', name: 'PH', width: 1270, height: 760, label: 'Product Hunt' },
+];
 
 export const GRADIENT_PRESETS: GradientPreset[] = [
   { id: 'sunset', name: 'Sunset', style: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', css: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
@@ -62,18 +114,58 @@ export const SHADOW_COLORS = [
   { id: 'green', name: 'Green', value: 'rgba(16,185,129,0.4)' },
 ];
 
+export const BG_PATTERNS = [
+  { id: 'none', name: 'None' },
+  { id: 'dots', name: 'Dots' },
+  { id: 'grid', name: 'Grid' },
+  { id: 'lines', name: 'Lines' },
+  { id: 'cross', name: 'Cross' },
+  { id: 'diagonal', name: 'Diagonal' },
+];
+
+export const TITLE_FONTS = [
+  { id: 'Inter', name: 'Inter' },
+  { id: 'Georgia', name: 'Georgia' },
+  { id: 'monospace', name: 'Mono' },
+  { id: 'system-ui', name: 'System' },
+];
+
 export const DEFAULT_STATE: EditorState = {
   image: null,
   fileName: '',
   background: GRADIENT_PRESETS[0].css,
   backgroundId: GRADIENT_PRESETS[0].id,
+  customBgColor1: '#667eea',
+  customBgColor2: '#764ba2',
+  bgAngle: 135,
+  bgPattern: 'none',
+  bgPatternOpacity: 0.1,
+  bgNoise: 0,
   padding: 64,
   borderRadius: 12,
+  aspectRatio: 'auto',
   shadow: 40,
   shadowColor: 'rgba(0,0,0,0.5)',
   frame: 'none',
+  tiltX: 0,
+  tiltY: 0,
   scale: 1,
   rotation: 0,
+  brightness: 100,
+  contrast: 100,
+  saturation: 100,
+  blur: 0,
+  borderWidth: 0,
+  borderColor: 'rgba(255,255,255,0.2)',
+  titleText: '',
+  titleSize: 32,
+  titleColor: '#ffffff',
+  titleFont: 'Inter',
+  titlePosition: 'above',
+  subtitleText: '',
+  subtitleSize: 16,
+  subtitleColor: 'rgba(255,255,255,0.6)',
   watermark: true,
   isPro: false,
+  reflection: false,
 };
