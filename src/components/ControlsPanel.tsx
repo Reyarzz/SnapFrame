@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Palette,
   Maximize,
@@ -14,17 +14,18 @@ import {
   X,
   Type,
   SlidersHorizontal,
-  FlipVertical,
   RotateCw,
   RectangleHorizontal,
   Grid3x3,
-  Paintbrush,
-  Sun,
-  Contrast,
-  Droplets,
-  CircleDot,
   ChevronDown,
   ChevronRight,
+  Copy,
+  Check,
+  Undo2,
+  Redo2,
+  Wand2,
+  ImagePlus,
+  Trash2,
 } from 'lucide-react';
 import {
   EditorState,
@@ -33,15 +34,22 @@ import {
   ASPECT_PRESETS,
   BG_PATTERNS,
   TITLE_FONTS,
+  STYLE_TEMPLATES,
 } from '../presets';
 
 interface ControlsPanelProps {
   state: EditorState;
   onChange: (partial: Partial<EditorState>) => void;
   onExport: (format: 'png' | 'jpeg' | 'webp') => void;
+  onCopy: () => void;
+  copySuccess: boolean;
   onReset: () => void;
   onUpgrade: () => void;
   onRemoveImage: () => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }
 
 const Section: React.FC<{
@@ -99,12 +107,74 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   state,
   onChange,
   onExport,
+  onCopy,
+  copySuccess,
   onReset,
   onUpgrade,
   onRemoveImage,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
 }) => {
+  const bgImageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleBgImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (ev.target?.result) {
+        onChange({ bgImage: ev.target.result as string, backgroundId: 'image' });
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   return (
-    <div className="w-full lg:w-80 xl:w-96 shrink-0 overflow-y-auto max-h-[calc(100vh-120px)] p-5 space-y-1">
+    <div className="w-full lg:w-80 xl:w-96 shrink-0 overflow-y-auto max-h-[calc(100vh-7rem)] p-5 space-y-1">
+
+      {/* Undo/Redo toolbar */}
+      <div className="flex items-center gap-1.5 mb-3 pb-3 border-b border-white/5">
+        <button
+          onClick={onUndo}
+          disabled={!canUndo}
+          className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all disabled:opacity-20 disabled:pointer-events-none"
+          title="Undo (Ctrl+Z)"
+        >
+          <Undo2 className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onRedo}
+          disabled={!canRedo}
+          className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all disabled:opacity-20 disabled:pointer-events-none"
+          title="Redo (Ctrl+Shift+Z)"
+        >
+          <Redo2 className="w-4 h-4" />
+        </button>
+        <div className="flex-1" />
+        <span className="text-[10px] text-white/20 font-mono">
+          {canUndo ? `${canUndo ? '●' : '○'} unsaved` : ''}
+        </span>
+      </div>
+
+      {/* ===== QUICK STYLES ===== */}
+      <Section title="Quick Styles" icon={<Wand2 className="w-3.5 h-3.5" />}>
+        <div className="grid grid-cols-4 gap-1.5">
+          {STYLE_TEMPLATES.map((tmpl) => (
+            <button
+              key={tmpl.id}
+              onClick={() => onChange(tmpl.overrides)}
+              className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-[11px] transition-all
+                bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 hover:scale-105"
+            >
+              <span className="text-base">{tmpl.emoji}</span>
+              <span>{tmpl.name}</span>
+            </button>
+          ))}
+        </div>
+      </Section>
 
       {/* ===== BACKGROUND ===== */}
       <Section title="Background" icon={<Palette className="w-3.5 h-3.5" />}>
@@ -113,7 +183,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           {GRADIENT_PRESETS.map((preset) => (
             <button
               key={preset.id}
-              onClick={() => onChange({ background: preset.css, backgroundId: preset.id })}
+              onClick={() => onChange({ background: preset.css, backgroundId: preset.id, bgImage: null })}
               className={`
                 w-full aspect-square rounded-lg transition-all duration-200 hover:scale-110
                 ${state.backgroundId === preset.id
@@ -140,7 +210,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 value={state.customBgColor1}
                 onChange={(e) => {
                   const bg = `linear-gradient(${state.bgAngle}deg, ${e.target.value} 0%, ${state.customBgColor2} 100%)`;
-                  onChange({ customBgColor1: e.target.value, background: bg, backgroundId: 'custom' });
+                  onChange({ customBgColor1: e.target.value, background: bg, backgroundId: 'custom', bgImage: null });
                 }}
                 className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent"
               />
@@ -149,7 +219,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 value={state.customBgColor2}
                 onChange={(e) => {
                   const bg = `linear-gradient(${state.bgAngle}deg, ${state.customBgColor1} 0%, ${e.target.value} 100%)`;
-                  onChange({ customBgColor2: e.target.value, background: bg, backgroundId: 'custom' });
+                  onChange({ customBgColor2: e.target.value, background: bg, backgroundId: 'custom', bgImage: null });
                 }}
                 className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent"
               />
@@ -157,7 +227,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <button
               onClick={() => {
                 const bg = `linear-gradient(${state.bgAngle}deg, ${state.customBgColor1} 0%, ${state.customBgColor2} 100%)`;
-                onChange({ background: bg, backgroundId: 'custom' });
+                onChange({ background: bg, backgroundId: 'custom', bgImage: null });
               }}
               className="px-3 py-1.5 rounded-md text-xs bg-white/10 text-white/60 hover:bg-white/15 transition-all"
             >
@@ -179,6 +249,35 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               }
             }}
           />
+        </div>
+
+        {/* Background image */}
+        <div className="pt-3 border-t border-white/5">
+          <span className="text-xs text-white/30 mb-2 block">Background Image</span>
+          <input
+            ref={bgImageInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleBgImageUpload}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={() => bgImageInputRef.current?.click()}
+              className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70 transition-all ring-1 ring-white/10"
+            >
+              <ImagePlus className="w-3.5 h-3.5" />
+              {state.bgImage ? 'Change' : 'Upload'}
+            </button>
+            {state.bgImage && (
+              <button
+                onClick={() => onChange({ bgImage: null })}
+                className="px-3 py-2 rounded-lg text-xs bg-white/5 text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </Section>
 
@@ -480,16 +579,30 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       {/* ===== EXPORT ===== */}
       <div className="pt-4 border-t border-white/10 space-y-3">
-        <button
-          onClick={() => onExport('png')}
-          className="w-full py-3.5 rounded-xl font-semibold text-white text-sm
-            bg-gradient-to-r from-brand-500 to-pink-500 hover:from-brand-600 hover:to-pink-600
-            transition-all duration-200 hover:shadow-lg hover:shadow-brand-500/25
-            flex items-center justify-center gap-2"
-        >
-          <Download className="w-4 h-4" />
-          Export PNG
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onExport('png')}
+            className="flex-1 py-3.5 rounded-xl font-semibold text-white text-sm
+              bg-gradient-to-r from-brand-500 to-pink-500 hover:from-brand-600 hover:to-pink-600
+              transition-all duration-200 hover:shadow-lg hover:shadow-brand-500/25
+              flex items-center justify-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Export PNG
+          </button>
+          <button
+            onClick={onCopy}
+            className={`px-4 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200
+              flex items-center justify-center gap-2
+              ${copySuccess
+                ? 'bg-green-500/20 text-green-300 ring-1 ring-green-500/30'
+                : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70 ring-1 ring-white/10'
+              }`}
+            title="Copy to clipboard (Ctrl+Shift+C)"
+          >
+            {copySuccess ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
 
         <div className="flex gap-2">
           <button

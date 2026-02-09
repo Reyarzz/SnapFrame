@@ -60,11 +60,20 @@ export interface EditorState {
   subtitleText: string;
   subtitleSize: number;
   subtitleColor: string;
+  // Background image
+  bgImage: string | null;
   // Misc
   watermark: boolean;
   isPro: boolean;
   // Reflection
   reflection: boolean;
+}
+
+export interface StyleTemplate {
+  id: string;
+  name: string;
+  emoji: string;
+  overrides: Partial<EditorState>;
 }
 
 export const ASPECT_PRESETS: AspectPreset[] = [
@@ -141,6 +150,7 @@ export const DEFAULT_STATE: EditorState = {
   bgPattern: 'none',
   bgPatternOpacity: 0.1,
   bgNoise: 0,
+  bgImage: null,
   padding: 64,
   borderRadius: 12,
   aspectRatio: 'auto',
@@ -169,3 +179,146 @@ export const DEFAULT_STATE: EditorState = {
   isPro: false,
   reflection: false,
 };
+
+export const STYLE_TEMPLATES: StyleTemplate[] = [
+  {
+    id: 'clean',
+    name: 'Clean',
+    emoji: '✨',
+    overrides: {
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      backgroundId: 'sunset',
+      padding: 64,
+      borderRadius: 12,
+      shadow: 40,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      frame: 'none',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 0,
+    },
+  },
+  {
+    id: 'browser-mockup',
+    name: 'Browser',
+    emoji: '🌐',
+    overrides: {
+      background: 'linear-gradient(135deg, #334155 0%, #1e293b 100%)',
+      backgroundId: 'slate',
+      padding: 48,
+      borderRadius: 12,
+      shadow: 60,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      frame: 'browser',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 0,
+    },
+  },
+  {
+    id: '3d-pop',
+    name: '3D Pop',
+    emoji: '🎯',
+    overrides: {
+      background: 'linear-gradient(135deg, #0c0c1d 0%, #1a1a3e 50%, #2d1b69 100%)',
+      backgroundId: 'midnight',
+      padding: 80,
+      borderRadius: 16,
+      shadow: 80,
+      shadowColor: 'rgba(139,92,246,0.4)',
+      frame: 'none',
+      tiltX: 8, tiltY: -6, scale: 0.9, rotation: 0,
+      bgPattern: 'dots', bgPatternOpacity: 0.08, bgNoise: 5,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.2)',
+    },
+  },
+  {
+    id: 'social',
+    name: 'Social',
+    emoji: '📱',
+    overrides: {
+      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      backgroundId: 'fire',
+      padding: 48,
+      borderRadius: 20,
+      shadow: 50,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      frame: 'none',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      aspectRatio: '1:1',
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 0,
+    },
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    emoji: '🧊',
+    overrides: {
+      background: '#ffffff',
+      backgroundId: 'solid-white',
+      padding: 48,
+      borderRadius: 8,
+      shadow: 20,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      frame: 'none',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.08)',
+    },
+  },
+  {
+    id: 'macos-dark',
+    name: 'macOS',
+    emoji: '💻',
+    overrides: {
+      background: 'linear-gradient(135deg, #141e30 0%, #243b55 100%)',
+      backgroundId: 'royal',
+      padding: 64,
+      borderRadius: 12,
+      shadow: 70,
+      shadowColor: 'rgba(0,0,0,0.5)',
+      frame: 'macos',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 0,
+    },
+  },
+  {
+    id: 'phone-hero',
+    name: 'Phone',
+    emoji: '📲',
+    overrides: {
+      background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+      backgroundId: 'cosmic',
+      padding: 64,
+      borderRadius: 12,
+      shadow: 60,
+      shadowColor: 'rgba(139,92,246,0.4)',
+      frame: 'phone',
+      tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', bgNoise: 0,
+      borderWidth: 0,
+    },
+  },
+  {
+    id: 'neon-glow',
+    name: 'Neon',
+    emoji: '🔥',
+    overrides: {
+      background: 'linear-gradient(135deg, #0c0c1d 0%, #1a1a3e 50%, #2d1b69 100%)',
+      backgroundId: 'midnight',
+      padding: 80,
+      borderRadius: 16,
+      shadow: 90,
+      shadowColor: 'rgba(236,72,153,0.4)',
+      frame: 'none',
+      tiltX: 0, tiltY: 0, scale: 0.95, rotation: 0,
+      bgPattern: 'grid', bgPatternOpacity: 0.05, bgNoise: 8,
+      borderWidth: 2,
+      borderColor: '#ec4899',
+    },
+  },
+];

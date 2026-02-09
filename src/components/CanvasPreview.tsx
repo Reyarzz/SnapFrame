@@ -96,7 +96,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     borderWidth, borderColor, bgPattern, bgPatternOpacity, bgNoise,
     titleText, titleSize, titleColor, titleFont, titlePosition,
     subtitleText, subtitleSize, subtitleColor,
-    aspectRatio, reflection,
+    aspectRatio, reflection, bgImage,
   } = state;
 
   if (!image) return null;
@@ -217,6 +217,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         className="relative inline-flex flex-col items-center justify-center"
         style={canvasStyle}
       >
+        {/* Background image */}
+        {bgImage && (
+          <img
+            src={bgImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+            draggable={false}
+          />
+        )}
+
         {/* Pattern overlay */}
         {patternBg && (
           <div className="absolute inset-0 pointer-events-none z-[1]"

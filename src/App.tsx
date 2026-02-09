@@ -9,9 +9,10 @@ import PaywallModal from './components/PaywallModal';
 import HeroSection from './components/HeroSection';
 import Footer from './components/Footer';
 
+const MAX_HISTORY = 50;
+
 const App: React.FC = () => {
   const [state, setState] = useState<EditorState>(() => {
-    // Check for saved license on load
     const savedLicense = localStorage.getItem('snapframe_license');
     if (savedLicense) {
       return { ...DEFAULT_STATE, isPro: true, watermark: false };
@@ -20,11 +21,50 @@ const App: React.FC = () => {
   });
   const [showPaywall, setShowPaywall] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
+  // Undo/Redo history
+  const [history, setHistory] = useState<EditorState[]>([]);
+  const [future, setFuture] = useState<EditorState[]>([]);
+  const skipHistoryRef = useRef(false);
+
   const updateState = useCallback((partial: Partial<EditorState>) => {
-    setState((prev) => ({ ...prev, ...partial }));
+    setState((prev) => {
+      const next = { ...prev, ...partial };
+      if (!skipHistoryRef.current) {
+        setHistory((h) => [...h.slice(-MAX_HISTORY), prev]);
+        setFuture([]);
+      }
+      return next;
+    });
+  }, []);
+
+  const undo = useCallback(() => {
+    setHistory((h) => {
+      if (h.length === 0) return h;
+      const prev = h[h.length - 1];
+      const rest = h.slice(0, -1);
+      setState((current) => {
+        setFuture((f) => [...f, current]);
+        return prev;
+      });
+      return rest;
+    });
+  }, []);
+
+  const redo = useCallback(() => {
+    setFuture((f) => {
+      if (f.length === 0) return f;
+      const next = f[f.length - 1];
+      const rest = f.slice(0, -1);
+      setState((current) => {
+        setHistory((h) => [...h, current]);
+        return next;
+      });
+      return rest;
+    });
   }, []);
 
   const handleImageLoad = useCallback((dataUrl: string, fileName: string) => {
@@ -60,13 +100,40 @@ const App: React.FC = () => {
   }, [state.fileName]);
 
   const handleReset = useCallback(() => {
-    setState((prev) => ({
-      ...DEFAULT_STATE,
-      image: prev.image,
-      fileName: prev.fileName,
-      isPro: prev.isPro,
-      watermark: prev.isPro ? false : true,
-    }));
+    setState((prev) => {
+      setHistory((h) => [...h.slice(-MAX_HISTORY), prev]);
+      setFuture([]);
+      return {
+        ...DEFAULT_STATE,
+        image: prev.image,
+        fileName: prev.fileName,
+        isPro: prev.isPro,
+        watermark: prev.isPro ? false : true,
+      };
+    });
+  }, []);
+
+  const handleCopy = useCallback(async () => {
+    if (!canvasRef.current) return;
+    try {
+      const canvas = await html2canvas(canvasRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false,
+      });
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob }),
+          ]);
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 2000);
+        }
+      }, 'image/png');
+    } catch (err) {
+      console.error('Copy failed:', err);
+    }
   }, []);
 
   const handleUpgrade = useCallback(() => {
@@ -110,6 +177,45 @@ const App: React.FC = () => {
     window.addEventListener('paste', handlePaste);
     return () => window.removeEventListener('paste', handlePaste);
   }, [handleImageLoad]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
+      // Ctrl/Cmd+Z = Undo (not in input fields)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey && !isInput) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+
+      // Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y = Redo
+      if ((e.ctrlKey || e.metaKey) && ((e.key === 'z' && e.shiftKey) || e.key === 'y') && !isInput) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      // Ctrl/Cmd+E = Export PNG
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e' && state.image) {
+        e.preventDefault();
+        handleExport('png');
+        return;
+      }
+
+      // Ctrl/Cmd+Shift+C = Copy to clipboard
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C' && state.image) {
+        e.preventDefault();
+        handleCopy();
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, handleExport, handleCopy, state.image]);
 
   return (
     <div className="noise w-full min-h-screen">
@@ -194,14 +300,20 @@ const App: React.FC = () => {
               </div>
 
               {/* Controls sidebar */}
-              <div className="lg:border-l lg:border-white/10">
+              <div className="lg:border-l lg:border-white/10 lg:sticky lg:top-24 lg:self-start">
                 <ControlsPanel
                   state={state}
                   onChange={updateState}
                   onExport={handleExport}
+                  onCopy={handleCopy}
+                  copySuccess={copySuccess}
                   onReset={handleReset}
                   onUpgrade={handleUpgrade}
                   onRemoveImage={handleRemoveImage}
+                  onUndo={undo}
+                  onRedo={redo}
+                  canUndo={history.length > 0}
+                  canRedo={future.length > 0}
                 />
               </div>
             </div>
@@ -265,6 +377,8 @@ const App: React.FC = () => {
                   '20+ gradients', 'Custom colors', 'Browser frames', 'macOS frames',
                   'iPhone mockup', 'Shadows', 'Rounded corners', '3D tilt',
                   'Text overlay', 'Canvas presets', 'PNG / JPEG / WebP', '2x resolution',
+                  'Quick styles', 'Copy to clipboard', 'Background images', 'Undo / Redo',
+                  'Keyboard shortcuts',
                 ].map((label, i) => (
                   <span key={i} className="px-4 py-2 rounded-full text-sm text-white/50 bg-white/[0.03] ring-1 ring-white/[0.06]">
                     {label}
