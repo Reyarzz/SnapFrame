@@ -32,14 +32,11 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
 
     setIsProcessing(true);
     try {
-      // Verify license key against Gumroad API
-      const res = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+      // Verify license key via serverless proxy (avoids CORS)
+      const res = await fetch('/api/verify-license', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          product_id: GUMROAD_PRODUCT_ID,
-          license_key: key,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key: key }),
       });
       const data = await res.json();
 
