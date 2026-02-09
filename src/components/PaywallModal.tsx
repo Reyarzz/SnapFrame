@@ -15,11 +15,12 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
   if (!isOpen) return null;
 
   const GUMROAD_PRODUCT_ID = 'gwY6ara8I5xgeof0CdXesQ==';
+  const GUMROAD_PRODUCT_URL = 'https://blazeclip.gumroad.com/l/ucbljd';
 
   const handlePurchase = () => {
     // Open Gumroad checkout in a new tab
     window.open(
-      `https://app.gumroad.com/checkout?product=${GUMROAD_PRODUCT_ID}&wanted=true`,
+      GUMROAD_PRODUCT_URL,
       '_blank',
       'noopener,noreferrer'
     );
