@@ -10,7 +10,14 @@ import HeroSection from './components/HeroSection';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
-  const [state, setState] = useState<EditorState>({ ...DEFAULT_STATE });
+  const [state, setState] = useState<EditorState>(() => {
+    // Check for saved license on load
+    const savedLicense = localStorage.getItem('snapframe_license');
+    if (savedLicense) {
+      return { ...DEFAULT_STATE, isPro: true, watermark: false };
+    }
+    return { ...DEFAULT_STATE };
+  });
   const [showPaywall, setShowPaywall] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);

@@ -14,28 +14,49 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
 
   if (!isOpen) return null;
 
+  const GUMROAD_PRODUCT_ID = 'gwY6ara8I5xgeof0CdXesQ==';
+
   const handlePurchase = () => {
-    // In production, this would connect to Stripe/Gumroad/LemonSqueezy
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      setShowSuccess(true);
-      setTimeout(() => {
-        onActivate();
-        onClose();
-        setShowSuccess(false);
-      }, 2000);
-    }, 1500);
+    // Open Gumroad checkout in a new tab
+    window.open(
+      `https://app.gumroad.com/checkout?product=${GUMROAD_PRODUCT_ID}&wanted=true`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
 
-  const handleActivate = () => {
-    if (licenseKey.trim().length > 8) {
-      setIsProcessing(true);
-      setTimeout(() => {
-        setIsProcessing(false);
-        onActivate();
-        onClose();
-      }, 1000);
+  const handleActivate = async () => {
+    const key = licenseKey.trim();
+    if (key.length < 8) return;
+
+    setIsProcessing(true);
+    try {
+      // Verify license key against Gumroad API
+      const res = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          product_id: GUMROAD_PRODUCT_ID,
+          license_key: key,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('snapframe_license', key);
+        setShowSuccess(true);
+        setTimeout(() => {
+          onActivate();
+          onClose();
+          setShowSuccess(false);
+        }, 2000);
+      } else {
+        alert('Invalid license key. Please check and try again.');
+      }
+    } catch {
+      alert('Could not verify license. Please check your connection and try again.');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -153,7 +174,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({ isOpen, onClose, onActivate
             </div>
 
             <p className="text-center text-xs text-white/20 mt-4">
-              Secure payment via Stripe • 30-day money-back guarantee
+              Secure payment via Gumroad • 30-day money-back guarantee
             </p>
           </div>
         )}
