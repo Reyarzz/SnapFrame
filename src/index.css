@@ -172,6 +172,20 @@ input[type="range"]::-moz-range-thumb {
   border: 2px solid #fff;
 }
 
+/* Hide scrollbar but keep scroll behaviour */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sidebar custom width */
+.xl\:w-88 {
+  width: 22rem;
+}
+
 /* Checkerboard for transparency */
 .checkerboard {
   background-image:

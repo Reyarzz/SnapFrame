@@ -48,6 +48,8 @@ export interface EditorState {
   contrast: number;
   saturation: number;
   blur: number;
+  vignette: number; // 0-100
+  flipX: boolean;
   // Border
   borderWidth: number;
   borderColor: string;
@@ -57,6 +59,7 @@ export interface EditorState {
   titleColor: string;
   titleFont: string;
   titlePosition: string; // 'above' | 'below' | 'center'
+  titleWeight: string; // 'bold' | 'normal'
   subtitleText: string;
   subtitleSize: number;
   subtitleColor: string;
@@ -67,6 +70,8 @@ export interface EditorState {
   isPro: boolean;
   // Reflection
   reflection: boolean;
+  previewGrid: boolean;
+  exportScale: number; // 1 | 2 | 3
 }
 
 export interface StyleTemplate {
@@ -178,6 +183,11 @@ export const DEFAULT_STATE: EditorState = {
   watermark: true,
   isPro: false,
   reflection: false,
+  previewGrid: false,
+  vignette: 0,
+  flipX: false,
+  titleWeight: 'bold',
+  exportScale: 2,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [

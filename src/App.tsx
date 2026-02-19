@@ -77,7 +77,7 @@ const App: React.FC = () => {
     setIsExporting(true);
     try {
       const canvas = await html2canvas(canvasRef.current, {
-        scale: 2,
+        scale: state.exportScale ?? 2,
         useCORS: true,
         backgroundColor: null,
         logging: false,
@@ -97,7 +97,7 @@ const App: React.FC = () => {
     } finally {
       setIsExporting(false);
     }
-  }, [state.fileName]);
+  }, [state.fileName, state.exportScale]);
 
   const handleReset = useCallback(() => {
     setState((prev) => {
@@ -265,60 +265,61 @@ const App: React.FC = () => {
       {!state.image && <HeroSection onScrollToEditor={scrollToEditor} />}
 
       {/* Editor */}
-      <div ref={editorRef} className={`w-full ${state.image ? 'pt-20' : ''}`}>
-        <section className="flex flex-col items-center w-full px-4 py-12">
-          {!state.image ? (
+      <div ref={editorRef} className={`w-full ${state.image ? 'pt-[4.25rem]' : ''}`}>
+        {!state.image ? (
+          <section className="flex flex-col items-center w-full px-4 py-12">
             <div className="w-full max-w-2xl py-12">
               <DropZone onImageLoad={handleImageLoad} />
             </div>
-          ) : (
-            <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-6">
-              {/* Canvas preview area */}
-              <div className="flex-1 min-w-0">
-                <div className="sticky top-20">
-                  {/* Toolbar */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2 text-sm text-white/40">
-                      <span className="w-2 h-2 rounded-full bg-green-400" />
-                      {state.fileName || 'Untitled'}
-                    </div>
-                    {isExporting && (
-                      <div className="flex items-center gap-2 text-sm text-brand-400">
-                        <div className="w-3 h-3 border-2 border-brand-400/30 border-t-brand-400 rounded-full animate-spin" />
-                        Exporting...
-                      </div>
-                    )}
+          </section>
+        ) : (
+          /* Side-by-side layout: canvas left, controls right */
+          <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-4.25rem)]">
+            {/* Canvas preview area */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              <div className="lg:sticky lg:top-[4.25rem] flex flex-col p-3 sm:p-5 gap-3">
+                {/* Toolbar */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-white/40">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                    {state.fileName || 'Untitled'}
                   </div>
-
-                  {/* Preview container */}
-                  <div className="rounded-xl overflow-hidden ring-1 ring-white/10 bg-[#0a0a1a] checkerboard">
-                    <div className="flex items-center justify-center min-h-[400px] p-4">
-                      <CanvasPreview state={state} canvasRef={canvasRef} />
+                  {isExporting && (
+                    <div className="flex items-center gap-2 text-xs text-brand-400">
+                      <div className="w-3 h-3 border-2 border-brand-400/30 border-t-brand-400 rounded-full animate-spin" />
+                      Exporting…
                     </div>
+                  )}
+                </div>
+
+                {/* Preview container */}
+                <div className="rounded-2xl overflow-hidden ring-1 ring-white/[0.08] bg-[#08080f] checkerboard">
+                  <div className="flex items-center justify-center min-h-[260px] sm:min-h-[420px] lg:min-h-[520px] p-4 sm:p-6">
+                    <CanvasPreview state={state} canvasRef={canvasRef} />
                   </div>
                 </div>
               </div>
-
-              {/* Controls sidebar */}
-              <div className="lg:border-l lg:border-white/10 lg:sticky lg:top-24 lg:self-start">
-                <ControlsPanel
-                  state={state}
-                  onChange={updateState}
-                  onExport={handleExport}
-                  onCopy={handleCopy}
-                  copySuccess={copySuccess}
-                  onReset={handleReset}
-                  onUpgrade={handleUpgrade}
-                  onRemoveImage={handleRemoveImage}
-                  onUndo={undo}
-                  onRedo={redo}
-                  canUndo={history.length > 0}
-                  canRedo={future.length > 0}
-                />
-              </div>
             </div>
-          )}
-        </section>
+
+            {/* Controls sidebar */}
+            <div className="lg:sticky lg:top-[4.25rem] lg:self-start shrink-0">
+              <ControlsPanel
+                state={state}
+                onChange={updateState}
+                onExport={handleExport}
+                onCopy={handleCopy}
+                copySuccess={copySuccess}
+                onReset={handleReset}
+                onUpgrade={handleUpgrade}
+                onRemoveImage={handleRemoveImage}
+                onUndo={undo}
+                onRedo={redo}
+                canUndo={history.length > 0}
+                canRedo={future.length > 0}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* How it works */}

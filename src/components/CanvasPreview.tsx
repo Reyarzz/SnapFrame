@@ -94,9 +94,9 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     frame, watermark, tiltX, tiltY, scale, rotation,
     brightness, contrast, saturation, blur: imgBlur,
     borderWidth, borderColor, bgPattern, bgPatternOpacity, bgNoise,
-    titleText, titleSize, titleColor, titleFont, titlePosition,
+    titleText, titleSize, titleColor, titleFont, titlePosition, titleWeight,
     subtitleText, subtitleSize, subtitleColor,
-    aspectRatio, reflection, bgImage,
+    aspectRatio, reflection, bgImage, vignette, flipX,
   } = state;
 
   if (!image) return null;
@@ -131,6 +131,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   ].filter(Boolean).join(' ') || undefined;
 
   const transformParts: string[] = [];
+  if (flipX) transformParts.push('scaleX(-1)');
   if (tiltX !== 0 || tiltY !== 0) {
     transformParts.push(`perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`);
   }
@@ -188,7 +189,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           fontSize: titleSize,
           color: titleColor,
           fontFamily: titleFont,
-          fontWeight: 700,
+          fontWeight: titleWeight === 'normal' ? 400 : 700,
           lineHeight: 1.3,
           textShadow: position === 'center' ? '0 2px 20px rgba(0,0,0,0.5)' : undefined,
         }}>
@@ -277,6 +278,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
         {/* Title below */}
         {renderTitle('below')}
+
+        {/* Vignette overlay */}
+        {vignette > 0 && (
+          <div
+            className="absolute inset-0 pointer-events-none z-[20]"
+            style={{
+              background: `radial-gradient(ellipse at center, transparent ${Math.max(0, 70 - vignette * 0.5)}%, rgba(0,0,0,${(vignette / 100) * 0.85}) 100%)`,
+            }}
+          />
+        )}
 
         {watermark && <Watermark />}
       </div>
