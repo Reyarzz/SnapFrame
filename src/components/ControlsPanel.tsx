@@ -4,7 +4,7 @@ import {
   Smartphone, Globe, MonitorSmartphone, X, Type,
   SlidersHorizontal, Maximize,
   Copy, Check, Undo2, Redo2, Wand2, ImagePlus, Trash2,
-  FlipHorizontal2, RotateCw, Layers,
+  FlipHorizontal2, RotateCw, Layers, Terminal,
 } from 'lucide-react';
 import {
   EditorState,
@@ -101,7 +101,7 @@ const ColorDots: React.FC<{
   <div className="flex gap-2 flex-wrap">
     {colors.map(c => (
       <button key={c.id} onClick={() => onSelect(c.value)} title={c.name}
-        className={`w-8 h-8 rounded-full transition-all duration-150 hover:scale-110 flex-shrink-0 ${
+        className={`w-7 h-7 rounded-full transition-all duration-150 hover:scale-110 flex-shrink-0 ${
           active === c.value
             ? 'ring-2 ring-brand-500 ring-offset-2 ring-offset-[#0c0c18]'
             : 'ring-1 ring-white/10 hover:ring-white/30'
@@ -153,20 +153,22 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       <Card>
         <SectionLabel>Device Frame</SectionLabel>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {[
-            { id: 'none',    name: 'None',    Icon: X },
-            { id: 'browser', name: 'Browser', Icon: Globe },
-            { id: 'macos',   name: 'macOS',   Icon: MonitorSmartphone },
-            { id: 'phone',   name: 'Phone',   Icon: Smartphone },
+            { id: 'none',     name: 'None',     Icon: X },
+            { id: 'browser',  name: 'Browser',  Icon: Globe },
+            { id: 'macos',    name: 'macOS',    Icon: MonitorSmartphone },
+            { id: 'phone',    name: 'Phone',    Icon: Smartphone },
+            { id: 'terminal', name: 'Terminal', Icon: Terminal },
+            { id: 'arc',      name: 'Arc',      Icon: Globe },
           ].map(f => (
             <button key={f.id} onClick={() => onChange({ frame: f.id })}
-              className={`flex items-center gap-2.5 px-3 py-3 rounded-xl text-sm font-medium transition-all ring-1 ${
+              className={`flex items-center gap-2 px-2.5 py-2.5 rounded-xl text-xs font-medium transition-all ring-1 ${
                 state.frame === f.id
                   ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
                   : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09] hover:text-white/60'
               }`}>
-              <f.Icon className="w-4 h-4 flex-shrink-0" />
+              <f.Icon className="w-3.5 h-3.5 flex-shrink-0" />
               {f.name}
             </button>
           ))}
@@ -175,16 +177,16 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       <Card>
         <SectionLabel>Canvas Size</SectionLabel>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-4 gap-1.5">
           {ASPECT_PRESETS.map(a => (
             <button key={a.id} onClick={() => onChange({ aspectRatio: a.id })}
-              className={`px-2 py-2.5 rounded-lg text-[10px] font-medium transition-all flex flex-col items-center gap-0.5 ring-1 ${
+              className={`px-1.5 py-2 rounded-lg text-[10px] font-medium transition-all flex flex-col items-center gap-0.5 ring-1 ${
                 state.aspectRatio === a.id
                   ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
                   : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09] hover:text-white/60'
               }`}>
-              <span className="font-bold text-xs">{a.name}</span>
-              <span className="text-[9px] opacity-60">{a.label}</span>
+              <span className="font-bold text-[10px]">{a.name}</span>
+              <span className="text-[8px] opacity-60 leading-tight text-center">{a.label}</span>
             </button>
           ))}
         </div>
@@ -197,7 +199,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <Card>
         <SectionLabel>Gradient Presets</SectionLabel>
-        <div className="grid grid-cols-6 gap-1.5">
+        <div className="grid grid-cols-7 gap-1.5">
           {GRADIENT_PRESETS.map(preset => (
             <button key={preset.id}
               onClick={() => onChange({ background: preset.css, backgroundId: preset.id, bgImage: null })}
@@ -239,6 +241,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               onChange({ bgAngle: v });
             }
           }} />
+        <Slider label="Opacity" value={state.bgOpacity ?? 100} min={10} max={100} unit="%"
+          onChange={v => onChange({ bgOpacity: v })} />
       </Card>
 
       <Card>
@@ -266,10 +270,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       <Card>
         <SectionLabel>Patterns & Texture</SectionLabel>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-5 gap-1.5">
           {BG_PATTERNS.map(p => (
             <button key={p.id} onClick={() => onChange({ bgPattern: p.id })}
-              className={`px-2 py-2 rounded-lg text-[10px] font-medium transition-all ring-1 ${
+              className={`px-1.5 py-2 rounded-lg text-[9px] font-medium transition-all ring-1 ${
                 state.bgPattern === p.id
                   ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
                   : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
@@ -282,7 +286,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           <Slider label="Pattern Opacity" value={Math.round(state.bgPatternOpacity * 100)} min={1} max={50}
             onChange={v => onChange({ bgPatternOpacity: v / 100 })} />
         )}
-        <Slider label="Noise" value={state.bgNoise} min={0} max={50} onChange={v => onChange({ bgNoise: v })} />
+        <Slider label="Film Noise" value={state.bgNoise} min={0} max={50} onChange={v => onChange({ bgNoise: v })} />
       </Card>
     </div>
   );
@@ -292,11 +296,11 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <Card>
         <SectionLabel>Padding</SectionLabel>
-        <Slider label="Size" value={state.padding} min={0} max={160} unit="px" onChange={v => onChange({ padding: v })} />
+        <Slider label="Size" value={state.padding} min={0} max={200} unit="px" onChange={v => onChange({ padding: v })} />
         <div className="flex gap-1.5">
-          {[0, 32, 64, 96, 128].map(v => (
+          {[0, 32, 64, 96, 128, 160].map(v => (
             <button key={v} onClick={() => onChange({ padding: v })}
-              className={`flex-1 py-1.5 text-[10px] font-medium rounded-lg transition-all ring-1 ${
+              className={`flex-1 py-1.5 text-[9px] font-medium rounded-lg transition-all ring-1 ${
                 state.padding === v
                   ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
                   : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
@@ -309,11 +313,11 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       <Card>
         <SectionLabel>Corner Radius</SectionLabel>
-        <Slider label="Radius" value={state.borderRadius} min={0} max={48} unit="px" onChange={v => onChange({ borderRadius: v })} />
+        <Slider label="Radius" value={state.borderRadius} min={0} max={64} unit="px" onChange={v => onChange({ borderRadius: v })} />
         <div className="flex gap-1.5">
-          {[0, 8, 16, 24, 48].map(v => (
+          {[0, 8, 16, 24, 48, 64].map(v => (
             <button key={v} onClick={() => onChange({ borderRadius: v })}
-              className={`flex-1 py-1.5 text-[10px] font-medium rounded-lg transition-all ring-1 ${
+              className={`flex-1 py-1.5 text-[9px] font-medium rounded-lg transition-all ring-1 ${
                 state.borderRadius === v
                   ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
                   : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
@@ -332,14 +336,15 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       {/* Drop Shadow */}
       <Card>
         <SectionLabel>Drop Shadow</SectionLabel>
-        <Slider label="Intensity" value={state.shadow} min={0} max={100} onChange={v => onChange({ shadow: v })} />
+        <Slider label="Intensity" value={state.shadow} min={0} max={120} onChange={v => onChange({ shadow: v })} />
+        <Slider label="X Offset" value={state.shadowX ?? 0} min={-50} max={50} unit="px" onChange={v => onChange({ shadowX: v })} />
         <ColorDots colors={SHADOW_COLORS} active={state.shadowColor} onSelect={v => onChange({ shadowColor: v })} />
       </Card>
 
       {/* Glow */}
       <Card>
         <SectionLabel>Outer Glow</SectionLabel>
-        <Slider label="Intensity" value={state.glowIntensity} min={0} max={100} onChange={v => onChange({ glowIntensity: v })} />
+        <Slider label="Intensity" value={state.glowIntensity} min={0} max={120} onChange={v => onChange({ glowIntensity: v })} />
         {state.glowIntensity > 0 && (
           <ColorDots colors={GLOW_COLORS} active={state.glowColor} onSelect={v => onChange({ glowColor: v })} />
         )}
@@ -354,10 +359,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       {/* Border */}
       <Card>
         <SectionLabel>Border</SectionLabel>
-        <Slider label="Width" value={state.borderWidth} min={0} max={16} unit="px" onChange={v => onChange({ borderWidth: v })} />
+        <Slider label="Width" value={state.borderWidth} min={0} max={20} unit="px" onChange={v => onChange({ borderWidth: v })} />
         {state.borderWidth > 0 && (
           <>
-            {/* Style */}
             <div>
               <span className="text-[10px] text-white/30 mb-2 block">Style</span>
               <div className="grid grid-cols-5 gap-1.5">
@@ -380,16 +384,15 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               </div>
             </div>
 
-            {/* Color (not shown for gradient — uses BG gradient colors) */}
             {state.borderStyle !== 'gradient' && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs text-white/40 flex-shrink-0">Color</span>
                 <input type="color"
                   value={state.borderColor.startsWith('rgba') ? '#ffffff' : state.borderColor}
                   onChange={e => onChange({ borderColor: e.target.value })}
-                  className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent flex-shrink-0" />
-                <div className="flex gap-1.5 ml-auto">
-                  {['#ffffff', '#000000', '#8b5cf6', '#ec4899', '#38bdf8', 'rgba(255,255,255,0.2)'].map(c => (
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent flex-shrink-0" />
+                <div className="flex gap-1.5 ml-auto flex-wrap">
+                  {['#ffffff', '#000000', '#8b5cf6', '#ec4899', '#38bdf8', '#f59e0b', 'rgba(255,255,255,0.15)'].map(c => (
                     <button key={c} onClick={() => onChange({ borderColor: c })}
                       className={`w-6 h-6 rounded-full ring-1 transition-all hover:scale-110 flex-shrink-0 ${
                         state.borderColor === c
@@ -417,8 +420,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <span className="text-xs text-white/40">Color</span>
             <input type="color" value={state.colorOverlay}
               onChange={e => onChange({ colorOverlay: e.target.value })}
-              className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent" />
-            <div className="flex-1 h-10 rounded-xl ring-1 ring-white/10" style={{ background: state.colorOverlay }} />
+              className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent" />
+            <div className="flex-1 h-9 rounded-xl ring-1 ring-white/10" style={{ background: state.colorOverlay }} />
           </div>
         )}
       </Card>
@@ -435,8 +438,18 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <Slider label="Intensity" value={state.scanlines} min={0} max={100} onChange={v => onChange({ scanlines: v })} />
       </Card>
 
+      {/* Film Grain */}
+      <Card>
+        <SectionLabel>Film Grain</SectionLabel>
+        <Slider label="Intensity" value={state.filmGrain ?? 0} min={0} max={100} onChange={v => onChange({ filmGrain: v })} />
+      </Card>
+
       <ResetBtn
-        onClick={() => onChange({ shadow: 0, glowIntensity: 0, innerShadow: 0, borderWidth: 0, colorOverlayOpacity: 0, vignette: 0, scanlines: 0 })}
+        onClick={() => onChange({
+          shadow: 0, shadowX: 0, glowIntensity: 0, innerShadow: 0,
+          borderWidth: 0, colorOverlayOpacity: 0,
+          vignette: 0, scanlines: 0, filmGrain: 0,
+        })}
         label="Clear All Effects"
       />
     </div>
@@ -447,11 +460,20 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <Card>
         <SectionLabel>Image Adjustments</SectionLabel>
-        <Slider label="Brightness" value={state.brightness} min={50} max={150} unit="%" onChange={v => onChange({ brightness: v })} />
-        <Slider label="Contrast"   value={state.contrast}   min={50} max={150} unit="%" onChange={v => onChange({ contrast: v })} />
-        <Slider label="Saturation" value={state.saturation} min={0}  max={200} unit="%" onChange={v => onChange({ saturation: v })} />
-        <Slider label="Blur"       value={state.blur}       min={0}  max={20}  step={0.5} unit="px" onChange={v => onChange({ blur: v })} />
-        <ResetBtn onClick={() => onChange({ brightness: 100, contrast: 100, saturation: 100, blur: 0 })} label="Reset Adjustments" />
+        <Slider label="Brightness" value={state.brightness} min={50}  max={150} unit="%" onChange={v => onChange({ brightness: v })} />
+        <Slider label="Contrast"   value={state.contrast}   min={50}  max={150} unit="%" onChange={v => onChange({ contrast: v })} />
+        <Slider label="Saturation" value={state.saturation} min={0}   max={200} unit="%" onChange={v => onChange({ saturation: v })} />
+        <Slider label="Blur"       value={state.blur}       min={0}   max={20}  step={0.5} unit="px" onChange={v => onChange({ blur: v })} />
+        <ResetBtn onClick={() => onChange({ brightness: 100, contrast: 100, saturation: 100, blur: 0 })} label="Reset Tone" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Filters</SectionLabel>
+        <Slider label="Sepia"     value={state.sepia ?? 0}     min={0} max={100} unit="%" onChange={v => onChange({ sepia: v })} />
+        <Slider label="Grayscale" value={state.grayscale ?? 0} min={0} max={100} unit="%" onChange={v => onChange({ grayscale: v })} />
+        <Slider label="Hue Shift" value={state.hueRotate ?? 0} min={-180} max={180} unit="°" onChange={v => onChange({ hueRotate: v })} />
+        <Toggle label="Invert Colors" value={state.invert ?? false} onChange={v => onChange({ invert: v })} />
+        <ResetBtn onClick={() => onChange({ sepia: 0, grayscale: 0, hueRotate: 0, invert: false })} label="Reset Filters" />
       </Card>
 
       <Card>
@@ -469,8 +491,31 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <Slider label="Tilt X"    value={state.tiltX}                  min={-30} max={30}  unit="°"  onChange={v => onChange({ tiltX: v })} />
         <Slider label="Tilt Y"    value={state.tiltY}                  min={-30} max={30}  unit="°"  onChange={v => onChange({ tiltY: v })} />
         <Slider label="Scale"     value={Math.round(state.scale * 100)} min={50}  max={150} unit="%"  onChange={v => onChange({ scale: v / 100 })} />
-        <Slider label="Rotation"  value={state.rotation}               min={-30} max={30}  unit="°"  onChange={v => onChange({ rotation: v })} />
+        <Slider label="Rotation"  value={state.rotation}               min={-45} max={45}  unit="°"  onChange={v => onChange({ rotation: v })} />
         <ResetBtn onClick={() => onChange({ tiltX: 0, tiltY: 0, scale: 1, rotation: 0 })} label="Reset Transform" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Perspective Presets</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { name: 'Flat',     tiltX: 0,   tiltY: 0  },
+            { name: 'Left',     tiltX: 0,   tiltY: 10 },
+            { name: 'Right',    tiltX: 0,   tiltY: -10 },
+            { name: 'Top',      tiltX: -10, tiltY: 0  },
+            { name: 'Bottom',   tiltX: 10,  tiltY: 0  },
+            { name: 'Corner',   tiltX: 6,   tiltY: -8 },
+          ].map(p => (
+            <button key={p.name} onClick={() => onChange({ tiltX: p.tiltX, tiltY: p.tiltY })}
+              className={`py-2 rounded-lg text-[10px] font-medium transition-all ring-1 ${
+                state.tiltX === p.tiltX && state.tiltY === p.tiltY
+                  ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
+                  : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
+              }`}>
+              {p.name}
+            </button>
+          ))}
+        </div>
       </Card>
 
       <Card>
@@ -490,7 +535,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.06] text-white text-sm
             placeholder:text-white/25 ring-1 ring-white/[0.1] focus:ring-brand-500/50
             focus:bg-white/[0.09] outline-none transition-all" />
-        <input type="text" placeholder="Subtitle text..." value={state.subtitleText}
+        <input type="text" placeholder="Subtitle / tagline..." value={state.subtitleText}
           onChange={e => onChange({ subtitleText: e.target.value })}
           className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.06] text-white text-sm
             placeholder:text-white/25 ring-1 ring-white/[0.1] focus:ring-brand-500/50
@@ -513,25 +558,51 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 </button>
               ))}
             </div>
+
+            <div>
+              <span className="text-[10px] text-white/30 mb-2 block">Alignment</span>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { id: 'left',   name: '⬅ Left' },
+                  { id: 'center', name: '↔ Center' },
+                  { id: 'right',  name: 'Right ➡' },
+                ].map(a => (
+                  <button key={a.id} onClick={() => onChange({ textAlign: a.id })}
+                    className={`py-2 rounded-lg text-[10px] font-medium transition-all ring-1 ${
+                      (state.textAlign ?? 'center') === a.id
+                        ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
+                        : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
+                    }`}>
+                    {a.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </Card>
 
           <Card>
             <SectionLabel>Typography</SectionLabel>
-            <Slider label="Title Size"    value={state.titleSize}    min={14} max={72} unit="px" onChange={v => onChange({ titleSize: v })} />
-            <Slider label="Subtitle Size" value={state.subtitleSize} min={10} max={36} unit="px" onChange={v => onChange({ subtitleSize: v })} />
-            <div className="grid grid-cols-2 gap-1.5 pt-1">
-              {TITLE_FONTS.map(f => (
-                <button key={f.id} onClick={() => onChange({ titleFont: f.id })}
-                  className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ring-1 ${
-                    state.titleFont === f.id
-                      ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
-                      : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
-                  }`}
-                  style={{ fontFamily: f.id }}>
-                  {f.name}
-                </button>
-              ))}
+            <Slider label="Title Size"      value={state.titleSize}        min={14} max={96}  unit="px" onChange={v => onChange({ titleSize: v })} />
+            <Slider label="Subtitle Size"   value={state.subtitleSize}     min={10} max={48}  unit="px" onChange={v => onChange({ subtitleSize: v })} />
+            <Slider label="Letter Spacing"  value={state.letterSpacing ?? 0} min={0} max={20} unit="px" onChange={v => onChange({ letterSpacing: v })} />
+
+            <div>
+              <span className="text-[10px] text-white/30 mb-2 block">Font</span>
+              <div className="grid grid-cols-2 gap-1.5">
+                {TITLE_FONTS.map(f => (
+                  <button key={f.id} onClick={() => onChange({ titleFont: f.id })}
+                    className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ring-1 ${
+                      state.titleFont === f.id
+                        ? 'bg-brand-500/20 text-brand-300 ring-brand-500/50'
+                        : 'bg-white/[0.04] text-white/40 ring-white/[0.07] hover:bg-white/[0.09]'
+                    }`}
+                    style={{ fontFamily: f.id }}>
+                    {f.name}
+                  </button>
+                ))}
+              </div>
             </div>
+
             <div className="grid grid-cols-2 gap-1.5">
               {[{ id: 'bold', name: 'Bold' }, { id: 'normal', name: 'Regular' }].map(w => (
                 <button key={w.id} onClick={() => onChange({ titleWeight: w.id })}
@@ -545,6 +616,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 </button>
               ))}
             </div>
+
+            <Toggle label="Text Shadow" value={state.titleShadow ?? false} onChange={v => onChange({ titleShadow: v })} />
           </Card>
 
           <Card>
@@ -558,9 +631,18 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   <span className="text-xs text-white/40 w-14 flex-shrink-0">{label}</span>
                   <input type="color" value={value}
                     onChange={e => onChange({ [key]: e.target.value } as Partial<EditorState>)}
-                    className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent" />
-                  <div className="flex-1 h-10 rounded-xl ring-1 ring-white/10" style={{ background: value }} />
+                    className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent" />
+                  <div className="flex-1 h-9 rounded-xl ring-1 ring-white/10" style={{ background: value }} />
                 </div>
+              ))}
+            </div>
+            <div className="flex gap-1.5 flex-wrap">
+              {['#ffffff', '#000000', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'].map(c => (
+                <button key={c} onClick={() => onChange({ titleColor: c })}
+                  className={`w-7 h-7 rounded-full ring-1 transition-all hover:scale-110 ${
+                    state.titleColor === c ? 'ring-2 ring-brand-500 ring-offset-1 ring-offset-[#0c0c18]' : 'ring-white/10'
+                  }`}
+                  style={{ background: c }} />
               ))}
             </div>
           </Card>
