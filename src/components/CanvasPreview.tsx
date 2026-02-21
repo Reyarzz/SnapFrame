@@ -93,10 +93,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     image, background, padding, borderRadius, shadow, shadowColor,
     frame, watermark, tiltX, tiltY, scale, rotation,
     brightness, contrast, saturation, blur: imgBlur,
-    borderWidth, borderColor, bgPattern, bgPatternOpacity, bgNoise,
+    borderWidth, borderColor, borderStyle,
+    bgPattern, bgPatternOpacity, bgNoise,
     titleText, titleSize, titleColor, titleFont, titlePosition, titleWeight,
     subtitleText, subtitleSize, subtitleColor,
-    aspectRatio, reflection, bgImage, vignette, flipX,
+    aspectRatio, reflection, bgImage,
+    vignette, flipX,
+    glowIntensity, glowColor,
+    colorOverlay, colorOverlayOpacity,
+    scanlines, bgBlur, innerShadow,
+    customBgColor1, customBgColor2, bgAngle,
   } = state;
 
   if (!image) return null;
@@ -119,9 +125,23 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.justifyContent = 'center';
   }
 
-  const shadowStyle = shadow > 0
-    ? `0 ${shadow}px ${shadow * 2}px ${shadowColor}, 0 ${shadow / 2}px ${shadow}px ${shadowColor.replace(/[\d.]+\)$/, (m) => `${parseFloat(m) * 0.5})`)}`
-    : 'none';
+  // Combined shadow: drop shadow + glow + optional inner shadow
+  const buildShadow = (includeInner = false) => {
+    const parts: string[] = [];
+    if (shadow > 0) {
+      parts.push(`0 ${shadow}px ${shadow * 2}px ${shadowColor}`);
+      parts.push(`0 ${shadow / 2}px ${shadow}px ${shadowColor.replace(/[\d.]+\)$/, (m) => `${parseFloat(m) * 0.5})`)}`);
+    }
+    if (glowIntensity > 0) {
+      parts.push(`0 0 ${Math.round(glowIntensity * 0.5)}px ${glowColor}`);
+      parts.push(`0 0 ${glowIntensity}px ${glowColor}`);
+    }
+    if (includeInner && innerShadow > 0) {
+      const opacity = Math.min(innerShadow / 100 * 0.85, 0.75).toFixed(2);
+      parts.push(`inset 0 ${Math.round(innerShadow * 0.3)}px ${innerShadow}px rgba(0,0,0,${opacity})`);
+    }
+    return parts.length > 0 ? parts.join(', ') : 'none';
+  };
 
   const imageFilter = [
     brightness !== 100 ? `brightness(${brightness}%)` : '',
@@ -139,40 +159,112 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (rotation !== 0) transformParts.push(`rotate(${rotation}deg)`);
   const imageTransform = transformParts.length > 0 ? transformParts.join(' ') : undefined;
 
-  const imageBorder = borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : undefined;
+  const useGradientBorder = borderStyle === 'gradient' && borderWidth > 0;
+  const regularBorder = (borderWidth > 0 && !useGradientBorder)
+    ? `${borderWidth}px ${borderStyle} ${borderColor}`
+    : undefined;
 
-  const renderImage = () => (
+  // Border radius of the outermost image wrapper depending on frame type
+  const frameBR = frame === 'phone'
+    ? Math.max(borderRadius, 28) + 8
+    : frame !== 'none' ? borderRadius + 4 : borderRadius;
+
+  // Raw image element (no shadow — that goes on the wrapper)
+  const renderImageEl = () => (
     <img
       src={image}
       alt="Screenshot"
       className="block w-full h-auto"
       style={{
         borderRadius: frame === 'none' ? borderRadius : 0,
-        boxShadow: frame === 'none' ? shadowStyle : 'none',
         filter: imageFilter,
-        border: frame === 'none' ? imageBorder : undefined,
       }}
       draggable={false}
     />
   );
 
-  const renderFramedImage = () => {
-    const wrapperShadow: React.CSSProperties = {
-      boxShadow: shadowStyle,
-      borderRadius: frame === 'phone' ? Math.max(borderRadius, 28) + 8 : borderRadius + 4,
-      border: imageBorder,
-    };
-
+  // Frame shell (no shadow/border — caller adds those)
+  const renderFrameShell = () => {
     switch (frame) {
-      case 'browser':
-        return <div style={wrapperShadow}><BrowserFrame borderRadius={borderRadius}>{renderImage()}</BrowserFrame></div>;
-      case 'macos':
-        return <div style={wrapperShadow}><MacFrame borderRadius={borderRadius}>{renderImage()}</MacFrame></div>;
-      case 'phone':
-        return <div style={{ boxShadow: shadowStyle }}><PhoneFrame borderRadius={borderRadius}>{renderImage()}</PhoneFrame></div>;
-      default:
-        return renderImage();
+      case 'browser': return <BrowserFrame borderRadius={borderRadius}>{renderImageEl()}</BrowserFrame>;
+      case 'macos':   return <MacFrame borderRadius={borderRadius}>{renderImageEl()}</MacFrame>;
+      case 'phone':   return <PhoneFrame borderRadius={borderRadius}>{renderImageEl()}</PhoneFrame>;
+      default:        return renderImageEl();
     }
+  };
+
+  // Color overlay element (sits atop the image/frame)
+  const colorOverlayEl = colorOverlayOpacity > 0 ? (
+    <div
+      style={{
+        position: 'absolute', inset: 0,
+        background: colorOverlay,
+        opacity: colorOverlayOpacity / 100,
+        borderRadius: frameBR,
+        pointerEvents: 'none',
+        zIndex: 10,
+        mixBlendMode: 'color',
+      }}
+    />
+  ) : null;
+
+  // Full image render: frame + borders + shadows + color overlay
+  const renderFinalImage = () => {
+    const shell = renderFrameShell();
+
+    // ── Gradient border path ──
+    if (useGradientBorder) {
+      return (
+        <div style={{
+          padding: borderWidth,
+          background: `linear-gradient(${bgAngle}deg, ${customBgColor1}, ${customBgColor2})`,
+          borderRadius: frameBR + borderWidth,
+          boxShadow: buildShadow(false),
+          display: 'inline-flex',
+          position: 'relative',
+        }}>
+          <div style={{ borderRadius: frameBR, overflow: 'hidden', position: 'relative', display: 'inline-flex' }}>
+            {shell}
+            {colorOverlayEl}
+          </div>
+        </div>
+      );
+    }
+
+    // ── Framed (browser/mac/phone) ──
+    if (frame !== 'none') {
+      return (
+        <div style={{
+          boxShadow: buildShadow(false),
+          borderRadius: frameBR,
+          border: regularBorder,
+          display: 'inline-flex',
+          position: 'relative',
+        }}>
+          {shell}
+          {colorOverlayEl}
+        </div>
+      );
+    }
+
+    // ── Plain image (no frame) ──
+    return (
+      <div style={{ position: 'relative', display: 'inline-flex' }}>
+        <img
+          src={image}
+          alt="Screenshot"
+          className="block w-full h-auto"
+          style={{
+            borderRadius,
+            boxShadow: buildShadow(true), // includes inner shadow
+            filter: imageFilter,
+            border: regularBorder,
+          }}
+          draggable={false}
+        />
+        {colorOverlayEl}
+      </div>
+    );
   };
 
   const patternBg = bgPattern !== 'none' ? getPatternSvg(bgPattern, bgPatternOpacity) : undefined;
@@ -224,6 +316,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             src={bgImage}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+            style={{
+              filter: bgBlur > 0 ? `blur(${bgBlur}px)` : undefined,
+              transform: bgBlur > 0 ? 'scale(1.08)' : undefined,
+            }}
             draggable={false}
           />
         )}
@@ -252,7 +348,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           transition: 'transform 0.3s ease',
           maxWidth: frame === 'phone' ? 320 : '100%',
         }}>
-          {renderFramedImage()}
+          {renderFinalImage()}
 
           {/* Reflection */}
           {reflection && (
@@ -264,7 +360,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               marginTop: 2,
               opacity: 0.4,
             }}>
-              {renderFramedImage()}
+              {renderFrameShell()}
             </div>
           )}
         </div>
@@ -279,12 +375,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Title below */}
         {renderTitle('below')}
 
-        {/* Vignette overlay */}
+        {/* Vignette */}
         {vignette > 0 && (
           <div
             className="absolute inset-0 pointer-events-none z-[20]"
             style={{
               background: `radial-gradient(ellipse at center, transparent ${Math.max(0, 70 - vignette * 0.5)}%, rgba(0,0,0,${(vignette / 100) * 0.85}) 100%)`,
+            }}
+          />
+        )}
+
+        {/* Scanlines */}
+        {scanlines > 0 && (
+          <div
+            className="absolute inset-0 pointer-events-none z-[21]"
+            style={{
+              backgroundImage: `repeating-linear-gradient(0deg, rgba(0,0,0,${(scanlines / 100 * 0.45).toFixed(2)}) 0px, rgba(0,0,0,${(scanlines / 100 * 0.45).toFixed(2)}) 1px, transparent 1px, transparent 4px)`,
             }}
           />
         )}

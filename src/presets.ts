@@ -50,9 +50,18 @@ export interface EditorState {
   blur: number;
   vignette: number; // 0-100
   flipX: boolean;
+  // New effects
+  glowIntensity: number; // 0-100
+  glowColor: string;
+  colorOverlay: string;
+  colorOverlayOpacity: number; // 0-100
+  scanlines: number; // 0-100
+  bgBlur: number; // 0-20px applied to bg image
+  innerShadow: number; // 0-100
   // Border
   borderWidth: number;
   borderColor: string;
+  borderStyle: string; // 'solid' | 'dashed' | 'dotted' | 'double' | 'gradient'
   // Text overlay
   titleText: string;
   titleSize: number;
@@ -128,6 +137,15 @@ export const SHADOW_COLORS = [
   { id: 'green', name: 'Green', value: 'rgba(16,185,129,0.4)' },
 ];
 
+export const GLOW_COLORS = [
+  { id: 'purple', name: 'Purple', value: 'rgba(139,92,246,0.8)' },
+  { id: 'pink',   name: 'Pink',   value: 'rgba(236,72,153,0.8)' },
+  { id: 'blue',   name: 'Blue',   value: 'rgba(59,130,246,0.8)' },
+  { id: 'cyan',   name: 'Cyan',   value: 'rgba(6,182,212,0.8)' },
+  { id: 'green',  name: 'Green',  value: 'rgba(16,185,129,0.8)' },
+  { id: 'white',  name: 'White',  value: 'rgba(255,255,255,0.6)' },
+];
+
 export const BG_PATTERNS = [
   { id: 'none', name: 'None' },
   { id: 'dots', name: 'Dots' },
@@ -188,6 +206,14 @@ export const DEFAULT_STATE: EditorState = {
   flipX: false,
   titleWeight: 'bold',
   exportScale: 2,
+  glowIntensity: 0,
+  glowColor: 'rgba(139,92,246,0.8)',
+  colorOverlay: '#8b5cf6',
+  colorOverlayOpacity: 0,
+  scanlines: 0,
+  bgBlur: 0,
+  innerShadow: 0,
+  borderStyle: 'solid',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
