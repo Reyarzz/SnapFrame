@@ -33,23 +33,34 @@ export interface EditorState {
   bgPatternOpacity: number;
   bgNoise: number;
   bgOpacity: number;
+  bgRadial: boolean;
+  patternScale: number;
   // Layout
   padding: number;
   borderRadius: number;
   aspectRatio: string;
   // Image positioning (zoom/crop)
-  imageZoom: number;   // 1.0 – 3.0
-  imagePanX: number;  // –50 to 50
-  imagePanY: number;  // –50 to 50
+  imageZoom: number;
+  imagePanX: number;
+  imagePanY: number;
+  imageBorderRadius: number;
+  imageFitMode: string;   // 'cover' | 'contain' | 'fill'
   // Effects
   shadow: number;
   shadowColor: string;
   shadowX: number;
+  shadowY: number;
+  shadowBlur: number;
   frame: string;
   tiltX: number;
   tiltY: number;
   scale: number;
   rotation: number;
+  canvasRotation: number;
+  skewX: number;
+  skewY: number;
+  flipY: boolean;
+  perspectiveDistance: number;
   // Image adjustments
   brightness: number;
   contrast: number;
@@ -60,16 +71,48 @@ export interface EditorState {
   hueRotate: number;
   invert: boolean;
   vignette: number;
+  vignetteColor: string;
   flipX: boolean;
+  // Advanced tone
+  temperature: number;   // -100 to 100 (cool to warm)
+  fade: number;          // 0-100 matte/film look
+  sharpness: number;     // 0-100
+  highlights: number;    // -100 to 100
+  shadows: number;       // -100 to 100
+  noiseOnImage: number;  // 0-100 grain on image
+  // Duotone
+  duotone: boolean;
+  duotoneHighlight: string;
+  duotoneShadow: string;
   // Overlay effects
   glowIntensity: number;
   glowColor: string;
   colorOverlay: string;
   colorOverlayOpacity: number;
+  colorOverlayBlendMode: string;
   scanlines: number;
+  scanlinesSpacing: number;
+  scanlinesColor: string;
   filmGrain: number;
   bgBlur: number;
   innerShadow: number;
+  innerGlowIntensity: number;
+  innerGlowColor: string;
+  // New overlays
+  lightLeak: number;
+  lightLeakAngle: number;
+  chromaAberration: number;
+  glitch: number;
+  halftone: number;
+  fog: number;
+  stars: number;
+  rain: number;
+  lensFlare: number;
+  lensFlareX: number;
+  lensFlareY: number;
+  spotlight: number;
+  cornerDots: boolean;
+  showRuleOfThirds: boolean;
   // Border
   borderWidth: number;
   borderColor: string;
@@ -82,26 +125,46 @@ export interface EditorState {
   titlePosition: string;
   titleWeight: string;
   titleShadow: boolean;
+  titleItalic: boolean;
+  titleAllCaps: boolean;
+  titleOpacity: number;
+  titleGradient: boolean;
+  titleGradientColor2: string;
   textAlign: string;
   letterSpacing: number;
+  lineHeight: number;
   subtitleText: string;
   subtitleSize: number;
   subtitleColor: string;
+  bodyText: string;
+  bodySize: number;
+  bodyColor: string;
+  textBg: string;           // 'none' | 'pill' | 'box'
+  textBgColor: string;
+  textBgOpacity: number;
+  textStroke: number;
+  textStrokeColor: string;
   // Background image
   bgImage: string | null;
   // Logo / branding overlay
   logoImage: string | null;
-  logoPosition: string; // 'tl'|'tc'|'tr'|'ml'|'mc'|'mr'|'bl'|'bc'|'br'
-  logoSize: number;     // 24–200 px
-  logoOpacity: number;  // 0–100
-  logoPadding: number;  // 8–48 px
+  logoPosition: string;
+  logoSize: number;
+  logoOpacity: number;
+  logoPadding: number;
+  // Reflection
+  reflection: boolean;
+  reflectionOpacity: number;
+  reflectionHeight: number;
   // Export
   exportFormat: 'png' | 'jpeg' | 'webp';
   exportScale: number;
+  exportFilename: string;
+  exportTransparent: boolean;
+  exportQuality: number;
   // Misc
   watermark: boolean;
   isPro: boolean;
-  reflection: boolean;
   previewGrid: boolean;
 }
 
@@ -114,18 +177,22 @@ export interface StyleTemplate {
 
 /* ── Aspect ratios ─────────────────────────────── */
 export const ASPECT_PRESETS: AspectPreset[] = [
-  { id: 'auto',     name: 'Auto',    width: 0,    height: 0,    label: 'Auto' },
-  { id: '16:9',     name: '16:9',    width: 1920, height: 1080, label: 'Widescreen' },
-  { id: '4:3',      name: '4:3',     width: 1600, height: 1200, label: 'Standard' },
-  { id: '1:1',      name: '1:1',     width: 1080, height: 1080, label: 'Square' },
-  { id: '4:5',      name: '4:5',     width: 1080, height: 1350, label: 'Instagram' },
-  { id: '9:16',     name: '9:16',    width: 1080, height: 1920, label: 'Story' },
-  { id: 'og',       name: 'OG',      width: 1200, height: 630,  label: 'Open Graph' },
-  { id: 'twitter',  name: 'Twitter', width: 1600, height: 900,  label: 'Twitter Card' },
-  { id: 'linkedin', name: 'LinkedIn',width: 1200, height: 627,  label: 'LinkedIn' },
-  { id: 'ph',       name: 'PH',      width: 1270, height: 760,  label: 'Product Hunt' },
-  { id: '21:9',     name: '21:9',    width: 2560, height: 1080, label: 'Ultrawide' },
-  { id: '2:1',      name: '2:1',     width: 2000, height: 1000, label: 'Panorama' },
+  { id: 'auto',      name: 'Auto',      width: 0,    height: 0,    label: 'Auto' },
+  { id: '16:9',      name: '16:9',      width: 1920, height: 1080, label: 'Widescreen' },
+  { id: '4:3',       name: '4:3',       width: 1600, height: 1200, label: 'Standard' },
+  { id: '1:1',       name: '1:1',       width: 1080, height: 1080, label: 'Square' },
+  { id: '4:5',       name: '4:5',       width: 1080, height: 1350, label: 'Instagram' },
+  { id: '9:16',      name: '9:16',      width: 1080, height: 1920, label: 'Story' },
+  { id: 'og',        name: 'OG',        width: 1200, height: 630,  label: 'Open Graph' },
+  { id: 'twitter',   name: 'Twitter',   width: 1600, height: 900,  label: 'Twitter Card' },
+  { id: 'linkedin',  name: 'LinkedIn',  width: 1200, height: 627,  label: 'LinkedIn' },
+  { id: 'ph',        name: 'PH',        width: 1270, height: 760,  label: 'Product Hunt' },
+  { id: '21:9',      name: '21:9',      width: 2560, height: 1080, label: 'Ultrawide' },
+  { id: '2:1',       name: '2:1',       width: 2000, height: 1000, label: 'Panorama' },
+  { id: 'youtube',   name: 'YT',        width: 1280, height: 720,  label: 'YouTube' },
+  { id: 'pinterest', name: 'Pin',       width: 1000, height: 1500, label: 'Pinterest' },
+  { id: 'tiktok',    name: 'TikTok',    width: 1080, height: 1920, label: 'TikTok' },
+  { id: 'discord',   name: 'Discord',   width: 1280, height: 720,  label: 'Discord' },
 ];
 
 /* ── Mesh gradient presets ─────────────────────── */
@@ -240,11 +307,11 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
   { id: 'cyber',     name: 'Cyber',        category: 'special', style: 'linear-gradient(135deg, #0d0d0d 0%, #003300 50%, #00ff41 100%)', css: 'linear-gradient(135deg, #0d0d0d 0%, #003300 50%, #00ff41 100%)' },
   { id: 'denim',     name: 'Denim',        category: 'special', style: 'linear-gradient(135deg, #1d3557 0%, #457b9d 50%, #a8dadc 100%)', css: 'linear-gradient(135deg, #1d3557 0%, #457b9d 50%, #a8dadc 100%)' },
   // Solids
-  { id: 'solid-black', name: 'Black',  category: 'solid', style: '#000000',  css: '#000000' },
-  { id: 'solid-white', name: 'White',  category: 'solid', style: '#ffffff',  css: '#ffffff' },
-  { id: 'solid-dark',  name: 'Dark',   category: 'solid', style: '#18181b',  css: '#18181b' },
-  { id: 'solid-gray',  name: 'Gray',   category: 'solid', style: '#3f3f46',  css: '#3f3f46' },
-  { id: 'solid-slate', name: 'Slate',  category: 'solid', style: '#1e293b',  css: '#1e293b' },
+  { id: 'solid-black', name: 'Black',  category: 'solid', style: '#000000',     css: '#000000' },
+  { id: 'solid-white', name: 'White',  category: 'solid', style: '#ffffff',     css: '#ffffff' },
+  { id: 'solid-dark',  name: 'Dark',   category: 'solid', style: '#18181b',     css: '#18181b' },
+  { id: 'solid-gray',  name: 'Gray',   category: 'solid', style: '#3f3f46',     css: '#3f3f46' },
+  { id: 'solid-slate', name: 'Slate',  category: 'solid', style: '#1e293b',     css: '#1e293b' },
   { id: 'transparent', name: 'None',   category: 'solid', style: 'transparent', css: 'transparent' },
 ];
 
@@ -256,6 +323,8 @@ export const SHADOW_COLORS = [
   { id: 'green',  name: 'Green',  value: 'rgba(16,185,129,0.4)' },
   { id: 'orange', name: 'Orange', value: 'rgba(249,115,22,0.4)' },
   { id: 'cyan',   name: 'Cyan',   value: 'rgba(6,182,212,0.4)' },
+  { id: 'teal',   name: 'Teal',   value: 'rgba(20,184,166,0.4)' },
+  { id: 'gold',   name: 'Gold',   value: 'rgba(234,179,8,0.4)' },
 ];
 
 export const GLOW_COLORS = [
@@ -266,6 +335,7 @@ export const GLOW_COLORS = [
   { id: 'green',  name: 'Green',  value: 'rgba(16,185,129,0.8)' },
   { id: 'orange', name: 'Orange', value: 'rgba(249,115,22,0.8)' },
   { id: 'white',  name: 'White',  value: 'rgba(255,255,255,0.6)' },
+  { id: 'gold',   name: 'Gold',   value: 'rgba(234,179,8,0.8)' },
 ];
 
 export const BG_PATTERNS = [
@@ -274,28 +344,36 @@ export const BG_PATTERNS = [
   { id: 'grid',      name: 'Grid' },
   { id: 'lines',     name: 'Lines' },
   { id: 'cross',     name: 'Cross' },
-  { id: 'diagonal',  name: 'Diagonal' },
+  { id: 'diagonal',  name: 'Diag' },
   { id: 'circles',   name: 'Circles' },
   { id: 'chevron',   name: 'Chevron' },
-  { id: 'triangles', name: 'Triangles' },
+  { id: 'triangles', name: 'Tri' },
   { id: 'waves',     name: 'Waves' },
+  { id: 'hexagons',  name: 'Hex' },
+  { id: 'bricks',    name: 'Bricks' },
+  { id: 'plaid',     name: 'Plaid' },
 ];
 
 export const TITLE_FONTS = [
-  { id: 'Inter',       name: 'Inter' },
-  { id: 'Georgia',     name: 'Georgia' },
-  { id: 'monospace',   name: 'Mono' },
-  { id: 'system-ui',   name: 'System' },
-  { id: 'serif',       name: 'Serif' },
-  { id: 'Courier New', name: 'Courier' },
-  { id: 'cursive',     name: 'Cursive' },
-  { id: 'Impact',      name: 'Impact' },
+  { id: 'Inter',              name: 'Inter' },
+  { id: 'Georgia',            name: 'Georgia' },
+  { id: 'monospace',          name: 'Mono' },
+  { id: 'system-ui',          name: 'System' },
+  { id: 'serif',              name: 'Serif' },
+  { id: 'Courier New',        name: 'Courier' },
+  { id: 'cursive',            name: 'Cursive' },
+  { id: 'Impact',             name: 'Impact' },
+  { id: "'Playfair Display'", name: 'Playfair' },
+  { id: "'Space Mono'",       name: 'Space Mono' },
+  { id: "'Oswald'",           name: 'Oswald' },
+  { id: "'Cinzel'",           name: 'Cinzel' },
+  { id: "'Dancing Script'",   name: 'Dancing' },
 ];
 
 export const DEFAULT_STATE: EditorState = {
   image: null,
   fileName: '',
-  background: GRADIENT_PRESETS[6].css, // sunset
+  background: GRADIENT_PRESETS[6].css,
   backgroundId: GRADIENT_PRESETS[6].id,
   customBgColor1: '#667eea',
   customBgColor2: '#764ba2',
@@ -304,6 +382,8 @@ export const DEFAULT_STATE: EditorState = {
   bgPatternOpacity: 0.1,
   bgNoise: 0,
   bgOpacity: 100,
+  bgRadial: false,
+  patternScale: 20,
   bgImage: null,
   padding: 64,
   borderRadius: 12,
@@ -311,14 +391,23 @@ export const DEFAULT_STATE: EditorState = {
   imageZoom: 1,
   imagePanX: 0,
   imagePanY: 0,
+  imageBorderRadius: 0,
+  imageFitMode: 'cover',
   shadow: 40,
   shadowColor: 'rgba(0,0,0,0.5)',
   shadowX: 0,
+  shadowY: 0,
+  shadowBlur: 0,
   frame: 'none',
   tiltX: 0,
   tiltY: 0,
   scale: 1,
   rotation: 0,
+  canvasRotation: 0,
+  skewX: 0,
+  skewY: 0,
+  flipY: false,
+  perspectiveDistance: 1000,
   brightness: 100,
   contrast: 100,
   saturation: 100,
@@ -327,6 +416,18 @@ export const DEFAULT_STATE: EditorState = {
   grayscale: 0,
   hueRotate: 0,
   invert: false,
+  vignette: 0,
+  vignetteColor: '#000000',
+  flipX: false,
+  temperature: 0,
+  fade: 0,
+  sharpness: 0,
+  highlights: 0,
+  shadows: 0,
+  noiseOnImage: 0,
+  duotone: false,
+  duotoneHighlight: '#ff6600',
+  duotoneShadow: '#3300cc',
   borderWidth: 0,
   borderColor: 'rgba(255,255,255,0.2)',
   borderStyle: 'solid',
@@ -335,34 +436,70 @@ export const DEFAULT_STATE: EditorState = {
   titleColor: '#ffffff',
   titleFont: 'Inter',
   titlePosition: 'above',
+  titleWeight: 'bold',
+  titleShadow: false,
+  titleItalic: false,
+  titleAllCaps: false,
+  titleOpacity: 100,
+  titleGradient: false,
+  titleGradientColor2: '#ec4899',
+  textAlign: 'center',
+  letterSpacing: 0,
+  lineHeight: 1.25,
   subtitleText: '',
   subtitleSize: 16,
   subtitleColor: 'rgba(255,255,255,0.6)',
+  bodyText: '',
+  bodySize: 14,
+  bodyColor: 'rgba(255,255,255,0.5)',
+  textBg: 'none',
+  textBgColor: '#000000',
+  textBgOpacity: 50,
+  textStroke: 0,
+  textStrokeColor: '#000000',
   watermark: true,
   isPro: false,
   reflection: false,
+  reflectionOpacity: 35,
+  reflectionHeight: 60,
   previewGrid: false,
-  vignette: 0,
-  flipX: false,
-  titleWeight: 'bold',
-  titleShadow: false,
-  textAlign: 'center',
-  letterSpacing: 0,
-  exportScale: 2,
-  exportFormat: 'png',
   glowIntensity: 0,
   glowColor: 'rgba(139,92,246,0.8)',
   colorOverlay: '#8b5cf6',
   colorOverlayOpacity: 0,
+  colorOverlayBlendMode: 'color',
   scanlines: 0,
+  scanlinesSpacing: 4,
+  scanlinesColor: 'dark',
   filmGrain: 0,
   bgBlur: 0,
   innerShadow: 0,
+  innerGlowIntensity: 0,
+  innerGlowColor: 'rgba(255,255,255,0.6)',
+  lightLeak: 0,
+  lightLeakAngle: 315,
+  chromaAberration: 0,
+  glitch: 0,
+  halftone: 0,
+  fog: 0,
+  stars: 0,
+  rain: 0,
+  lensFlare: 0,
+  lensFlareX: 20,
+  lensFlareY: 15,
+  spotlight: 0,
+  cornerDots: false,
+  showRuleOfThirds: false,
   logoImage: null,
   logoPosition: 'br',
   logoSize: 60,
   logoOpacity: 100,
   logoPadding: 16,
+  exportScale: 2,
+  exportFormat: 'png',
+  exportFilename: '',
+  exportTransparent: false,
+  exportQuality: 92,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -372,12 +509,12 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
     emoji: '✨',
     overrides: {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', backgroundId: 'sunset',
-      padding: 64, borderRadius: 12, shadow: 40, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
+      padding: 64, borderRadius: 12, shadow: 40, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0, shadowY: 0,
       frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
       bgPattern: 'none', bgNoise: 0, borderWidth: 0,
       sepia: 0, grayscale: 0, hueRotate: 0, invert: false,
       glowIntensity: 0, scanlines: 0, filmGrain: 0, vignette: 0,
-      imageZoom: 1, imagePanX: 0, imagePanY: 0,
+      lightLeak: 0, fog: 0, stars: 0, glitch: 0, chromaAberration: 0,
     },
   },
   {
@@ -388,8 +525,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #334155 0%, #1e293b 100%)', backgroundId: 'slate',
       padding: 48, borderRadius: 12, shadow: 60, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'browser', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
-      sepia: 0, grayscale: 0, hueRotate: 0, invert: false,
     },
   },
   {
@@ -435,7 +570,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #141e30 0%, #243b55 100%)', backgroundId: 'royal',
       padding: 64, borderRadius: 12, shadow: 70, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'macos', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
     },
   },
   {
@@ -446,7 +580,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)', backgroundId: 'cosmic',
       padding: 64, borderRadius: 12, shadow: 60, shadowColor: 'rgba(139,92,246,0.4)', shadowX: 0,
       frame: 'phone', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
     },
   },
   {
@@ -471,8 +604,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       backgroundId: 'mesh-aurora',
       padding: 72, borderRadius: 16, shadow: 60, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
-      glowIntensity: 0,
     },
   },
   {
@@ -483,7 +614,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: '#0d1117', backgroundId: 'solid-dark',
       padding: 40, borderRadius: 10, shadow: 50, shadowColor: 'rgba(0,0,0,0.7)', shadowX: 0,
       frame: 'terminal', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
       glowIntensity: 20, glowColor: 'rgba(16,185,129,0.8)',
     },
   },
@@ -495,7 +625,7 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #3E1C00 0%, #916C00 100%)', backgroundId: 'mocha',
       padding: 64, borderRadius: 8, shadow: 60, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 4, borderColor: '#8B6914',
+      borderWidth: 4, borderColor: '#8B6914',
       sepia: 40, scanlines: 25, vignette: 30, filmGrain: 30,
     },
   },
@@ -507,7 +637,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)', backgroundId: 'twilight',
       padding: 56, borderRadius: 12, shadow: 70, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'ipad', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
     },
   },
   {
@@ -518,7 +647,6 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', backgroundId: 'sunset',
       padding: 64, borderRadius: 12, shadow: 60, shadowColor: 'rgba(0,0,0,0.4)', shadowX: 0,
       frame: 'imac', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 0,
     },
   },
   {
@@ -529,8 +657,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: '#000000', backgroundId: 'solid-black',
       padding: 64, borderRadius: 0, shadow: 0, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
       frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      aspectRatio: '21:9', bgPattern: 'none', bgNoise: 0, borderWidth: 0,
-      vignette: 60, scanlines: 10, filmGrain: 20, sepia: 0, grayscale: 20,
+      aspectRatio: '21:9', bgPattern: 'none', borderWidth: 0,
+      vignette: 60, scanlines: 10, filmGrain: 20, grayscale: 20,
     },
   },
   {
@@ -541,7 +669,7 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #f857a6 0%, #ff5858 100%)', backgroundId: 'flamingo',
       padding: 56, borderRadius: 24, shadow: 70, shadowColor: 'rgba(248,87,166,0.4)', shadowX: 0,
       frame: 'none', tiltX: 0, tiltY: -4, scale: 0.95, rotation: 0,
-      bgPattern: 'none', bgNoise: 0, borderWidth: 3, borderStyle: 'gradient',
+      borderWidth: 3, borderStyle: 'gradient',
       glowIntensity: 40, glowColor: 'rgba(248,87,166,0.8)',
     },
   },
@@ -554,7 +682,143 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       backgroundId: 'custom', customBgColor1: '#FF6154', customBgColor2: '#FF4500',
       padding: 56, borderRadius: 16, shadow: 60, shadowColor: 'rgba(255,97,84,0.3)', shadowX: 0,
       frame: 'browser', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
-      aspectRatio: 'ph', bgPattern: 'none', bgNoise: 0, borderWidth: 0,
+      aspectRatio: 'ph',
+    },
+  },
+  // NEW TEMPLATES
+  {
+    id: 'glassmorphism',
+    name: 'Glass',
+    emoji: '🪟',
+    overrides: {
+      background: 'radial-gradient(ellipse 80% 80% at 20% 20%, rgba(120,40,200,0.85) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 10%, rgba(0,200,180,0.7) 0%, transparent 55%), #0a0a1a',
+      backgroundId: 'mesh-aurora',
+      padding: 48, borderRadius: 20, shadow: 60, shadowColor: 'rgba(0,0,0,0.4)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)',
+      bgBlur: 0, colorOverlayOpacity: 8, colorOverlay: '#ffffff',
+      colorOverlayBlendMode: 'screen', glowIntensity: 20, glowColor: 'rgba(255,255,255,0.3)',
+    },
+  },
+  {
+    id: 'notion-dark',
+    name: 'Notion',
+    emoji: '📝',
+    overrides: {
+      background: '#191919', backgroundId: 'solid-dark',
+      padding: 40, borderRadius: 8, shadow: 30, shadowColor: 'rgba(0,0,0,0.6)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'none', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+      brightness: 100, contrast: 100, saturation: 95,
+    },
+  },
+  {
+    id: 'saas-hero',
+    name: 'SaaS',
+    emoji: '⚡',
+    overrides: {
+      background: 'radial-gradient(ellipse 80% 60% at 20% 30%, rgba(120,0,220,0.9) 0%, transparent 55%), radial-gradient(ellipse 60% 80% at 80% 70%, rgba(0,80,220,0.8) 0%, transparent 50%), #050010',
+      backgroundId: 'mesh-cosmic',
+      padding: 80, borderRadius: 16, shadow: 80, shadowColor: 'rgba(139,92,246,0.5)', shadowX: 0,
+      frame: 'browser', tiltX: 0, tiltY: 0, scale: 0.9, rotation: 0,
+      glowIntensity: 30, glowColor: 'rgba(139,92,246,0.8)',
+      bgPattern: 'dots', bgPatternOpacity: 0.06,
+      borderWidth: 1, borderColor: 'rgba(139,92,246,0.3)',
+    },
+  },
+  {
+    id: 'dev-dark',
+    name: 'Dev',
+    emoji: '👨‍💻',
+    overrides: {
+      background: '#0d1117', backgroundId: 'solid-dark',
+      padding: 48, borderRadius: 10, shadow: 60, shadowColor: 'rgba(0,0,0,0.8)', shadowX: 0,
+      frame: 'terminal', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'grid', bgPatternOpacity: 0.04,
+      borderWidth: 1, borderColor: 'rgba(48,54,61,1)',
+    },
+  },
+  {
+    id: 'presentation',
+    name: 'Slides',
+    emoji: '📊',
+    overrides: {
+      background: '#f8f9fa', backgroundId: 'solid-white',
+      padding: 56, borderRadius: 12, shadow: 25, shadowColor: 'rgba(0,0,0,0.15)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      aspectRatio: '16:9', bgPattern: 'none',
+      borderWidth: 2, borderColor: 'rgba(0,0,0,0.06)',
+    },
+  },
+  {
+    id: 'game-screenshot',
+    name: 'Game',
+    emoji: '🎮',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0d0d 0%, #003300 50%, #00ff41 100%)', backgroundId: 'cyber',
+      padding: 48, borderRadius: 4, shadow: 80, shadowColor: 'rgba(0,255,65,0.3)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'grid', bgPatternOpacity: 0.08,
+      borderWidth: 2, borderColor: 'rgba(0,255,65,0.5)',
+      glowIntensity: 50, glowColor: 'rgba(0,255,65,0.6)',
+      scanlines: 15, filmGrain: 10, vignette: 40,
+    },
+  },
+  {
+    id: 'portfolio',
+    name: 'Portfolio',
+    emoji: '🎨',
+    overrides: {
+      background: '#1a1a1a', backgroundId: 'solid-dark',
+      padding: 60, borderRadius: 0, shadow: 0, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      aspectRatio: '4:3', bgPattern: 'none',
+      borderWidth: 8, borderColor: '#ffffff',
+    },
+  },
+  {
+    id: 'viral-social',
+    name: 'Viral',
+    emoji: '🔴',
+    overrides: {
+      background: 'linear-gradient(135deg, #f857a6 0%, #ff5858 100%)', backgroundId: 'flamingo',
+      padding: 40, borderRadius: 24, shadow: 60, shadowColor: 'rgba(248,87,166,0.5)', shadowX: 0,
+      frame: 'phone', tiltX: 0, tiltY: -6, scale: 0.88, rotation: 0,
+      glowIntensity: 50, glowColor: 'rgba(248,87,166,0.8)',
+      bgPattern: 'none', bgNoise: 5,
+    },
+  },
+  {
+    id: 'macbook-hero',
+    name: 'MacBook',
+    emoji: '🍎',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', backgroundId: 'cobalt',
+      padding: 64, borderRadius: 8, shadow: 70, shadowColor: 'rgba(0,0,0,0.6)', shadowX: 0,
+      frame: 'macbook', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+    },
+  },
+  {
+    id: 'polaroid-style',
+    name: 'Polaroid',
+    emoji: '📷',
+    overrides: {
+      background: '#f0ebe3', backgroundId: 'solid-white',
+      padding: 32, borderRadius: 4, shadow: 40, shadowColor: 'rgba(0,0,0,0.25)', shadowX: 4,
+      frame: 'polaroid', tiltX: 0, tiltY: 0, scale: 1, rotation: 3,
+      bgPattern: 'none',
+    },
+  },
+  {
+    id: 'app-store',
+    name: 'App Store',
+    emoji: '📦',
+    overrides: {
+      background: 'linear-gradient(135deg, #0093E9 0%, #80D0C7 100%)', backgroundId: 'ocean',
+      padding: 56, borderRadius: 16, shadow: 60, shadowColor: 'rgba(0,147,233,0.3)', shadowX: 0,
+      frame: 'phone', tiltX: 0, tiltY: 8, scale: 0.85, rotation: 0,
+      glowIntensity: 25, glowColor: 'rgba(0,147,233,0.6)',
+      aspectRatio: '4:5',
     },
   },
 ];
