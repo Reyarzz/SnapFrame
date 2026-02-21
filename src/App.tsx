@@ -316,6 +316,7 @@ const App: React.FC = () => {
                 onRedo={redo}
                 canUndo={history.length > 0}
                 canRedo={future.length > 0}
+                isExporting={isExporting}
               />
             </div>
           </div>
