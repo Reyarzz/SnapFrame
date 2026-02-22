@@ -1343,6 +1343,133 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      <Card>
+        <SectionLabel>Canvas Gradient Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGradientOverlay ?? false}
+          onChange={v => onChange({ canvasGradientOverlay: v })}
+          desc="Multi-color gradient over entire canvas" />
+        {(state.canvasGradientOverlay ?? false) && (
+          <>
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color 1</span>
+                <input type="color"
+                  value={(state.canvasGradientOverlayColor1 ?? '#ff006680').slice(0, 7)}
+                  onChange={e => onChange({ canvasGradientOverlayColor1: e.target.value + '80' })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color 2</span>
+                <input type="color"
+                  value={(state.canvasGradientOverlayColor2 ?? '#8338ec80').slice(0, 7)}
+                  onChange={e => onChange({ canvasGradientOverlayColor2: e.target.value + '80' })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            </div>
+            <Slider label="Angle" value={state.canvasGradientOverlayAngle ?? 135} min={0} max={360} unit="°"
+              onChange={v => onChange({ canvasGradientOverlayAngle: v })} />
+            <Slider label="Opacity" value={state.canvasGradientOverlayOpacity ?? 30} min={5} max={100}
+              onChange={v => onChange({ canvasGradientOverlayOpacity: v })} />
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { c1: '#ff006680', c2: '#8338ec80', l: 'Sunset' },
+                { c1: '#00b4d880', c2: '#0077b680', l: 'Ocean' },
+                { c1: '#38ef7d80', c2: '#11998e80', l: 'Mint' },
+                { c1: '#f7971e80', c2: '#ffd20080', l: 'Gold' },
+                { c1: '#fc466b80', c2: '#3f5efb80', l: 'Candy' },
+                { c1: '#ffffff40', c2: '#00000040', l: 'Soft' },
+              ].map(p => (
+                <button key={p.l}
+                  onClick={() => onChange({ canvasGradientOverlayColor1: p.c1, canvasGradientOverlayColor2: p.c2 })}
+                  className="py-2 rounded-lg text-[9px] text-white/70 ring-1 ring-white/[0.06] overflow-hidden relative hover:ring-white/20 transition-all">
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }} />
+                  <span className="relative z-10 font-medium">{p.l}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Overlay Blur</SectionLabel>
+        <Slider label="Blur" value={state.overlayBlur ?? 0} min={0} max={20} unit="px"
+          onChange={v => onChange({ overlayBlur: v })} />
+        <p className="text-[8.5px] text-white/20">Adds backdrop blur to the color overlay</p>
+      </Card>
+
+      <Card>
+        <SectionLabel>Text Sticker</SectionLabel>
+        <input type="text" placeholder="e.g. ✨ NEW, 🔥 HOT TAKE…" value={state.stickerText ?? ''}
+          onChange={e => onChange({ stickerText: e.target.value })}
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.06] text-white text-sm
+            placeholder:text-white/20 ring-1 ring-white/[0.09] focus:ring-brand-500/50
+            focus:bg-white/[0.09] outline-none transition-all" />
+        {(state.stickerText ?? '').length > 0 && (
+          <>
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">BG</span>
+                <input type="color" value={state.stickerBg ?? '#8b5cf6'}
+                  onChange={e => onChange({ stickerBg: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Text</span>
+                <input type="color" value={state.stickerColor ?? '#ffffff'}
+                  onChange={e => onChange({ stickerColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Slider label="X" value={state.stickerX ?? 50} min={5} max={95} unit="%"
+                onChange={v => onChange({ stickerX: v })} />
+              <Slider label="Y" value={state.stickerY ?? 80} min={5} max={95} unit="%"
+                onChange={v => onChange({ stickerY: v })} />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Slider label="Font Size" value={state.stickerSize ?? 16} min={10} max={36} unit="px"
+                onChange={v => onChange({ stickerSize: v })} />
+              <Slider label="Radius" value={state.stickerRadius ?? 999} min={0} max={999}
+                onChange={v => onChange({ stickerRadius: v })} />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Progress Bar</SectionLabel>
+        <Toggle label="Enable" value={state.progressBar ?? false} onChange={v => onChange({ progressBar: v })}
+          desc="Horizontal progress bar decoration" />
+        {(state.progressBar ?? false) && (
+          <>
+            <Slider label="Value" value={state.progressBarValue ?? 70} min={0} max={100} unit="%"
+              onChange={v => onChange({ progressBarValue: v })} />
+            <Slider label="Height" value={state.progressBarHeight ?? 4} min={2} max={16} unit="px"
+              onChange={v => onChange({ progressBarHeight: v })} />
+            <div className="grid grid-cols-2 gap-1.5">
+              <QuickChip active={(state.progressBarPosition ?? 'bottom') === 'top'}
+                onClick={() => onChange({ progressBarPosition: 'top' })}>Top</QuickChip>
+              <QuickChip active={(state.progressBarPosition ?? 'bottom') === 'bottom'}
+                onClick={() => onChange({ progressBarPosition: 'bottom' })}>Bottom</QuickChip>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.progressBarColor ?? '#8b5cf6'}
+                onChange={e => onChange({ progressBarColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444'].map(c => (
+                  <button key={c} onClick={() => onChange({ progressBarColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -1887,6 +2014,63 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                     className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
                 </div>
               </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Title Extras</SectionLabel>
+            <Toggle label="Underline" value={state.titleUnderline ?? false}
+              onChange={v => onChange({ titleUnderline: v })} desc="Underline the title text" />
+            {(state.titleGradient ?? false) && (
+              <Slider label="Gradient Angle" value={state.textGradientAngle ?? 135} min={0} max={360} unit="°"
+                onChange={v => onChange({ textGradientAngle: v })} />
+            )}
+            <Toggle label="Title Band" value={state.titleBackground ?? false}
+              onChange={v => onChange({ titleBackground: v })} desc="Colored band behind title text" />
+            {(state.titleBackground ?? false) && (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/35">Band Color</span>
+                  <input type="color"
+                    value={state.titleBackgroundColor?.startsWith('rgba') ? '#000000' : (state.titleBackgroundColor ?? '#000000')}
+                    onChange={e => onChange({ titleBackgroundColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                </div>
+                <Slider label="Band Padding" value={state.titleBackgroundPadding ?? 12} min={4} max={40} unit="px"
+                  onChange={v => onChange({ titleBackgroundPadding: v })} />
+              </>
+            )}
+            <Slider label="Text Box Padding" value={state.textBoxPadding ?? 0} min={0} max={40} unit="px"
+              onChange={v => onChange({ textBoxPadding: v })} />
+          </Card>
+
+          <Card>
+            <SectionLabel>Tag Line</SectionLabel>
+            <input type="text" placeholder="e.g. NEW FEATURE, COMING SOON…" value={state.tagLine ?? ''}
+              onChange={e => onChange({ tagLine: e.target.value })}
+              className="w-full px-3 py-2.5 rounded-xl bg-white/[0.06] text-white text-sm
+                placeholder:text-white/20 ring-1 ring-white/[0.09] focus:ring-brand-500/50
+                focus:bg-white/[0.09] outline-none transition-all" />
+            {(state.tagLine ?? '').length > 0 && (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/35">BG</span>
+                  <input type="color" value={state.tagLineBg ?? '#8b5cf6'}
+                    onChange={e => onChange({ tagLineBg: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <span className="text-[10px] text-white/35 ml-2">Text</span>
+                  <input type="color" value={state.tagLineColor ?? '#ffffff'}
+                    onChange={e => onChange({ tagLineColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <div className="flex gap-1.5 ml-auto">
+                    {['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'].map(c => (
+                      <button key={c} onClick={() => onChange({ tagLineBg: c })}
+                        className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                        style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </Card>
 

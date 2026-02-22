@@ -624,6 +624,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     shadowPreset,
     textGlitch, textGlitchColor1, textGlitchColor2,
     canvasBorderWidth, canvasBorderColor, canvasBorderStyle,
+    // Batch 7
+    titleUnderline, textBoxPadding, textGradientAngle,
+    bgOverlayGradient, bgOverlayGradientOpacity,
+    stickerText, stickerX, stickerY, stickerSize, stickerBg, stickerColor, stickerRadius,
+    progressBar, progressBarValue, progressBarColor, progressBarBg, progressBarHeight, progressBarPosition,
+    tagLine, tagLineColor, tagLineBg,
+    canvasGradientOverlay, canvasGradientOverlayAngle, canvasGradientOverlayColor1, canvasGradientOverlayColor2, canvasGradientOverlayOpacity,
+    overlayBlur,
+    titleBackground, titleBackgroundColor, titleBackgroundPadding,
   } = state;
 
   if (!image) return null;
@@ -900,6 +909,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       opacity: colorOverlayOpacity / 100, borderRadius: frameBR,
       pointerEvents: 'none', zIndex: 10,
       mixBlendMode: (colorOverlayBlendMode ?? 'color') as React.CSSProperties['mixBlendMode'],
+      backdropFilter: (overlayBlur ?? 0) > 0 ? `blur(${overlayBlur}px)` : undefined,
+      WebkitBackdropFilter: (overlayBlur ?? 0) > 0 ? `blur(${overlayBlur}px)` : undefined,
     }} />
   ) : null;
 
@@ -982,9 +993,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     if (isTitle && (titleGradient ?? false)) {
       return {
         ...base,
-        background: `linear-gradient(135deg, ${color}, ${titleGradientColor2})`,
+        background: `linear-gradient(${textGradientAngle ?? 135}deg, ${color}, ${titleGradientColor2})`,
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         WebkitTextStroke: (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined,
+        textDecoration: (titleUnderline ?? false) ? 'underline' : undefined,
       };
     }
 
@@ -1001,6 +1013,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...base,
       color,
       WebkitTextStroke: strokeVal,
+      textDecoration: isTitle && (titleUnderline ?? false) ? 'underline' : undefined,
       textShadow: glitchShadow ?? customDropShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
     };
   };
@@ -1023,13 +1036,30 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const rotateStyle: React.CSSProperties = (textRotation ?? 0) !== 0
       ? { transform: `rotate(${textRotation}deg)`, display: 'inline-block' }
       : {};
+    // textBoxPadding: extra padding around the whole text block (Batch 7)
+    const boxPadStyle: React.CSSProperties = (textBoxPadding ?? 0) > 0
+      ? { padding: textBoxPadding, ...(titleBackground ? { background: titleBackgroundColor ?? 'rgba(0,0,0,0.5)', width: '100%' } : {}) }
+      : (titleBackground ? { background: titleBackgroundColor ?? 'rgba(0,0,0,0.5)', width: '100%', padding: titleBackgroundPadding ?? 12 } : {});
 
     return (
       <div className="relative z-[2]" style={padStyle}>
-        <div style={{ ...wrapperStyle, ...rotateStyle }}>
-          {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
-          {subtitleText && <div style={{ ...getTextStyle(subtitleSize, subtitleColor, 400), textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined }}>{subtitleText}</div>}
-          {bodyText && <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
+        {/* Tag line above title (Batch 7) */}
+        {(tagLine ?? '') && (
+          <div style={{ marginBottom: 8, textAlign: textAlignVal }}>
+            <span style={{
+              display: 'inline-block', padding: '3px 12px', borderRadius: 999,
+              background: tagLineBg ?? '#8b5cf6', color: tagLineColor ?? '#ffffff',
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              fontFamily: 'Inter, system-ui, sans-serif',
+            }}>{tagLine}</span>
+          </div>
+        )}
+        <div style={boxPadStyle}>
+          <div style={{ ...wrapperStyle, ...rotateStyle }}>
+            {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
+            {subtitleText && <div style={{ ...getTextStyle(subtitleSize, subtitleColor, 400), textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined }}>{subtitleText}</div>}
+            {bodyText && <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
+          </div>
         </div>
       </div>
     );
@@ -1565,6 +1595,64 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             </div>
           );
         })()}
+
+        {/* Canvas gradient overlay (Batch 7) */}
+        {(canvasGradientOverlay ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+            background: `linear-gradient(${canvasGradientOverlayAngle ?? 135}deg, ${canvasGradientOverlayColor1 ?? '#ff006680'}, ${canvasGradientOverlayColor2 ?? '#8338ec80'})`,
+            opacity: (canvasGradientOverlayOpacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Background overlay gradient (second BG layer, Batch 7) */}
+        {(bgOverlayGradient ?? 'none') !== 'none' && (bgOverlayGradientOpacity ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+            background: bgOverlayGradient,
+            opacity: (bgOverlayGradientOpacity ?? 0) / 100,
+          }} />
+        )}
+
+        {/* Progress bar (Batch 7) */}
+        {(progressBar ?? false) && (
+          <div style={{
+            position: 'absolute', zIndex: 32,
+            left: 0, right: 0,
+            ...(progressBarPosition === 'top' ? { top: 0 } : { bottom: 0 }),
+            height: progressBarHeight ?? 4,
+            background: progressBarBg ?? 'rgba(255,255,255,0.15)',
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${Math.min(100, Math.max(0, progressBarValue ?? 70))}%`,
+              background: progressBarColor ?? '#8b5cf6',
+              borderRadius: progressBarPosition === 'top' ? '0 0 2px 2px' : '2px 2px 0 0',
+            }} />
+          </div>
+        )}
+
+        {/* Custom sticker text label (Batch 7) */}
+        {(stickerText ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', zIndex: 32,
+            left: `${stickerX ?? 50}%`, top: `${stickerY ?? 80}%`,
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+          }}>
+            <span style={{
+              display: 'inline-block',
+              padding: '4px 12px',
+              borderRadius: stickerRadius ?? 999,
+              background: stickerBg ?? '#8b5cf6',
+              color: stickerColor ?? '#ffffff',
+              fontSize: stickerSize ?? 16,
+              fontWeight: 700,
+              fontFamily: 'Inter, system-ui, sans-serif',
+              whiteSpace: 'nowrap',
+              boxShadow: `0 2px 8px ${stickerBg ?? '#8b5cf6'}80`,
+            }}>{stickerText}</span>
+          </div>
+        )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
         {watermark && (

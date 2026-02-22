@@ -347,6 +347,37 @@ export interface EditorState {
   canvasBorderWidth: number;
   canvasBorderColor: string;
   canvasBorderStyle: string;  // 'solid' | 'dashed' | 'dotted' | 'double'
+  // Batch 7
+  titleUnderline: boolean;
+  textBoxPadding: number;
+  textGradientAngle: number;
+  bgOverlayGradient: string;
+  bgOverlayGradientOpacity: number;
+  stickerText: string;
+  stickerX: number;
+  stickerY: number;
+  stickerSize: number;
+  stickerBg: string;
+  stickerColor: string;
+  stickerRadius: number;
+  progressBar: boolean;
+  progressBarValue: number;
+  progressBarColor: string;
+  progressBarBg: string;
+  progressBarHeight: number;
+  progressBarPosition: string;
+  tagLine: string;
+  tagLineColor: string;
+  tagLineBg: string;
+  canvasGradientOverlay: boolean;
+  canvasGradientOverlayAngle: number;
+  canvasGradientOverlayColor1: string;
+  canvasGradientOverlayColor2: string;
+  canvasGradientOverlayOpacity: number;
+  overlayBlur: number;
+  titleBackground: boolean;
+  titleBackgroundColor: string;
+  titleBackgroundPadding: number;
 }
 
 export interface StyleTemplate {
@@ -832,6 +863,37 @@ export const DEFAULT_STATE: EditorState = {
   canvasBorderWidth: 0,
   canvasBorderColor: '#ffffff',
   canvasBorderStyle: 'solid',
+  // Batch 7
+  titleUnderline: false,
+  textBoxPadding: 0,
+  textGradientAngle: 135,
+  bgOverlayGradient: 'none',     // 'none' | gradient css string id
+  bgOverlayGradientOpacity: 0,
+  stickerText: '',
+  stickerX: 50,
+  stickerY: 80,
+  stickerSize: 16,
+  stickerBg: '#8b5cf6',
+  stickerColor: '#ffffff',
+  stickerRadius: 999,
+  progressBar: false,
+  progressBarValue: 70,          // 0-100
+  progressBarColor: '#8b5cf6',
+  progressBarBg: 'rgba(255,255,255,0.15)',
+  progressBarHeight: 4,
+  progressBarPosition: 'bottom', // 'top' | 'bottom'
+  tagLine: '',
+  tagLineColor: '#ffffff',
+  tagLineBg: '#8b5cf6',
+  canvasGradientOverlay: false,
+  canvasGradientOverlayAngle: 135,
+  canvasGradientOverlayColor1: '#ff006680',
+  canvasGradientOverlayColor2: '#8338ec80',
+  canvasGradientOverlayOpacity: 30,
+  overlayBlur: 0,
+  titleBackground: false,
+  titleBackgroundColor: 'rgba(0,0,0,0.5)',
+  titleBackgroundPadding: 12,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1376,6 +1438,51 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(180deg, #f8faff 0%, #e8eeff 100%)', backgroundId: 'soft-white',
       padding: 60, borderRadius: 20, scale: 1, tiltX: 0, tiltY: 0,
       shadowPreset: 'float',
+    },
+  },
+  // Batch 7 templates
+  {
+    id: 'progress-card',
+    name: 'Progress',
+    emoji: '📊',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', backgroundId: 'deep-space',
+      padding: 52, borderRadius: 20, shadow: 50, tiltX: 0, tiltY: 0, scale: 1,
+      progressBar: true, progressBarValue: 75, progressBarColor: '#8b5cf6',
+      titleText: 'Progress Update', titleSize: 28, titleColor: '#ffffff',
+    },
+  },
+  {
+    id: 'tagged-post',
+    name: 'Tagged',
+    emoji: '🏷',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)', backgroundId: 'ocean',
+      padding: 48, borderRadius: 16, shadow: 60, tiltX: 0, tiltY: 0, scale: 1,
+      tagLine: 'NEW FEATURE', tagLineBg: '#8b5cf6', tagLineColor: '#ffffff',
+      titleText: 'Introducing SnapFrame', titleSize: 32, titleColor: '#ffffff',
+    },
+  },
+  {
+    id: 'gradient-overlay',
+    name: 'Gradient',
+    emoji: '🌈',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #000000 100%)', backgroundId: 'black',
+      padding: 40, borderRadius: 20, shadow: 40, tiltX: 0, tiltY: 0, scale: 1,
+      canvasGradientOverlay: true, canvasGradientOverlayOpacity: 45,
+      canvasGradientOverlayColor1: '#ff006680', canvasGradientOverlayColor2: '#8338ec80',
+    },
+  },
+  {
+    id: 'sticker-fun',
+    name: 'Sticker',
+    emoji: '✏️',
+    overrides: {
+      background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', backgroundId: 'peach',
+      padding: 48, borderRadius: 24, shadow: 40, tiltX: 0, tiltY: 0, scale: 1,
+      stickerText: '✨ NEW', stickerBg: '#8b5cf6', stickerColor: '#ffffff',
+      stickerX: 80, stickerY: 85, stickerSize: 14,
     },
   },
 ];
