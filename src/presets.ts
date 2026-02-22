@@ -378,6 +378,29 @@ export interface EditorState {
   titleBackground: boolean;
   titleBackgroundColor: string;
   titleBackgroundPadding: number;
+  // Batch 8
+  lineAccent: boolean;         // horizontal line between title and subtitle
+  lineAccentColor: string;
+  lineAccentWidth: number;     // 0-100% of block width
+  lineAccentHeight: number;    // 1-6px thickness
+  logoRotation: number;        // -180 to 180
+  imageColorShift: string;     // 'none' | 'red' | 'green' | 'blue' | 'cyan' | 'magenta' | 'yellow'
+  imageColorShiftAmount: number; // 0-100
+  bgPatternColor: string;      // custom tint color for bg pattern
+  bgPatternColorEnabled: boolean;
+  textSpacingPreset: string;   // 'normal' | 'compact' | 'wide' | 'ultra'
+  accentLine: boolean;         // decorative accent line on canvas
+  accentLineColor: string;
+  accentLinePosition: string;  // 'top' | 'bottom' | 'left' | 'right'
+  accentLineThickness: number; // 2-12
+  chipText: string;            // annotation chip text
+  chipX: number;
+  chipY: number;
+  chipColor: string;
+  imageInnerGlow: number;      // inner glow on image (same as imageGlow but inset)
+  imageInnerGlowColor: string;
+  canvasInsetShadow: number;   // inset box-shadow on canvas
+  vignetteShape: string;       // 'elliptical' | 'linear-v' | 'linear-h'
 }
 
 export interface StyleTemplate {
@@ -894,6 +917,29 @@ export const DEFAULT_STATE: EditorState = {
   titleBackground: false,
   titleBackgroundColor: 'rgba(0,0,0,0.5)',
   titleBackgroundPadding: 12,
+  // Batch 8
+  lineAccent: false,
+  lineAccentColor: '#ffffff',
+  lineAccentWidth: 60,
+  lineAccentHeight: 2,
+  logoRotation: 0,
+  imageColorShift: 'none',
+  imageColorShiftAmount: 40,
+  bgPatternColor: '#ffffff',
+  bgPatternColorEnabled: false,
+  textSpacingPreset: 'normal',
+  accentLine: false,
+  accentLineColor: '#8b5cf6',
+  accentLinePosition: 'bottom',
+  accentLineThickness: 4,
+  chipText: '',
+  chipX: 60,
+  chipY: 30,
+  chipColor: '#f59e0b',
+  imageInnerGlow: 0,
+  imageInnerGlowColor: '#ffffff',
+  canvasInsetShadow: 0,
+  vignetteShape: 'elliptical',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1483,6 +1529,50 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 24, shadow: 40, tiltX: 0, tiltY: 0, scale: 1,
       stickerText: '✨ NEW', stickerBg: '#8b5cf6', stickerColor: '#ffffff',
       stickerX: 80, stickerY: 85, stickerSize: 14,
+    },
+  },
+  // Batch 8 templates
+  {
+    id: 'accent-stripe',
+    name: 'Stripe',
+    emoji: '▌',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 100%)', backgroundId: 'galaxy',
+      padding: 52, borderRadius: 16, shadow: 60, tiltX: 0, tiltY: 0, scale: 1,
+      accentLine: true, accentLineColor: '#8b5cf6', accentLinePosition: 'left', accentLineThickness: 6,
+      titleText: 'SnapFrame', titleSize: 34, titleColor: '#ffffff',
+      lineAccent: true, lineAccentColor: '#8b5cf6', lineAccentWidth: 40,
+    },
+  },
+  {
+    id: 'warm-color',
+    name: 'Warm',
+    emoji: '🔴',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a00 0%, #2d1200 100%)', backgroundId: 'dark-warm',
+      padding: 48, borderRadius: 20, shadow: 60,
+      imageColorShift: 'red', imageColorShiftAmount: 55,
+      glowIntensity: 25, glowColor: 'rgba(255,80,0,0.4)',
+    },
+  },
+  {
+    id: 'chip-annotation',
+    name: 'Annotate',
+    emoji: '🏷',
+    overrides: {
+      background: 'linear-gradient(135deg, #1e3a5f 0%, #0a1a2e 100%)', backgroundId: 'ocean-dark',
+      padding: 52, borderRadius: 20, shadow: 50,
+      chipText: '👈 Click here', chipColor: '#f59e0b', chipX: 65, chipY: 40,
+    },
+  },
+  {
+    id: 'inset-depth',
+    name: 'Depth',
+    emoji: '🫧',
+    overrides: {
+      background: 'linear-gradient(135deg, #e0e0e0 0%, #f8f8f8 100%)', backgroundId: 'light-gray',
+      padding: 56, borderRadius: 24,
+      canvasInsetShadow: 60, shadowPreset: 'float',
     },
   },
 ];

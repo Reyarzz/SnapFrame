@@ -633,6 +633,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasGradientOverlay, canvasGradientOverlayAngle, canvasGradientOverlayColor1, canvasGradientOverlayColor2, canvasGradientOverlayOpacity,
     overlayBlur,
     titleBackground, titleBackgroundColor, titleBackgroundPadding,
+    // Batch 8
+    lineAccent, lineAccentColor, lineAccentWidth, lineAccentHeight,
+    logoRotation,
+    imageColorShift, imageColorShiftAmount,
+    bgPatternColor, bgPatternColorEnabled,
+    textSpacingPreset,
+    accentLine, accentLineColor, accentLinePosition, accentLineThickness,
+    chipText, chipX, chipY, chipColor,
+    imageInnerGlow, imageInnerGlowColor,
+    canvasInsetShadow,
+    vignetteShape,
   } = state;
 
   if (!image) return null;
@@ -704,6 +715,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.flexDirection = 'column';
     canvasStyle.alignItems = 'center';
     canvasStyle.justifyContent = 'center';
+  }
+
+  // Canvas inset shadow (Batch 8)
+  if ((canvasInsetShadow ?? 0) > 0) {
+    const cis = canvasInsetShadow ?? 0;
+    canvasStyle.boxShadow = `inset 0 0 ${cis}px rgba(0,0,0,${Math.min(0.85, cis / 100 * 0.9).toFixed(2)})`;
   }
 
   /* ── Shadow / glow compositing ── */
@@ -791,6 +808,20 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   // Image glow (Batch 3) — drop-shadow specifically on the image
   if ((imageGlow ?? 0) > 0) {
     imageFilterParts.push(`drop-shadow(0 0 ${imageGlow}px ${imageGlowColor ?? 'rgba(255,255,255,0.8)'})`);
+  }
+  // Image color shift (Batch 8) — boost one color channel via hue + saturate
+  if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
+    const amt = imageColorShiftAmount ?? 40;
+    const shiftMap: Record<string, string> = {
+      red:     `hue-rotate(0deg) saturate(${100 + amt}%) brightness(${100 + amt * 0.15}%)`,
+      green:   `hue-rotate(100deg) saturate(${100 + amt}%) hue-rotate(-100deg)`,
+      blue:    `hue-rotate(220deg) saturate(${100 + amt}%) hue-rotate(-220deg)`,
+      cyan:    `hue-rotate(175deg) saturate(${100 + amt}%) hue-rotate(-175deg)`,
+      magenta: `hue-rotate(300deg) saturate(${100 + amt}%) hue-rotate(-300deg)`,
+      yellow:  `hue-rotate(55deg) saturate(${100 + amt}%) hue-rotate(-55deg)`,
+    };
+    const sf = shiftMap[imageColorShift ?? ''];
+    if (sf) imageFilterParts.push(sf);
   }
   const imageFilter = imageFilterParts.filter(Boolean).join(' ') || undefined;
 
@@ -974,6 +1005,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   const lhVal = lineHeight ?? 1.25;
   const wsVal = (wordSpacing ?? 0) > 0 ? `${wordSpacing}px` : undefined;
 
+  // Text spacing preset (Batch 8)
+  const spacingPresetMap: Record<string, string | undefined> = {
+    compact: '-0.02em', normal: undefined, wide: '0.08em', ultra: '0.2em',
+  };
+  const lsValFinal = lsVal ?? spacingPresetMap[textSpacingPreset ?? 'normal'];
+
   const getTextStyle = (size: number, color: string, weight = 400, isTitle = false): React.CSSProperties => {
     const neonShadow = isTitle && neonTextGlow
       ? `0 0 ${neonGlowIntensity ?? 60}px ${neonGlowColor ?? '#00ffff'}, 0 0 ${(neonGlowIntensity ?? 60) * 2}px ${neonGlowColor ?? '#00ffff'}, 0 0 4px ${neonGlowColor ?? '#00ffff'}`
@@ -984,7 +1021,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
     const base: React.CSSProperties = {
       fontSize: size, fontFamily: titleFont, fontWeight: weight,
-      lineHeight: lhVal, letterSpacing: lsVal, wordSpacing: wsVal,
+      lineHeight: lhVal, letterSpacing: lsValFinal, wordSpacing: wsVal,
       textTransform: isTitle && (titleAllCaps ?? false) ? 'uppercase' : undefined,
       fontStyle: isTitle && (titleItalic ?? false) ? 'italic' : undefined,
       opacity: isTitle ? (titleOpacity ?? 100) / 100 : 1,
@@ -1057,6 +1094,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         <div style={boxPadStyle}>
           <div style={{ ...wrapperStyle, ...rotateStyle }}>
             {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
+            {/* Line accent divider (Batch 8) */}
+            {(lineAccent ?? false) && titleText && subtitleText && (
+              <div style={{
+                height: lineAccentHeight ?? 2,
+                width: `${lineAccentWidth ?? 60}%`,
+                background: lineAccentColor ?? '#ffffff',
+                margin: '6px auto',
+                borderRadius: 2,
+              }} />
+            )}
             {subtitleText && <div style={{ ...getTextStyle(subtitleSize, subtitleColor, 400), textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined }}>{subtitleText}</div>}
             {bodyText && <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
           </div>
@@ -1067,6 +1114,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
   /* ── Background processing ── */
   const patternBg = bgPattern !== 'none' ? getPatternSvg(bgPattern, bgPatternOpacity, patternScale ?? 20) : undefined;
+  // Pattern color tint (Batch 8) — color overlay on top of pattern
+  const patternColorTint = patternBg && (bgPatternColorEnabled ?? false) ? bgPatternColor ?? '#ffffff' : null;
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -1116,6 +1165,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Pattern overlay */}
         {patternBg && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{ backgroundImage: patternBg, backgroundRepeat: 'repeat' }} />
+        )}
+        {/* Pattern color tint (Batch 8) */}
+        {patternColorTint && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: patternColorTint, opacity: 0.35, mixBlendMode: 'color' }} />
         )}
 
         {/* Noise overlay */}
@@ -1312,7 +1365,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Logo overlay */}
         {logoImage && (logoOpacity ?? 100) > 0 && (
           <div style={{ position: 'absolute', zIndex: 26, opacity: (logoOpacity ?? 100) / 100, ...getLogoPositionStyle(logoPosition ?? 'br', logoPadding ?? 16) }}>
-            <img src={logoImage} alt="Logo" draggable={false} style={{ width: logoSize ?? 60, height: logoSize ?? 60, objectFit: 'contain', display: 'block' }} />
+            <img src={logoImage} alt="Logo" draggable={false} style={{ width: logoSize ?? 60, height: logoSize ?? 60, objectFit: 'contain', display: 'block', transform: (logoRotation ?? 0) !== 0 ? `rotate(${logoRotation}deg)` : undefined }} />
           </div>
         )}
 
@@ -1343,9 +1396,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Vignette */}
-        {vignette > 0 && (
-          <div className="absolute inset-0 pointer-events-none z-[25]" style={{ background: `radial-gradient(ellipse at center, transparent ${Math.max(0, 70 - vignette * 0.5)}%, ${vignetteColor ?? '#000000'}${Math.round(vignette / 100 * 0.85 * 255).toString(16).padStart(2, '0')} 100%)` }} />
-        )}
+        {vignette > 0 && (() => {
+          const vc = `${vignetteColor ?? '#000000'}${Math.round(vignette / 100 * 0.85 * 255).toString(16).padStart(2, '0')}`;
+          const vShape = vignetteShape ?? 'elliptical';
+          const bg = vShape === 'linear-v'
+            ? `linear-gradient(to bottom, ${vc} 0%, transparent ${Math.max(10, 40 - vignette * 0.3)}%, transparent ${Math.min(90, 60 + vignette * 0.3)}%, ${vc} 100%)`
+            : vShape === 'linear-h'
+            ? `linear-gradient(to right, ${vc} 0%, transparent ${Math.max(10, 40 - vignette * 0.3)}%, transparent ${Math.min(90, 60 + vignette * 0.3)}%, ${vc} 100%)`
+            : `radial-gradient(ellipse at center, transparent ${Math.max(0, 70 - vignette * 0.5)}%, ${vc} 100%)`;
+          return <div className="absolute inset-0 pointer-events-none z-[25]" style={{ background: bg }} />;
+        })()}
 
         {/* Scanlines */}
         {scanlines > 0 && (
@@ -1651,6 +1711,56 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               whiteSpace: 'nowrap',
               boxShadow: `0 2px 8px ${stickerBg ?? '#8b5cf6'}80`,
             }}>{stickerText}</span>
+          </div>
+        )}
+
+        {/* Accent line decoration (Batch 8) */}
+        {(accentLine ?? false) && (() => {
+          const pos = accentLinePosition ?? 'bottom';
+          const th = accentLineThickness ?? 4;
+          const posStyle: React.CSSProperties =
+            pos === 'top'    ? { top: 0, left: 0, right: 0, height: th } :
+            pos === 'left'   ? { top: 0, left: 0, bottom: 0, width: th } :
+            pos === 'right'  ? { top: 0, right: 0, bottom: 0, width: th } :
+                               { bottom: 0, left: 0, right: 0, height: th };
+          return (
+            <div style={{
+              position: 'absolute', zIndex: 32,
+              background: accentLineColor ?? '#8b5cf6',
+              pointerEvents: 'none',
+              ...posStyle,
+            }} />
+          );
+        })()}
+
+        {/* Image inner glow (Batch 8) — inset glow overlay */}
+        {(imageInnerGlow ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[24]" style={{
+            boxShadow: `inset 0 0 ${imageInnerGlow ?? 0}px ${imageInnerGlowColor ?? '#ffffff'}`,
+            borderRadius: frameBR,
+          }} />
+        )}
+
+        {/* Chip annotation (Batch 8) */}
+        {(chipText ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', zIndex: 33,
+            left: `${chipX ?? 60}%`, top: `${chipY ?? 30}%`,
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+          }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4,
+              padding: '4px 10px', borderRadius: 999,
+              background: chipColor ?? '#f59e0b',
+              color: '#fff', fontSize: 11, fontWeight: 700,
+              fontFamily: 'Inter, system-ui, sans-serif',
+              boxShadow: `0 2px 8px ${chipColor ?? '#f59e0b'}80`,
+              whiteSpace: 'nowrap',
+            }}>
+              <span style={{ fontSize: 8 }}>▶</span>
+              {chipText}
+            </div>
           </div>
         )}
 

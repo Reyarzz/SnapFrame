@@ -107,22 +107,29 @@ const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) =
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
-  <div className="flex items-center justify-between">
-    <p className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/25">{children}</p>
+  <div className="flex items-center justify-between gap-2">
+    <div className="flex items-center gap-1.5">
+      <div className="w-1 h-3 rounded-full bg-gradient-to-b from-brand-400 to-pink-400 opacity-70 flex-shrink-0" />
+      <p className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/35">{children}</p>
+    </div>
     {action}
   </div>
 );
 
-const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <div className={`rounded-2xl bg-white/[0.035] ring-1 ring-white/[0.06] p-3.5 space-y-3 ${className}`}>
+const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
+  <div className={`rounded-2xl p-3.5 space-y-3 transition-all ${
+    highlight
+      ? 'bg-brand-500/[0.06] ring-1 ring-brand-500/25'
+      : 'bg-white/[0.035] ring-1 ring-white/[0.07] hover:ring-white/[0.1]'
+  } ${className}`}>
     {children}
   </div>
 );
 
 const ResetBtn: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Reset' }) => (
   <button onClick={onClick}
-    className="w-full py-1.5 rounded-lg text-[10px] text-white/25 hover:text-white/50 hover:bg-white/[0.06] transition-all">
-    {label}
+    className="w-full py-1.5 rounded-lg text-[10px] text-white/25 hover:text-white/55 hover:bg-white/[0.06] transition-all flex items-center justify-center gap-1">
+    <span className="text-[9px]">↺</span> {label}
   </button>
 );
 
@@ -143,8 +150,10 @@ const ColorDots: React.FC<{
 
 const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
   <button onClick={onClick}
-    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all ring-1 ${
-      active ? 'bg-brand-500/20 text-brand-300 ring-brand-500/40' : 'bg-white/[0.04] text-white/40 ring-white/[0.06] hover:bg-white/[0.08] hover:text-white/65'
+    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-semibold transition-all duration-150 ${
+      active
+        ? 'bg-gradient-to-br from-brand-500/30 to-pink-500/20 text-brand-200 ring-1 ring-brand-400/40 shadow-sm shadow-brand-500/10'
+        : 'bg-white/[0.04] text-white/38 ring-1 ring-white/[0.07] hover:bg-white/[0.09] hover:text-white/60 hover:ring-white/15'
     }`}>
     {children}
   </button>
@@ -492,6 +501,23 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               onChange={v => onChange({ bgPatternOpacity: v / 100 })} />
             <Slider label="Pattern Scale" value={state.patternScale ?? 20} min={6} max={80} unit="px"
               onChange={v => onChange({ patternScale: v })} />
+            <Toggle label="Pattern Color Tint" value={state.bgPatternColorEnabled ?? false}
+              onChange={v => onChange({ bgPatternColorEnabled: v })} desc="Apply a color tint to the pattern" />
+            {(state.bgPatternColorEnabled ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Tint</span>
+                <input type="color" value={state.bgPatternColor ?? '#ffffff'}
+                  onChange={e => onChange({ bgPatternColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                <div className="flex gap-1.5 ml-auto">
+                  {['#ffffff', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'].map(c => (
+                    <button key={c} onClick={() => onChange({ bgPatternColor: c })}
+                      className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                      style={{ background: c }} />
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
         <Slider label="Noise Texture" value={state.bgNoise} min={0} max={60} onChange={v => onChange({ bgNoise: v })} />
@@ -995,19 +1021,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <SectionLabel>Atmospheric</SectionLabel>
         <Slider label="Vignette"   value={state.vignette}       min={0} max={100} onChange={v => onChange({ vignette: v })} />
         {state.vignette > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-white/35">Color</span>
-            <input type="color" value={state.vignetteColor ?? '#000000'}
-              onChange={e => onChange({ vignetteColor: e.target.value })}
-              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
-            <div className="flex gap-1.5 ml-auto">
-              {['#000000', '#ffffff', '#1a0a3e', '#0a1a3e', '#1a0a0a'].map(c => (
-                <button key={c} onClick={() => onChange({ vignetteColor: c })}
-                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
-                  style={{ background: c }} />
+          <>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[{ id: 'elliptical', l: 'Radial' }, { id: 'linear-v', l: 'Top/Bot' }, { id: 'linear-h', l: 'Left/Right' }].map(s => (
+                <QuickChip key={s.id} active={(state.vignetteShape ?? 'elliptical') === s.id}
+                  onClick={() => onChange({ vignetteShape: s.id })}>{s.l}</QuickChip>
               ))}
             </div>
-          </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.vignetteColor ?? '#000000'}
+                onChange={e => onChange({ vignetteColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#000000', '#ffffff', '#1a0a3e', '#0a1a3e', '#1a0a0a'].map(c => (
+                  <button key={c} onClick={() => onChange({ vignetteColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
         )}
         <Slider label="Scanlines"  value={state.scanlines}      min={0} max={100} onChange={v => onChange({ scanlines: v })} />
         {state.scanlines > 0 && (
@@ -1470,6 +1504,104 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Accent Line */}
+      <Card>
+        <SectionLabel>Accent Line</SectionLabel>
+        <Toggle label="Enable" value={state.accentLine ?? false} onChange={v => onChange({ accentLine: v })}
+          desc="Bold edge accent stripe" />
+        {(state.accentLine ?? false) && (
+          <>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(['left','right','top','bottom'] as const).map(pos => (
+                <QuickChip key={pos} active={(state.accentLinePosition ?? 'left') === pos}
+                  onClick={() => onChange({ accentLinePosition: pos })}>
+                  {pos.charAt(0).toUpperCase() + pos.slice(1)}
+                </QuickChip>
+              ))}
+            </div>
+            <Slider label="Thickness" value={state.accentLineThickness ?? 4} min={1} max={20} unit="px"
+              onChange={v => onChange({ accentLineThickness: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.accentLineColor ?? '#8b5cf6'}
+                onChange={e => onChange({ accentLineColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444','#ffffff'].map(c => (
+                  <button key={c} onClick={() => onChange({ accentLineColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      {/* Image Inner Glow */}
+      <Card>
+        <SectionLabel>Image Inner Glow</SectionLabel>
+        <Toggle label="Enable" value={(state.imageInnerGlow ?? 0) > 0} onChange={v => onChange({ imageInnerGlow: v ? 40 : 0 })}
+          desc="Soft inset glow on image edges" />
+        {(state.imageInnerGlow ?? 0) > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.imageInnerGlowColor ?? '#8b5cf6'}
+              onChange={e => onChange({ imageInnerGlowColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#8b5cf6','#ec4899','#f59e0b','#3b82f6','#ffffff','#000000'].map(c => (
+                <button key={c} onClick={() => onChange({ imageInnerGlowColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* Canvas Inset Shadow */}
+      <Card>
+        <SectionLabel>Canvas Inset Shadow</SectionLabel>
+        <Toggle label="Enable" value={(state.canvasInsetShadow ?? 0) > 0} onChange={v => onChange({ canvasInsetShadow: v ? 30 : 0 })}
+          desc="Deep inset shadow inside canvas border" />
+      </Card>
+
+      {/* Chip Annotation */}
+      <Card>
+        <SectionLabel>Chip Annotation</SectionLabel>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="e.g. #viral"
+            value={state.chipText ?? ''}
+            onChange={e => onChange({ chipText: e.target.value })}
+            className="flex-1 bg-white/[0.06] rounded-xl px-3 py-2 text-[11px] text-white/80 placeholder:text-white/25 border border-white/[0.07] focus:outline-none focus:border-brand-500/50"
+          />
+        </div>
+        {(state.chipText ?? '') !== '' && (
+          <>
+            <Slider label="X Position" value={state.chipX ?? 50} min={0} max={100} unit="%"
+              onChange={v => onChange({ chipX: v })} />
+            <Slider label="Y Position" value={state.chipY ?? 90} min={0} max={100} unit="%"
+              onChange={v => onChange({ chipY: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.chipColor ?? '#8b5cf6'}
+                onChange={e => onChange({ chipColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#ffffff','#000000'].map(c => (
+                  <button key={c} onClick={() => onChange({ chipColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -1663,6 +1795,28 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </Card>
 
       <Card>
+        <SectionLabel>Color Channel Shift</SectionLabel>
+        <div className="grid grid-cols-4 gap-1.5">
+          {[
+            { id: 'none',    l: 'Off' },
+            { id: 'red',     l: 'Red' },
+            { id: 'green',   l: 'Green' },
+            { id: 'blue',    l: 'Blue' },
+            { id: 'cyan',    l: 'Cyan' },
+            { id: 'magenta', l: 'Magenta' },
+            { id: 'yellow',  l: 'Yellow' },
+          ].map(c => (
+            <QuickChip key={c.id} active={(state.imageColorShift ?? 'none') === c.id}
+              onClick={() => onChange({ imageColorShift: c.id })}>{c.l}</QuickChip>
+          ))}
+        </div>
+        {(state.imageColorShift ?? 'none') !== 'none' && (
+          <Slider label="Amount" value={state.imageColorShiftAmount ?? 40} min={5} max={100}
+            onChange={v => onChange({ imageColorShiftAmount: v })} />
+        )}
+      </Card>
+
+      <Card>
         <SectionLabel>Warp / Distortion</SectionLabel>
         <Slider label="Warp" value={state.warpEffect ?? 0} min={-100} max={100}
           onChange={v => onChange({ warpEffect: v })} />
@@ -1828,6 +1982,15 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             {state.bodyText && (
               <Slider label="Body Size" value={state.bodySize ?? 14} min={10} max={36} unit="px" onChange={v => onChange({ bodySize: v })} />
             )}
+            <div>
+              <p className="text-[9.5px] text-white/25 mb-1.5">Spacing Preset</p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[{ id: 'compact', l: 'Tight' }, { id: 'normal', l: 'Normal' }, { id: 'wide', l: 'Wide' }, { id: 'ultra', l: 'Ultra' }].map(p => (
+                  <QuickChip key={p.id} active={(state.textSpacingPreset ?? 'normal') === p.id}
+                    onClick={() => onChange({ textSpacingPreset: p.id })}>{p.l}</QuickChip>
+                ))}
+              </div>
+            </div>
             <Slider label="Letter Spacing" value={state.letterSpacing ?? 0}  min={0}  max={20} unit="px" onChange={v => onChange({ letterSpacing: v })} />
             <Slider label="Word Spacing"   value={state.wordSpacing ?? 0}    min={0}  max={20} unit="px" onChange={v => onChange({ wordSpacing: v })} />
             <Slider label="Line Height"    value={state.lineHeight ?? 1.25}  min={1}  max={3}  step={0.05}
@@ -2042,6 +2205,31 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             )}
             <Slider label="Text Box Padding" value={state.textBoxPadding ?? 0} min={0} max={40} unit="px"
               onChange={v => onChange({ textBoxPadding: v })} />
+            <Toggle label="Title/Subtitle Divider" value={state.lineAccent ?? false}
+              onChange={v => onChange({ lineAccent: v })} desc="Decorative line between title and subtitle" />
+            {(state.lineAccent ?? false) && (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/35">Color</span>
+                  <input type="color" value={state.lineAccentColor ?? '#ffffff'}
+                    onChange={e => onChange({ lineAccentColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <div className="flex gap-1.5 ml-auto">
+                    {['#ffffff', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'].map(c => (
+                      <button key={c} onClick={() => onChange({ lineAccentColor: c })}
+                        className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                        style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Slider label="Width" value={state.lineAccentWidth ?? 60} min={10} max={100} unit="%"
+                    onChange={v => onChange({ lineAccentWidth: v })} />
+                  <Slider label="Height" value={state.lineAccentHeight ?? 2} min={1} max={6} unit="px"
+                    onChange={v => onChange({ lineAccentHeight: v })} />
+                </div>
+              </>
+            )}
           </Card>
 
           <Card>
@@ -2219,9 +2407,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         </div>
         {state.logoImage && (
           <>
-            <Slider label="Size"    value={state.logoSize ?? 60}    min={16} max={200} unit="px" onChange={v => onChange({ logoSize: v })} />
-            <Slider label="Opacity" value={state.logoOpacity ?? 100} min={10} max={100} unit="%" onChange={v => onChange({ logoOpacity: v })} />
-            <Slider label="Padding" value={state.logoPadding ?? 16}  min={4}  max={48}  unit="px" onChange={v => onChange({ logoPadding: v })} />
+            <Slider label="Size"     value={state.logoSize ?? 60}      min={16} max={200} unit="px" onChange={v => onChange({ logoSize: v })} />
+            <Slider label="Opacity"  value={state.logoOpacity ?? 100}   min={10} max={100} unit="%" onChange={v => onChange({ logoOpacity: v })} />
+            <Slider label="Padding"  value={state.logoPadding ?? 16}    min={4}  max={48}  unit="px" onChange={v => onChange({ logoPadding: v })} />
+            <Slider label="Rotation" value={state.logoRotation ?? 0}    min={-180} max={180} unit="°" onChange={v => onChange({ logoRotation: v })} />
             <div>
               <p className="text-[9.5px] text-white/25 mb-2">Position</p>
               <div className="grid grid-cols-3 gap-1.5 max-w-[160px]">
