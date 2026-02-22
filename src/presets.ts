@@ -315,6 +315,38 @@ export interface EditorState {
   borderRadiusBR: number;
   borderRadiusBL: number;
   usePerCornerRadius: boolean;
+  // Batch 6
+  // Frosted glass / glassmorphism overlay
+  glassEffect: number;        // 0-100 strength
+  glassColor: string;         // tint color for glass overlay
+  // Corner accent brackets
+  cornerAccents: boolean;
+  cornerAccentColor: string;
+  cornerAccentSize: number;   // 10-60
+  cornerAccentThickness: number; // 1-6
+  // Frame outer glow (around the frame border, not image shadow)
+  frameGlow: number;          // 0-100
+  frameGlowColor: string;
+  // Mirror / flip effect on canvas
+  mirrorMode: string;         // 'none' | 'horizontal' | 'vertical' | 'both'
+  // Texture noise overlay type
+  noiseType: string;          // 'none' | 'film' | 'sand' | 'fabric' | 'static'
+  noiseAmount: number;        // 0-100
+  // Horizontal duotone split (top/bottom)
+  duotoneSplit: boolean;
+  duotoneSplitColor1: string; // top color
+  duotoneSplitColor2: string; // bottom color
+  duotoneSplitMidpoint: number; // 0-100 where split happens
+  // Quick shadow preset
+  shadowPreset: string;       // 'none' | 'soft' | 'hard' | 'float' | 'neon' | 'retro'
+  // Text glitch (chromatic title shift)
+  textGlitch: number;         // 0-20 pixel offset
+  textGlitchColor1: string;
+  textGlitchColor2: string;
+  // Canvas outer border (separate from image border)
+  canvasBorderWidth: number;
+  canvasBorderColor: string;
+  canvasBorderStyle: string;  // 'solid' | 'dashed' | 'dotted' | 'double'
 }
 
 export interface StyleTemplate {
@@ -777,6 +809,29 @@ export const DEFAULT_STATE: EditorState = {
   borderRadiusBR: 12,
   borderRadiusBL: 12,
   usePerCornerRadius: false,
+  // Batch 6
+  glassEffect: 0,
+  glassColor: '#ffffff',
+  cornerAccents: false,
+  cornerAccentColor: '#ffffff',
+  cornerAccentSize: 28,
+  cornerAccentThickness: 2,
+  frameGlow: 0,
+  frameGlowColor: '#8b5cf6',
+  mirrorMode: 'none',
+  noiseType: 'none',
+  noiseAmount: 40,
+  duotoneSplit: false,
+  duotoneSplitColor1: '#ff6600',
+  duotoneSplitColor2: '#3300cc',
+  duotoneSplitMidpoint: 50,
+  shadowPreset: 'none',
+  textGlitch: 0,
+  textGlitchColor1: '#ff0000',
+  textGlitchColor2: '#00ffff',
+  canvasBorderWidth: 0,
+  canvasBorderColor: '#ffffff',
+  canvasBorderStyle: 'solid',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1261,6 +1316,66 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
       overlayPatternType: 'confetti', overlayPatternOpacity: 60,
       glowIntensity: 20, glowColor: 'rgba(255,200,50,0.5)',
+    },
+  },
+  // Batch 6 templates
+  {
+    id: 'glass-card',
+    name: 'Glass',
+    emoji: '🔮',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', backgroundId: 'deep-space',
+      padding: 48, borderRadius: 28, shadow: 60, shadowColor: 'rgba(0,0,0,0.6)',
+      frame: 'none', tiltX: 0, tiltY: -8, scale: 1,
+      glassEffect: 45, glassColor: '#a8d8ff',
+      glowIntensity: 30, glowColor: 'rgba(100,180,255,0.4)',
+    },
+  },
+  {
+    id: 'retro-noise',
+    name: 'Retro',
+    emoji: '📺',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', backgroundId: 'black',
+      padding: 40, borderRadius: 4, shadow: 50, shadowColor: 'rgba(0,0,0,0.8)',
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      noiseType: 'static', noiseAmount: 55, scanlines: 60, scanlinesSpacing: 3,
+      imagePreset: 'moon',
+    },
+  },
+  {
+    id: 'neon-frame',
+    name: 'Neon',
+    emoji: '⚡',
+    overrides: {
+      background: 'linear-gradient(135deg, #000010 0%, #001020 100%)', backgroundId: 'ultra-dark',
+      padding: 52, borderRadius: 16, shadow: 40,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1,
+      frameGlow: 70, frameGlowColor: '#00ffff',
+      cornerAccents: true, cornerAccentColor: '#00ffff', cornerAccentSize: 36,
+      glowIntensity: 50, glowColor: 'rgba(0,255,255,0.5)',
+      canvasBorderWidth: 2, canvasBorderColor: '#00ffff',
+    },
+  },
+  {
+    id: 'mirror-art',
+    name: 'Mirror',
+    emoji: '🪞',
+    overrides: {
+      background: 'linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', backgroundId: 'galaxy',
+      padding: 40, borderRadius: 12, shadow: 60, tiltX: 0, tiltY: 6, scale: 1,
+      mirrorMode: 'horizontal',
+      glowIntensity: 20, glowColor: 'rgba(140,100,255,0.3)',
+    },
+  },
+  {
+    id: 'shadow-float',
+    name: 'Float',
+    emoji: '🌤',
+    overrides: {
+      background: 'linear-gradient(180deg, #f8faff 0%, #e8eeff 100%)', backgroundId: 'soft-white',
+      padding: 60, borderRadius: 20, scale: 1, tiltX: 0, tiltY: 0,
+      shadowPreset: 'float',
     },
   },
 ];

@@ -614,6 +614,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     warpEffect,
     subtitleAllCaps,
     borderRadiusTL, borderRadiusTR, borderRadiusBR, borderRadiusBL, usePerCornerRadius,
+    // Batch 6
+    glassEffect, glassColor,
+    cornerAccents, cornerAccentColor, cornerAccentSize, cornerAccentThickness,
+    frameGlow, frameGlowColor,
+    mirrorMode,
+    noiseType, noiseAmount,
+    duotoneSplit, duotoneSplitColor1, duotoneSplitColor2, duotoneSplitMidpoint,
+    shadowPreset,
+    textGlitch, textGlitchColor1, textGlitchColor2,
+    canvasBorderWidth, canvasBorderColor, canvasBorderStyle,
   } = state;
 
   if (!image) return null;
@@ -658,8 +668,23 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = `polygon(${pct}% 0%,${100-pct}% 0%,100% ${pct}%,100% ${100-pct}%,${100-pct}% 100%,${pct}% 100%,0% ${100-pct}%,0% ${pct}%)`;
   }
 
+  // Canvas outer border (Batch 6)
+  if ((canvasBorderWidth ?? 0) > 0) {
+    canvasStyle.border = `${canvasBorderWidth}px ${canvasBorderStyle ?? 'solid'} ${canvasBorderColor ?? '#ffffff'}`;
+  }
+
+  // Mirror mode (Batch 6)
+  const mirrorTransformStr = (mirrorMode ?? 'none') === 'horizontal' ? 'scaleX(-1)'
+    : (mirrorMode ?? 'none') === 'vertical'    ? 'scaleY(-1)'
+    : (mirrorMode ?? 'none') === 'both'        ? 'scale(-1,-1)'
+    : '';
+
   if (canvasRotation !== 0) {
-    canvasStyle.transform = `rotate(${canvasRotation}deg)`;
+    canvasStyle.transform = mirrorTransformStr
+      ? `rotate(${canvasRotation}deg) ${mirrorTransformStr}`
+      : `rotate(${canvasRotation}deg)`;
+  } else if (mirrorTransformStr) {
+    canvasStyle.transform = mirrorTransformStr;
   }
 
   if (aspectPreset && aspectPreset.id !== 'auto') {
@@ -697,6 +722,23 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     }
     if ((innerGlowIntensity ?? 0) > 0) {
       parts.push(`inset 0 0 ${innerGlowIntensity}px ${innerGlowColor}`);
+    }
+    // Frame outer glow (Batch 6)
+    if ((frameGlow ?? 0) > 0) {
+      const fg = frameGlow ?? 0;
+      const fc = frameGlowColor ?? '#8b5cf6';
+      parts.push(`0 0 ${fg * 0.5}px ${fc}, 0 0 ${fg}px ${fc}, 0 0 ${fg * 2}px ${fc}40`);
+    }
+    // Shadow presets (Batch 6) – applied when no manual shadow/glow set
+    if ((shadowPreset ?? 'none') !== 'none' && shadow === 0 && glowIntensity === 0 && parts.length === 0) {
+      const presets: Record<string, string> = {
+        soft:  `0 4px 24px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.12)`,
+        hard:  `4px 8px 0px rgba(0,0,0,0.85)`,
+        float: `0 20px 60px rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.15)`,
+        neon:  `0 0 20px ${effGlowColor}, 0 0 40px ${effGlowColor}, 0 0 80px ${effGlowColor}40`,
+        retro: `6px 6px 0 rgba(0,0,0,0.9), 12px 12px 0 rgba(0,0,0,0.4)`,
+      };
+      return presets[shadowPreset ?? ''] ?? 'none';
     }
     return parts.length > 0 ? parts.join(', ') : 'none';
   };
@@ -949,11 +991,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const strokeVal = isTitle && (textOutline ?? 0) > 0
       ? `${textOutline}px ${textOutlineColor ?? '#000000'}`
       : (isTitle && (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined);
+
+    // Text glitch chromatic shift (Batch 6)
+    const glitchShadow = isTitle && (textGlitch ?? 0) > 0
+      ? `${textGlitch}px 0 0 ${textGlitchColor1 ?? '#ff0000'}, -${textGlitch}px 0 0 ${textGlitchColor2 ?? '#00ffff'}`
+      : undefined;
+
     return {
       ...base,
       color,
       WebkitTextStroke: strokeVal,
-      textShadow: customDropShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
+      textShadow: glitchShadow ?? customDropShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
     };
   };
 
@@ -1439,6 +1487,82 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             <div className="absolute inset-0 pointer-events-none z-[28]" style={{
               opacity: op, backgroundRepeat: 'repeat', mixBlendMode: 'normal', ...ps,
             }} />
+          );
+        })()}
+
+        {/* Frosted glass overlay (Batch 6) */}
+        {(glassEffect ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+            backdropFilter: `blur(${(glassEffect ?? 0) * 0.15}px)`,
+            WebkitBackdropFilter: `blur(${(glassEffect ?? 0) * 0.15}px)`,
+            background: `${glassColor ?? '#ffffff'}${Math.round((glassEffect ?? 0) / 100 * 0.25 * 255).toString(16).padStart(2, '0')}`,
+            mixBlendMode: 'normal',
+          }} />
+        )}
+
+        {/* Duotone horizontal split (Batch 6) */}
+        {(duotoneSplit ?? false) && (
+          <>
+            <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+              background: `linear-gradient(to bottom, ${duotoneSplitColor1 ?? '#ff6600'} 0%, ${duotoneSplitColor1 ?? '#ff6600'} ${duotoneSplitMidpoint ?? 50}%, transparent ${duotoneSplitMidpoint ?? 50}%)`,
+              mixBlendMode: 'multiply', opacity: 0.55,
+            }} />
+            <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+              background: `linear-gradient(to bottom, transparent 0%, transparent ${duotoneSplitMidpoint ?? 50}%, ${duotoneSplitColor2 ?? '#3300cc'} ${duotoneSplitMidpoint ?? 50}%, ${duotoneSplitColor2 ?? '#3300cc'} 100%)`,
+              mixBlendMode: 'multiply', opacity: 0.55,
+            }} />
+          </>
+        )}
+
+        {/* Noise texture overlay (Batch 6) */}
+        {(noiseType ?? 'none') !== 'none' && (noiseAmount ?? 0) > 0 && (() => {
+          const amt = (noiseAmount ?? 40) / 100;
+          const noiseMap: Record<string, React.CSSProperties> = {
+            film: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+              backgroundSize: '180px 180px', mixBlendMode: 'overlay' as React.CSSProperties['mixBlendMode'],
+            },
+            sand: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)' opacity='0.8'/%3E%3C/svg%3E")`,
+              backgroundSize: '250px 250px', mixBlendMode: 'soft-light' as React.CSSProperties['mixBlendMode'],
+            },
+            fabric: {
+              backgroundImage: `repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px), repeating-linear-gradient(-45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px)`,
+              mixBlendMode: 'overlay' as React.CSSProperties['mixBlendMode'],
+            },
+            static: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.95' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`,
+              backgroundSize: '120px 120px', mixBlendMode: 'screen' as React.CSSProperties['mixBlendMode'],
+            },
+          };
+          const ns = noiseMap[noiseType ?? ''] ?? {};
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[29]" style={{ opacity: amt, backgroundRepeat: 'repeat', ...ns }} />
+          );
+        })()}
+
+        {/* Corner accent brackets (Batch 6) */}
+        {(cornerAccents ?? false) && (() => {
+          const sz = cornerAccentSize ?? 28;
+          const th = cornerAccentThickness ?? 2;
+          const col = cornerAccentColor ?? '#ffffff';
+          const corners = [
+            { top: 10, left: 10,   rotate: '0deg' },
+            { top: 10, right: 10,  rotate: '90deg' },
+            { bottom: 10, right: 10, rotate: '180deg' },
+            { bottom: 10, left: 10,  rotate: '270deg' },
+          ] as React.CSSProperties[];
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[31]">
+              {corners.map((pos, i) => (
+                <div key={i} style={{ position: 'absolute', ...pos, width: sz, height: sz }}>
+                  <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`} fill="none">
+                    <path d={`M ${th/2} ${sz} L ${th/2} ${th/2} L ${sz} ${th/2}`}
+                      stroke={col} strokeWidth={th} strokeLinecap="round" />
+                  </svg>
+                </div>
+              ))}
+            </div>
           );
         })()}
 
