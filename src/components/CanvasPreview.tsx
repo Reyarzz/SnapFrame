@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EditorState, ASPECT_PRESETS } from '../presets';
+import { EditorState, ASPECT_PRESETS, FILM_LOOKS } from '../presets';
 
 interface CanvasPreviewProps {
   state: EditorState;
@@ -156,7 +156,6 @@ const ArcFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ childre
   </div>
 );
 
-/* ── NEW: Samsung Galaxy frame ─────────────────── */
 const SamsungFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => {
   const r = Math.max(br, 30) + 6;
   return (
@@ -167,14 +166,12 @@ const SamsungFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ chi
       position: 'relative',
       boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 0 1px rgba(0,0,0,0.5)',
     }}>
-      {/* Punch-hole camera top-center */}
       <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 6 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.05)' }} />
       </div>
       <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 22) }}>
         {children}
       </div>
-      {/* Nav bar */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 24, paddingTop: 10 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />
         <div style={{ width: 20, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.2)' }} />
@@ -184,10 +181,8 @@ const SamsungFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ chi
   );
 };
 
-/* ── NEW: MacBook laptop frame ─────────────────── */
 const MacBookFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    {/* Screen lid */}
     <div style={{
       background: 'linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%)',
       borderRadius: `${Math.max(br, 6) + 8}px ${Math.max(br, 6) + 8}px 0 0`,
@@ -195,16 +190,13 @@ const MacBookFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ chi
       width: '100%',
       boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.07)',
     }}>
-      {/* Notch */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>
         <div style={{ width: 14, height: 6, borderRadius: '0 0 4px 4px', background: '#1a1a1a' }} />
       </div>
-      {/* Screen */}
       <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 4), background: '#000' }}>
         {children}
       </div>
     </div>
-    {/* Keyboard base */}
     <div style={{
       width: '110%', height: 22,
       background: 'linear-gradient(180deg, #c8c8ca 0%, #b0b0b2 100%)',
@@ -212,13 +204,11 @@ const MacBookFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ chi
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
     }}>
-      {/* Trackpad hint */}
       <div style={{ width: 50, height: 10, borderRadius: 3, background: 'rgba(0,0,0,0.1)', border: '0.5px solid rgba(0,0,0,0.15)' }} />
     </div>
   </div>
 );
 
-/* ── NEW: Polaroid frame ───────────────────────── */
 const PolaroidFrame: React.FC<{ children: React.ReactNode; br: number; caption?: string }> = ({ children, br, caption }) => (
   <div style={{
     background: '#fff',
@@ -241,7 +231,6 @@ const PolaroidFrame: React.FC<{ children: React.ReactNode; br: number; caption?:
   </div>
 );
 
-/* ── NEW: Newspaper frame ──────────────────────── */
 const NewspaperFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
   <div style={{ borderRadius: br + 2, overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '3px solid #111' }}>
     <div style={{
@@ -256,14 +245,116 @@ const NewspaperFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ c
       <span style={{ fontSize: 7, fontFamily: 'Georgia, serif', color: '#666' }}>Est. 2024</span>
     </div>
     {children}
-    <div style={{
-      background: '#f5f0e8', borderTop: '1px solid #ccc',
-      padding: '4px 10px',
-    }}>
+    <div style={{ background: '#f5f0e8', borderTop: '1px solid #ccc', padding: '4px 10px' }}>
       <span style={{ fontSize: 7, fontFamily: 'Georgia, serif', color: '#888', letterSpacing: '0.05em' }}>
         All rights reserved · © 2025
       </span>
     </div>
+  </div>
+);
+
+/* ── NEW: Smart TV frame ─────────────────────────── */
+const SmartTVFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{
+      background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)',
+      borderRadius: Math.max(br, 6) + 6,
+      padding: '12px 12px 16px',
+      boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.06), 0 0 0 1px rgba(0,0,0,0.8)',
+    }}>
+      {/* Camera + LED row */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.08)' }} />
+        <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', opacity: 0.7 }} />
+      </div>
+      <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 4) }}>
+        {children}
+      </div>
+      {/* Speaker grilles */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, paddingLeft: 8, paddingRight: 8 }}>
+        {[0, 1].map(side => (
+          <div key={side} style={{ display: 'flex', gap: 3 }}>
+            {[0, 1, 2].map(i => (
+              <div key={i} style={{ width: 2, height: 8, borderRadius: 1, background: 'rgba(255,255,255,0.08)' }} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+    {/* Stand */}
+    <div style={{ width: 60, height: 20, background: 'linear-gradient(to bottom, #222, #111)', clipPath: 'polygon(30% 0%, 70% 0%, 85% 100%, 15% 100%)' }} />
+    <div style={{ width: 100, height: 6, borderRadius: '0 0 4px 4px', background: 'linear-gradient(to bottom, #333, #222)', boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} />
+  </div>
+);
+
+/* ── NEW: Kindle e-reader frame ──────────────────── */
+const KindleFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
+  <div style={{
+    background: 'linear-gradient(170deg, #f5f0eb 0%, #e8e3dc 100%)',
+    borderRadius: Math.max(br, 8) + 6,
+    padding: '14px 10px 20px',
+    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.3)',
+    position: 'relative',
+  }}>
+    {/* Amazon logo area */}
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+      <div style={{ width: 32, height: 3, borderRadius: 2, background: 'rgba(0,0,0,0.15)' }} />
+    </div>
+    {/* E-ink screen with slight warm tint */}
+    <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 4), background: '#f8f4ee' }}>
+      <div style={{ filter: 'sepia(5%) contrast(95%) brightness(105%)' }}>
+        {children}
+      </div>
+    </div>
+    {/* Page-turn area bottom-right */}
+    <div style={{ position: 'absolute', right: 6, bottom: 40, width: 5, height: 30, borderRadius: 3, background: 'rgba(0,0,0,0.08)' }} />
+    {/* Home button */}
+    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
+      <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.12)' }} />
+    </div>
+  </div>
+);
+
+/* ── NEW: Windows Chrome browser frame ───────────── */
+const WindowsFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
+  <div style={{ borderRadius: br + 4, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 0 0 1px rgba(0,0,0,0.2)' }}>
+    {/* Title bar */}
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 0,
+      background: '#202124',
+      borderTopLeftRadius: br + 4, borderTopRightRadius: br + 4,
+    }}>
+      {/* Tab */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px 6px', background: '#35363a', borderRadius: '6px 6px 0 0', marginTop: 4, minWidth: 160 }}>
+        <div style={{ width: 14, height: 14, borderRadius: 3, background: 'linear-gradient(135deg, #4285f4, #34a853)' }} />
+        <span style={{ fontSize: 10, fontFamily: 'Segoe UI, system-ui', color: 'rgba(255,255,255,0.75)', flex: 1 }}>New Tab</span>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', cursor: 'pointer' }}>✕</span>
+      </div>
+      <div style={{ flex: 1 }} />
+      {/* Window controls - Windows style (right side) */}
+      <div style={{ display: 'flex' }}>
+        {['─', '□', '✕'].map((icon, i) => (
+          <div key={i} style={{
+            width: 46, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: i === 2 ? 11 : 13, color: 'rgba(255,255,255,0.5)',
+            background: i === 2 ? 'transparent' : 'transparent',
+          }}>{icon}</div>
+        ))}
+      </div>
+    </div>
+    {/* Address bar */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: '#35363a' }}>
+      <div style={{ display: 'flex', gap: 4 }}>
+        {['←', '→'].map((a, i) => (
+          <span key={i} style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', width: 20, textAlign: 'center' }}>{a}</span>
+        ))}
+      </div>
+      <div style={{ flex: 1, height: 26, borderRadius: 14, background: '#202124', display: 'flex', alignItems: 'center', padding: '0 12px', gap: 6 }}>
+        <div style={{ width: 12, height: 12, borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
+        <span style={{ fontSize: 11, fontFamily: 'Segoe UI, system-ui', color: 'rgba(255,255,255,0.3)' }}>https://</span>
+      </div>
+    </div>
+    {children}
   </div>
 );
 
@@ -323,11 +414,35 @@ function getLogoPositionStyle(pos: string, padding: number): React.CSSProperties
   }
 }
 
+/* ── Badge position helper ───────────────────────── */
+function getBadgePositionStyle(pos: string): React.CSSProperties {
+  switch (pos) {
+    case 'tl': return { top: 12, left: 12 };
+    case 'tc': return { top: 12, left: '50%', transform: 'translateX(-50%)' };
+    case 'tr': return { top: 12, right: 12 };
+    case 'bl': return { bottom: 12, left: 12 };
+    case 'bc': return { bottom: 12, left: '50%', transform: 'translateX(-50%)' };
+    case 'br': default: return { bottom: 12, right: 12 };
+  }
+}
+
+/* ── Clip path helper ────────────────────────────── */
+function getClipPath(shape: string): string {
+  switch (shape) {
+    case 'circle':  return 'circle(50%)';
+    case 'hexagon': return 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+    case 'diamond': return 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
+    case 'star':    return 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+    case 'arch':    return 'ellipse(50% 45% at 50% 55%)';
+    case 'rounded': return 'inset(0% round 30%)';
+    default: return '';
+  }
+}
+
 /* ── Light leak position helper ──────────────────── */
 function getLightLeakGradient(angle: number, intensity: number): string {
   const op = (intensity / 100 * 0.7).toFixed(2);
   const op2 = (intensity / 100 * 0.35).toFixed(2);
-  // Map angle to corner positions
   const positions: Record<string, string> = {
     '315': `radial-gradient(ellipse 70% 70% at 0% 0%, rgba(255,200,80,${op}) 0%, rgba(255,120,0,${op2}) 30%, transparent 65%)`,
     '45':  `radial-gradient(ellipse 70% 70% at 100% 0%, rgba(255,200,80,${op}) 0%, rgba(255,120,0,${op2}) 30%, transparent 65%)`,
@@ -379,16 +494,40 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     spotlight, cornerDots, showRuleOfThirds,
     customBgColor1, customBgColor2, bgAngle,
     logoImage, logoPosition, logoSize, logoOpacity, logoPadding,
+    // Batch 2 new fields
+    imageClipShape, imageOpacity, imageRotation,
+    filmLook, vibrance,
+    splitTone, splitToneHighlightColor, splitToneShadowColor,
+    splitToneHighlightStrength, splitToneShadowStrength,
+    tiltShift, tiltShiftBlur, tiltShiftCenter, tiltShiftRange,
+    badge, badgePosition, badgeColor,
+    emojiOverlay, emojiSize, emojiPositionX, emojiPositionY,
+    neonTextGlow, neonGlowColor, neonGlowIntensity,
+    textRotation, wordSpacing,
+    prismEffect, sunburst, sunburstX, sunburstY, sunburstColor,
+    shadowSpread,
+    uniformPadding, paddingTop, paddingRight, paddingBottom, paddingLeft,
   } = state;
 
   if (!image) return null;
 
   const aspectPreset = ASPECT_PRESETS.find(a => a.id === aspectRatio);
+
+  /* ── Per-side padding ── */
+  const paddingStyle: React.CSSProperties = uniformPadding !== false
+    ? { padding }
+    : {
+        paddingTop: paddingTop ?? padding,
+        paddingRight: paddingRight ?? padding,
+        paddingBottom: paddingBottom ?? padding,
+        paddingLeft: paddingLeft ?? padding,
+      };
+
   const canvasStyle: React.CSSProperties = {
     background: bgRadial
       ? background.replace(/^linear-gradient\([\d]+deg,/, `radial-gradient(ellipse at center,`).replace('linear-gradient(', 'radial-gradient(ellipse at center,')
       : background,
-    padding,
+    ...paddingStyle,
     position: 'relative',
     overflow: 'hidden',
   };
@@ -413,9 +552,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const sx = shadowX ?? 0;
     const sy = shadowY ?? 0;
     const sb = shadowBlur > 0 ? shadowBlur : (shadow > 0 ? shadow * 2 : 0);
+    const spread = shadowSpread ?? 0;
     if (shadow > 0) {
-      parts.push(`${sx}px ${shadow + sy}px ${sb}px ${shadowColor}`);
-      parts.push(`${sx * 0.5}px ${(shadow + sy) / 2}px ${shadow}px ${shadowColor.replace(/[\d.]+\)$/, m => `${parseFloat(m) * 0.5})`)}`);
+      parts.push(`${sx}px ${shadow + sy}px ${sb}px ${spread}px ${shadowColor}`);
+      parts.push(`${sx * 0.5}px ${(shadow + sy) / 2}px ${shadow}px 0px ${shadowColor.replace(/[\d.]+\)$/, m => `${parseFloat(m) * 0.5})`)}`);
     }
     if (glowIntensity > 0) {
       parts.push(`0 0 ${Math.round(glowIntensity * 0.5)}px ${glowColor}`);
@@ -446,11 +586,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const t = Math.abs(temperature);
     imageFilterParts.push(`hue-rotate(${t * 0.3}deg) saturate(${100 - t * 0.3}%)`);
   }
-  // Fade/matte: lift blacks by reducing contrast + slight brightness
+  // Vibrance (selective saturation approximation)
+  if ((vibrance ?? 0) !== 0) {
+    const v = vibrance ?? 0;
+    imageFilterParts.push(`saturate(${100 + v * 0.8}%)`);
+  }
+  // Fade/matte
   if ((fade ?? 0) > 0) {
     imageFilterParts.push(`contrast(${100 - fade * 0.5}%) brightness(${100 + fade * 0.15}%)`);
   }
-  // Sharpness: pseudo-sharpening via contrast
+  // Sharpness
   if ((sharpness ?? 0) > 0) {
     imageFilterParts.push(`contrast(${100 + sharpness * 0.5}%)`);
   }
@@ -460,17 +605,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   } else if ((highlights ?? 0) < 0) {
     imageFilterParts.push(`brightness(${100 + highlights * 0.15}%)`);
   }
-  // Shadows lift (simulated via brightness)
+  // Shadows lift
   if ((shadows ?? 0) > 0) {
     imageFilterParts.push(`brightness(${100 + shadows * 0.12}%)`);
   }
   if ((grayscale ?? 0) > 0 || duotone) imageFilterParts.push(`grayscale(${duotone ? 100 : grayscale}%)`);
   if ((hueRotate ?? 0) !== 0) imageFilterParts.push(`hue-rotate(${hueRotate}deg)`);
   if (invert) imageFilterParts.push('invert(100%)');
-  // Chromatic aberration via drop-shadow filter
+  // Chromatic aberration
   if ((chromaAberration ?? 0) > 0) {
     const n = chromaAberration;
     imageFilterParts.push(`drop-shadow(${n}px 0 0 rgba(255,0,0,0.45)) drop-shadow(-${n}px 0 0 rgba(0,200,255,0.45))`);
+  }
+  // Film look presets
+  if (filmLook && filmLook !== 'none') {
+    const look = FILM_LOOKS.find(f => f.id === filmLook);
+    if (look?.filters) imageFilterParts.push(look.filters);
   }
   const imageFilter = imageFilterParts.filter(Boolean).join(' ') || undefined;
 
@@ -497,6 +647,9 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   const panY = imagePanY ?? 0;
   const hasZoomPan = zoom !== 1 || panX !== 0 || panY !== 0;
   const imgBR = imageBorderRadius ?? 0;
+  const clipPath = getClipPath(imageClipShape ?? 'none');
+  const imgOpacity = (imageOpacity ?? 100) / 100;
+  const imgRotation = imageRotation ?? 0;
 
   const frameBR = frame === 'phone'    ? Math.max(borderRadius, 28) + 8
     : frame === 'samsung' ? Math.max(borderRadius, 30) + 6
@@ -505,9 +658,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
   /* ── Inner image element ── */
   const renderImageEl = (rawBorderRadius = 0) => {
+    const effectiveBR = rawBorderRadius || imgBR;
     const fitStyle: React.CSSProperties = {
-      borderRadius: rawBorderRadius || imgBR,
+      borderRadius: effectiveBR,
       filter: imageFilter,
+      opacity: imgOpacity,
+      clipPath: clipPath || undefined,
+      transform: imgRotation !== 0 ? `rotate(${imgRotation}deg)` : undefined,
     };
 
     if (!hasZoomPan) {
@@ -522,14 +679,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const ratio = imgNatural ? imgNatural.w / imgNatural.h : 16 / 9;
     const fitObj = imageFitMode === 'contain' ? 'contain' : imageFitMode === 'fill' ? 'fill' : 'cover';
     return (
-      <div style={{ width: '100%', aspectRatio: String(ratio), overflow: 'hidden', borderRadius: rawBorderRadius || imgBR, position: 'relative' }}>
+      <div style={{ width: '100%', aspectRatio: String(ratio), overflow: 'hidden', borderRadius: effectiveBR, position: 'relative', clipPath: clipPath || undefined }}>
         <img src={image} alt="Screenshot" draggable={false}
           style={{
             position: 'absolute', inset: 0,
             width: '100%', height: '100%',
             objectFit: fitObj,
             filter: imageFilter,
-            transform: `translate(${panX}%, ${panY}%) scale(${zoom})`,
+            opacity: imgOpacity,
+            transform: `translate(${panX}%, ${panY}%) scale(${zoom})${imgRotation !== 0 ? ` rotate(${imgRotation}deg)` : ''}`,
             transformOrigin: 'center center',
           }}
           onLoad={e => { const t = e.currentTarget; setImgNatural({ w: t.naturalWidth, h: t.naturalHeight }); }}
@@ -541,17 +699,20 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   /* ── Frame shell ── */
   const renderFrameShell = () => {
     switch (frame) {
-      case 'browser':   return <BrowserFrame  br={borderRadius}>{renderImageEl(0)}</BrowserFrame>;
-      case 'macos':     return <MacFrame      br={borderRadius}>{renderImageEl(0)}</MacFrame>;
-      case 'phone':     return <PhoneFrame    br={borderRadius}>{renderImageEl(0)}</PhoneFrame>;
-      case 'ipad':      return <IPadFrame     br={borderRadius}>{renderImageEl(0)}</IPadFrame>;
-      case 'imac':      return <IMacFrame     br={borderRadius}>{renderImageEl(0)}</IMacFrame>;
-      case 'terminal':  return <TerminalFrame br={borderRadius}>{renderImageEl(0)}</TerminalFrame>;
-      case 'arc':       return <ArcFrame      br={borderRadius}>{renderImageEl(0)}</ArcFrame>;
-      case 'samsung':   return <SamsungFrame  br={borderRadius}>{renderImageEl(0)}</SamsungFrame>;
-      case 'macbook':   return <MacBookFrame  br={borderRadius}>{renderImageEl(0)}</MacBookFrame>;
-      case 'polaroid':  return <PolaroidFrame br={borderRadius}>{renderImageEl(0)}</PolaroidFrame>;
-      case 'newspaper': return <NewspaperFrame br={borderRadius}>{renderImageEl(0)}</NewspaperFrame>;
+      case 'browser':   return <BrowserFrame   br={borderRadius}>{renderImageEl(0)}</BrowserFrame>;
+      case 'macos':     return <MacFrame        br={borderRadius}>{renderImageEl(0)}</MacFrame>;
+      case 'phone':     return <PhoneFrame      br={borderRadius}>{renderImageEl(0)}</PhoneFrame>;
+      case 'ipad':      return <IPadFrame       br={borderRadius}>{renderImageEl(0)}</IPadFrame>;
+      case 'imac':      return <IMacFrame       br={borderRadius}>{renderImageEl(0)}</IMacFrame>;
+      case 'terminal':  return <TerminalFrame   br={borderRadius}>{renderImageEl(0)}</TerminalFrame>;
+      case 'arc':       return <ArcFrame        br={borderRadius}>{renderImageEl(0)}</ArcFrame>;
+      case 'samsung':   return <SamsungFrame    br={borderRadius}>{renderImageEl(0)}</SamsungFrame>;
+      case 'macbook':   return <MacBookFrame    br={borderRadius}>{renderImageEl(0)}</MacBookFrame>;
+      case 'polaroid':  return <PolaroidFrame   br={borderRadius}>{renderImageEl(0)}</PolaroidFrame>;
+      case 'newspaper': return <NewspaperFrame  br={borderRadius}>{renderImageEl(0)}</NewspaperFrame>;
+      case 'smarttv':   return <SmartTVFrame    br={borderRadius}>{renderImageEl(0)}</SmartTVFrame>;
+      case 'kindle':    return <KindleFrame     br={borderRadius}>{renderImageEl(0)}</KindleFrame>;
+      case 'windows':   return <WindowsFrame    br={borderRadius}>{renderImageEl(0)}</WindowsFrame>;
       default:          return renderImageEl(borderRadius);
     }
   };
@@ -576,6 +737,28 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     </>
   ) : null;
 
+  /* ── Split tone overlays ── */
+  const splitToneEls = splitTone ? (
+    <>
+      {/* Shadow tone (multiply — darkens shadows with color) */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: splitToneShadowColor ?? '#3366cc',
+        opacity: (splitToneShadowStrength ?? 30) / 100 * 0.4,
+        mixBlendMode: 'multiply',
+        borderRadius: frameBR, pointerEvents: 'none', zIndex: 13,
+      }} />
+      {/* Highlight tone (screen — brightens highlights with color) */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: splitToneHighlightColor ?? '#ffcc66',
+        opacity: (splitToneHighlightStrength ?? 30) / 100 * 0.35,
+        mixBlendMode: 'screen',
+        borderRadius: frameBR, pointerEvents: 'none', zIndex: 14,
+      }} />
+    </>
+  ) : null;
+
   /* ── Final image render ── */
   const renderFinalImage = () => {
     const shell = renderFrameShell();
@@ -590,7 +773,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           display: 'inline-flex', position: 'relative',
         }}>
           <div style={{ borderRadius: frameBR, overflow: 'hidden', position: 'relative', display: 'inline-flex' }}>
-            {shell}{colorOverlayEl}{duotoneEls}
+            {shell}{colorOverlayEl}{duotoneEls}{splitToneEls}
           </div>
         </div>
       );
@@ -599,7 +782,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     if (frame !== 'none') {
       return (
         <div style={{ boxShadow: buildShadow(false), borderRadius: frameBR, border: regularBorder, display: 'inline-flex', position: 'relative' }}>
-          {shell}{colorOverlayEl}{duotoneEls}
+          {shell}{colorOverlayEl}{duotoneEls}{splitToneEls}
         </div>
       );
     }
@@ -607,7 +790,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     if (hasZoomPan) {
       return (
         <div style={{ position: 'relative', display: 'inline-flex', borderRadius, overflow: 'hidden', boxShadow: buildShadow(true), border: regularBorder }}>
-          {shell}{colorOverlayEl}{duotoneEls}
+          {shell}{colorOverlayEl}{duotoneEls}{splitToneEls}
         </div>
       );
     }
@@ -615,11 +798,19 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     return (
       <div style={{ position: 'relative', display: 'inline-flex' }}>
         <img src={image} alt="Screenshot" className="block w-full h-auto"
-          style={{ borderRadius, boxShadow: buildShadow(true), filter: imageFilter, border: regularBorder }}
+          style={{
+            borderRadius,
+            boxShadow: buildShadow(true),
+            filter: imageFilter,
+            border: regularBorder,
+            opacity: imgOpacity,
+            clipPath: clipPath || undefined,
+            transform: imgRotation !== 0 ? `rotate(${imgRotation}deg)` : undefined,
+          }}
           onLoad={e => { const t = e.currentTarget; setImgNatural({ w: t.naturalWidth, h: t.naturalHeight }); }}
           draggable={false}
         />
-        {colorOverlayEl}{duotoneEls}
+        {colorOverlayEl}{duotoneEls}{splitToneEls}
       </div>
     );
   };
@@ -628,14 +819,20 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   const textAlignVal = (textAlign ?? 'center') as React.CSSProperties['textAlign'];
   const lsVal = (letterSpacing ?? 0) > 0 ? `${letterSpacing}px` : undefined;
   const lhVal = lineHeight ?? 1.25;
+  const wsVal = (wordSpacing ?? 0) > 0 ? `${wordSpacing}px` : undefined;
 
   const getTextStyle = (size: number, color: string, weight = 400, isTitle = false): React.CSSProperties => {
+    const neonShadow = isTitle && neonTextGlow
+      ? `0 0 ${neonGlowIntensity ?? 60}px ${neonGlowColor ?? '#00ffff'}, 0 0 ${(neonGlowIntensity ?? 60) * 2}px ${neonGlowColor ?? '#00ffff'}, 0 0 4px ${neonGlowColor ?? '#00ffff'}`
+      : undefined;
+
     const base: React.CSSProperties = {
       fontSize: size,
       fontFamily: titleFont,
       fontWeight: weight,
       lineHeight: lhVal,
       letterSpacing: lsVal,
+      wordSpacing: wsVal,
       textTransform: isTitle && (titleAllCaps ?? false) ? 'uppercase' : undefined,
       fontStyle: isTitle && (titleItalic ?? false) ? 'italic' : undefined,
       opacity: isTitle ? (titleOpacity ?? 100) / 100 : 1,
@@ -656,9 +853,9 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...base,
       color,
       WebkitTextStroke: isTitle && (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined,
-      textShadow: isTitle && (titleShadow ?? false)
+      textShadow: neonShadow ?? (isTitle && (titleShadow ?? false)
         ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)'
-        : undefined,
+        : undefined),
     };
   };
 
@@ -681,9 +878,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       background: `${textBgColor ?? '#000000'}${Math.round((textBgOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
     } : {};
 
+    const rotateStyle: React.CSSProperties = (textRotation ?? 0) !== 0
+      ? { transform: `rotate(${textRotation}deg)`, display: 'inline-block' }
+      : {};
+
     return (
       <div className="relative z-[2]" style={paddingStyle}>
-        <div style={wrapperStyle}>
+        <div style={{ ...wrapperStyle, ...rotateStyle }}>
           {titleText && (
             <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>
               {titleText}
@@ -695,7 +896,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             </div>
           )}
           {bodyText && (
-            <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal }}>
+            <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>
               {bodyText}
             </div>
           )}
@@ -790,6 +991,28 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Title below */}
         {renderTextBlock('below')}
 
+        {/* Tilt shift effect (miniature) */}
+        {(tiltShift ?? false) && (tiltShiftBlur ?? 0) > 0 && (
+          <>
+            {/* Top blur */}
+            <div className="absolute left-0 right-0 top-0 pointer-events-none z-[16]" style={{
+              height: `${Math.max(0, (tiltShiftCenter ?? 50) - (tiltShiftRange ?? 30) / 2)}%`,
+              backdropFilter: `blur(${tiltShiftBlur ?? 10}px)`,
+              WebkitBackdropFilter: `blur(${tiltShiftBlur ?? 10}px)`,
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+            }} />
+            {/* Bottom blur */}
+            <div className="absolute left-0 right-0 bottom-0 pointer-events-none z-[16]" style={{
+              height: `${Math.max(0, 100 - (tiltShiftCenter ?? 50) - (tiltShiftRange ?? 30) / 2)}%`,
+              backdropFilter: `blur(${tiltShiftBlur ?? 10}px)`,
+              WebkitBackdropFilter: `blur(${tiltShiftBlur ?? 10}px)`,
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 80%, transparent 100%)',
+            }} />
+          </>
+        )}
+
         {/* Spotlight (center brightening) */}
         {(spotlight ?? 0) > 0 && (
           <div className="absolute inset-0 pointer-events-none z-[19]" style={{
@@ -798,10 +1021,27 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           }} />
         )}
 
+        {/* Sunburst rays */}
+        {(sunburst ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[19]" style={{
+            background: `repeating-conic-gradient(from 0deg at ${sunburstX ?? 50}% ${sunburstY ?? 50}%, ${sunburstColor ?? '#ffee88'}${Math.round((sunburst ?? 0) / 100 * 60).toString(16).padStart(2, '0')} 0deg, transparent 4deg, transparent 9deg)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
         {/* Light leak */}
         {(lightLeak ?? 0) > 0 && (
           <div className="absolute inset-0 pointer-events-none z-[20]" style={{
             background: getLightLeakGradient(lightLeakAngle ?? 315, lightLeak),
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Prism / rainbow effect */}
+        {(prismEffect ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[20]" style={{
+            background: `linear-gradient(135deg, rgba(255,0,0,0.15), rgba(255,165,0,0.15), rgba(255,255,0,0.12), rgba(0,200,80,0.12), rgba(0,100,255,0.15), rgba(100,0,200,0.15), rgba(220,100,220,0.12))`,
+            opacity: (prismEffect ?? 0) / 100,
             mixBlendMode: 'screen',
           }} />
         )}
@@ -844,7 +1084,6 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Lens flare */}
         {(lensFlare ?? 0) > 0 && (
           <div className="absolute inset-0 pointer-events-none z-[22]" style={{ overflow: 'hidden' }}>
-            {/* Main burst */}
             <div style={{
               position: 'absolute',
               left: `${lensFlareX ?? 20}%`, top: `${lensFlareY ?? 15}%`,
@@ -854,7 +1093,6 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               borderRadius: '50%',
               mixBlendMode: 'screen',
             }} />
-            {/* Secondary rings */}
             <div style={{
               position: 'absolute',
               left: `${100 - (lensFlareX ?? 20)}%`, top: `${100 - (lensFlareY ?? 15)}%`,
@@ -887,6 +1125,46 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             <img src={logoImage} alt="Logo" draggable={false}
               style={{ width: logoSize ?? 60, height: logoSize ?? 60, objectFit: 'contain', display: 'block' }}
             />
+          </div>
+        )}
+
+        {/* Badge overlay */}
+        {badge && badge.length > 0 && (
+          <div style={{
+            position: 'absolute', zIndex: 27,
+            ...getBadgePositionStyle(badgePosition ?? 'tr'),
+          }}>
+            <div style={{
+              padding: '4px 10px',
+              borderRadius: 6,
+              background: badgeColor ?? '#8b5cf6',
+              color: '#fff',
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontFamily: 'Inter, system-ui, sans-serif',
+              boxShadow: `0 2px 8px ${badgeColor ?? '#8b5cf6'}80`,
+              whiteSpace: 'nowrap',
+            }}>
+              {badge}
+            </div>
+          </div>
+        )}
+
+        {/* Emoji sticker overlay */}
+        {emojiOverlay && emojiOverlay.length > 0 && (
+          <div style={{
+            position: 'absolute', zIndex: 27,
+            left: `${emojiPositionX ?? 50}%`,
+            top: `${emojiPositionY ?? 50}%`,
+            transform: 'translate(-50%, -50%)',
+            fontSize: emojiSize ?? 48,
+            lineHeight: 1,
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}>
+            {emojiOverlay}
           </div>
         )}
 

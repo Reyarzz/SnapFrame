@@ -7,11 +7,12 @@ import {
   FlipHorizontal2, RotateCw, Layers, Terminal,
   Monitor, Tablet, Share2, Shuffle,
   Camera, Newspaper, Laptop, Grid3X3,
+  Tv2, BookOpen,
 } from 'lucide-react';
 import {
   EditorState, GRADIENT_PRESETS, MESH_PRESETS,
   SHADOW_COLORS, GLOW_COLORS, ASPECT_PRESETS,
-  BG_PATTERNS, TITLE_FONTS, STYLE_TEMPLATES,
+  BG_PATTERNS, TITLE_FONTS, STYLE_TEMPLATES, FILM_LOOKS,
 } from '../presets';
 
 interface ControlsPanelProps {
@@ -202,7 +203,6 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     e.target.value = '';
   };
 
-  // Randomize all visual settings
   const handleRandomize = () => {
     const gradients = [...GRADIENT_PRESETS, ...MESH_PRESETS];
     const randGrad = gradients[Math.floor(Math.random() * gradients.length)];
@@ -226,7 +226,6 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     });
   };
 
-  // Auto-enhance
   const handleAutoEnhance = () => {
     onChange({
       brightness: 103, contrast: 105, saturation: 110,
@@ -285,6 +284,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             { id: 'macbook',   name: 'MacBook',  Icon: Laptop },
             { id: 'polaroid',  name: 'Polaroid', Icon: Camera },
             { id: 'newspaper', name: 'News',     Icon: Newspaper },
+            { id: 'smarttv',   name: 'Smart TV', Icon: Tv2 },
+            { id: 'kindle',    name: 'Kindle',   Icon: BookOpen },
+            { id: 'windows',   name: 'Windows',  Icon: Monitor },
           ].map(f => (
             <button key={f.id} onClick={() => onChange({ frame: f.id })}
               className={`flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-[9px] font-medium transition-all ring-1 ${
@@ -494,13 +496,34 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   const renderLayoutTab = () => (
     <div className="space-y-3">
       <Card>
-        <SectionLabel>Padding</SectionLabel>
-        <Slider label="Size" value={state.padding} min={0} max={200} unit="px" onChange={v => onChange({ padding: v })} />
-        <div className="flex gap-1.5 flex-wrap">
-          {[0, 24, 48, 64, 96, 128, 160].map(v => (
-            <QuickChip key={v} active={state.padding === v} onClick={() => onChange({ padding: v })}>{v}</QuickChip>
-          ))}
-        </div>
+        <SectionLabel
+          action={
+            <button onClick={() => onChange({ uniformPadding: !(state.uniformPadding ?? true) })}
+              className="text-[9px] text-brand-400 hover:text-brand-300 font-semibold uppercase tracking-wider transition-colors">
+              {(state.uniformPadding ?? true) ? 'Per Side' : 'Uniform'}
+            </button>
+          }
+        >
+          Padding
+        </SectionLabel>
+
+        {(state.uniformPadding ?? true) ? (
+          <>
+            <Slider label="Size" value={state.padding} min={0} max={200} unit="px" onChange={v => onChange({ padding: v })} />
+            <div className="flex gap-1.5 flex-wrap">
+              {[0, 24, 48, 64, 96, 128, 160].map(v => (
+                <QuickChip key={v} active={state.padding === v} onClick={() => onChange({ padding: v })}>{v}</QuickChip>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            <Slider label="Top"    value={state.paddingTop    ?? state.padding} min={0} max={200} unit="px" onChange={v => onChange({ paddingTop: v })} />
+            <Slider label="Right"  value={state.paddingRight  ?? state.padding} min={0} max={200} unit="px" onChange={v => onChange({ paddingRight: v })} />
+            <Slider label="Bottom" value={state.paddingBottom ?? state.padding} min={0} max={200} unit="px" onChange={v => onChange({ paddingBottom: v })} />
+            <Slider label="Left"   value={state.paddingLeft   ?? state.padding} min={0} max={200} unit="px" onChange={v => onChange({ paddingLeft: v })} />
+          </div>
+        )}
       </Card>
 
       <Card>
@@ -516,6 +539,26 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </Card>
 
       <Card>
+        <SectionLabel>Image Clip Shape</SectionLabel>
+        <div className="grid grid-cols-4 gap-1.5">
+          {[
+            { id: 'none',    label: 'None' },
+            { id: 'circle',  label: 'Circle' },
+            { id: 'hexagon', label: 'Hex' },
+            { id: 'diamond', label: 'Diamond' },
+            { id: 'star',    label: 'Star' },
+            { id: 'arch',    label: 'Arch' },
+            { id: 'rounded', label: 'Rounded' },
+          ].map(s => (
+            <QuickChip key={s.id} active={(state.imageClipShape ?? 'none') === s.id}
+              onClick={() => onChange({ imageClipShape: s.id })}>
+              {s.label}
+            </QuickChip>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
         <SectionLabel>Image Zoom & Pan</SectionLabel>
         <Slider label="Zoom" value={Math.round((state.imageZoom ?? 1) * 100)} min={100} max={300} unit="%"
           onChange={v => onChange({ imageZoom: v / 100 })} />
@@ -528,6 +571,14 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <ResetBtn onClick={() => onChange({ imageZoom: 1, imagePanX: 0, imagePanY: 0 })} label="Reset Zoom" />
           </>
         )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Transform</SectionLabel>
+        <Slider label="Opacity" value={state.imageOpacity ?? 100} min={0} max={100} unit="%"
+          onChange={v => onChange({ imageOpacity: v })} />
+        <Slider label="Rotation" value={state.imageRotation ?? 0} min={-180} max={180} unit="°"
+          onChange={v => onChange({ imageRotation: v })} />
       </Card>
 
       <Card>
@@ -564,10 +615,11 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <Card>
         <SectionLabel>Drop Shadow</SectionLabel>
-        <Slider label="Intensity" value={state.shadow} min={0} max={120} onChange={v => onChange({ shadow: v })} />
-        <Slider label="X Offset" value={state.shadowX ?? 0} min={-60} max={60} unit="px" onChange={v => onChange({ shadowX: v })} />
-        <Slider label="Y Offset" value={state.shadowY ?? 0} min={-60} max={60} unit="px" onChange={v => onChange({ shadowY: v })} />
-        <Slider label="Blur Radius" value={state.shadowBlur ?? 0} min={0} max={120} unit="px" onChange={v => onChange({ shadowBlur: v })} />
+        <Slider label="Intensity"   value={state.shadow}              min={0}   max={120}      onChange={v => onChange({ shadow: v })} />
+        <Slider label="X Offset"    value={state.shadowX ?? 0}        min={-60} max={60}  unit="px" onChange={v => onChange({ shadowX: v })} />
+        <Slider label="Y Offset"    value={state.shadowY ?? 0}        min={-60} max={60}  unit="px" onChange={v => onChange({ shadowY: v })} />
+        <Slider label="Blur Radius" value={state.shadowBlur ?? 0}     min={0}   max={120} unit="px" onChange={v => onChange({ shadowBlur: v })} />
+        <Slider label="Spread"      value={state.shadowSpread ?? 0}   min={-20} max={60}  unit="px" onChange={v => onChange({ shadowSpread: v })} />
         <ColorDots colors={SHADOW_COLORS} active={state.shadowColor} onSelect={v => onChange({ shadowColor: v })} />
       </Card>
 
@@ -582,7 +634,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       <Card>
         <SectionLabel>Inner Shadow & Glow</SectionLabel>
         <Slider label="Inner Shadow" value={state.innerShadow} min={0} max={100} onChange={v => onChange({ innerShadow: v })} />
-        <Slider label="Inner Glow" value={state.innerGlowIntensity ?? 0} min={0} max={100} onChange={v => onChange({ innerGlowIntensity: v })} />
+        <Slider label="Inner Glow"   value={state.innerGlowIntensity ?? 0} min={0} max={100} onChange={v => onChange({ innerGlowIntensity: v })} />
         {(state.innerGlowIntensity ?? 0) > 0 && (
           <div className="flex items-center gap-3">
             <span className="text-[10px] text-white/35">Color</span>
@@ -678,7 +730,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <div className="flex gap-1.5 ml-auto">
               {['#000000', '#ffffff', '#1a0a3e', '#0a1a3e', '#1a0a0a'].map(c => (
                 <button key={c} onClick={() => onChange({ vignetteColor: c })}
-                  className={`w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all`}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
                   style={{ background: c }} />
               ))}
             </div>
@@ -711,11 +763,12 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
         )}
-        <Slider label="Fog / Haze" value={state.fog ?? 0} min={0} max={100} onChange={v => onChange({ fog: v })} />
-        <Slider label="Stars" value={state.stars ?? 0} min={0} max={100} onChange={v => onChange({ stars: v })} />
-        <Slider label="Rain" value={state.rain ?? 0} min={0} max={100} onChange={v => onChange({ rain: v })} />
-        <Slider label="Halftone" value={state.halftone ?? 0} min={0} max={100} onChange={v => onChange({ halftone: v })} />
-        <Slider label="Lens Flare" value={state.lensFlare ?? 0} min={0} max={100} onChange={v => onChange({ lensFlare: v })} />
+        <Slider label="Prism Effect" value={state.prismEffect ?? 0} min={0} max={100} onChange={v => onChange({ prismEffect: v })} />
+        <Slider label="Fog / Haze"   value={state.fog ?? 0}          min={0} max={100} onChange={v => onChange({ fog: v })} />
+        <Slider label="Stars"        value={state.stars ?? 0}        min={0} max={100} onChange={v => onChange({ stars: v })} />
+        <Slider label="Rain"         value={state.rain ?? 0}         min={0} max={100} onChange={v => onChange({ rain: v })} />
+        <Slider label="Halftone"     value={state.halftone ?? 0}     min={0} max={100} onChange={v => onChange({ halftone: v })} />
+        <Slider label="Lens Flare"   value={state.lensFlare ?? 0}    min={0} max={100} onChange={v => onChange({ lensFlare: v })} />
         {(state.lensFlare ?? 0) > 0 && (
           <>
             <Slider label="Flare X" value={state.lensFlareX ?? 20} min={0} max={100} unit="%" onChange={v => onChange({ lensFlareX: v })} />
@@ -725,19 +778,44 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </Card>
 
       <Card>
+        <SectionLabel>Sunburst Rays</SectionLabel>
+        <Slider label="Intensity" value={state.sunburst ?? 0} min={0} max={100} onChange={v => onChange({ sunburst: v })} />
+        {(state.sunburst ?? 0) > 0 && (
+          <>
+            <Slider label="Origin X" value={state.sunburstX ?? 50} min={0} max={100} unit="%" onChange={v => onChange({ sunburstX: v })} />
+            <Slider label="Origin Y" value={state.sunburstY ?? 50} min={0} max={100} unit="%" onChange={v => onChange({ sunburstY: v })} />
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-white/35">Ray Color</span>
+              <input type="color" value={state.sunburstColor ?? '#ffee88'}
+                onChange={e => onChange({ sunburstColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#ffee88', '#ffffff', '#ffa500', '#ff6600', '#aaffaa'].map(c => (
+                  <button key={c} onClick={() => onChange({ sunburstColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
         <SectionLabel>Glitch & Distortion</SectionLabel>
-        <Slider label="Glitch" value={state.glitch ?? 0} min={0} max={100} onChange={v => onChange({ glitch: v })} />
-        <Slider label="Chroma Aberration" value={state.chromaAberration ?? 0} min={0} max={20} onChange={v => onChange({ chromaAberration: v })} />
+        <Slider label="Glitch"            value={state.glitch ?? 0}           min={0} max={100} onChange={v => onChange({ glitch: v })} />
+        <Slider label="Chroma Aberration" value={state.chromaAberration ?? 0} min={0} max={20}  onChange={v => onChange({ chromaAberration: v })} />
       </Card>
 
       <ResetBtn
         onClick={() => onChange({
-          shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0,
+          shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
           glowIntensity: 0, innerShadow: 0, innerGlowIntensity: 0,
           borderWidth: 0, colorOverlayOpacity: 0,
           vignette: 0, scanlines: 0, filmGrain: 0,
           lightLeak: 0, fog: 0, stars: 0, rain: 0, halftone: 0,
           lensFlare: 0, glitch: 0, chromaAberration: 0, spotlight: 0,
+          prismEffect: 0, sunburst: 0,
         })}
         label="Clear All Effects"
       />
@@ -749,26 +827,42 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <Card>
         <SectionLabel>Tone</SectionLabel>
-        <Slider label="Brightness" value={state.brightness} min={50}  max={150} unit="%" onChange={v => onChange({ brightness: v })} />
-        <Slider label="Contrast"   value={state.contrast}   min={50}  max={150} unit="%" onChange={v => onChange({ contrast: v })} />
-        <Slider label="Saturation" value={state.saturation} min={0}   max={200} unit="%" onChange={v => onChange({ saturation: v })} />
-        <Slider label="Blur"       value={state.blur}       min={0}   max={20}  step={0.5} unit="px" onChange={v => onChange({ blur: v })} />
-        <ResetBtn onClick={() => onChange({ brightness: 100, contrast: 100, saturation: 100, blur: 0 })} label="Reset Tone" />
+        <Slider label="Brightness" value={state.brightness}        min={50}  max={150} unit="%" onChange={v => onChange({ brightness: v })} />
+        <Slider label="Contrast"   value={state.contrast}          min={50}  max={150} unit="%" onChange={v => onChange({ contrast: v })} />
+        <Slider label="Saturation" value={state.saturation}        min={0}   max={200} unit="%" onChange={v => onChange({ saturation: v })} />
+        <Slider label="Vibrance"   value={state.vibrance ?? 0}     min={-100} max={100}          onChange={v => onChange({ vibrance: v })} />
+        <Slider label="Blur"       value={state.blur}              min={0}   max={20}  step={0.5} unit="px" onChange={v => onChange({ blur: v })} />
+        <ResetBtn onClick={() => onChange({ brightness: 100, contrast: 100, saturation: 100, blur: 0, vibrance: 0 })} label="Reset Tone" />
       </Card>
 
       <Card>
         <SectionLabel>Advanced Tone</SectionLabel>
-        <Slider label="Temperature" value={state.temperature ?? 0} min={-100} max={100}
-          onChange={v => onChange({ temperature: v })} />
+        <Slider label="Temperature" value={state.temperature ?? 0} min={-100} max={100} onChange={v => onChange({ temperature: v })} />
         <p className="text-[8.5px] text-white/20 -mt-1">
           {(state.temperature ?? 0) > 0 ? 'Warm →' : (state.temperature ?? 0) < 0 ? '← Cool' : 'Neutral'}
         </p>
-        <Slider label="Highlights" value={state.highlights ?? 0} min={-100} max={100} onChange={v => onChange({ highlights: v })} />
-        <Slider label="Shadows"    value={state.shadows ?? 0}    min={-100} max={100} onChange={v => onChange({ shadows: v })} />
-        <Slider label="Fade / Matte" value={state.fade ?? 0}     min={0}    max={100} onChange={v => onChange({ fade: v })} />
-        <Slider label="Sharpness"  value={state.sharpness ?? 0}  min={0}    max={100} onChange={v => onChange({ sharpness: v })} />
-        <Slider label="Image Noise" value={state.noiseOnImage ?? 0} min={0} max={100} onChange={v => onChange({ noiseOnImage: v })} />
+        <Slider label="Highlights"   value={state.highlights ?? 0}   min={-100} max={100} onChange={v => onChange({ highlights: v })} />
+        <Slider label="Shadows"      value={state.shadows ?? 0}      min={-100} max={100} onChange={v => onChange({ shadows: v })} />
+        <Slider label="Fade / Matte" value={state.fade ?? 0}         min={0}    max={100} onChange={v => onChange({ fade: v })} />
+        <Slider label="Sharpness"    value={state.sharpness ?? 0}    min={0}    max={100} onChange={v => onChange({ sharpness: v })} />
+        <Slider label="Image Noise"  value={state.noiseOnImage ?? 0} min={0}    max={100} onChange={v => onChange({ noiseOnImage: v })} />
         <ResetBtn onClick={() => onChange({ temperature: 0, highlights: 0, shadows: 0, fade: 0, sharpness: 0, noiseOnImage: 0 })} label="Reset Advanced" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Film Look</SectionLabel>
+        <div className="grid grid-cols-4 gap-1.5">
+          {FILM_LOOKS.map(f => (
+            <button key={f.id} onClick={() => onChange({ filmLook: f.id })}
+              className={`py-2 rounded-lg text-[9px] font-medium transition-all ring-1 ${
+                (state.filmLook ?? 'none') === f.id
+                  ? 'bg-brand-500/20 text-brand-300 ring-brand-500/40'
+                  : 'bg-white/[0.03] text-white/35 ring-white/[0.06] hover:bg-white/[0.08]'
+              }`}>
+              {f.name}
+            </button>
+          ))}
+        </div>
       </Card>
 
       <Card>
@@ -776,9 +870,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <Slider label="Sepia"      value={state.sepia ?? 0}     min={0}    max={100} unit="%" onChange={v => onChange({ sepia: v })} />
         <Slider label="Grayscale"  value={state.grayscale ?? 0} min={0}    max={100} unit="%" onChange={v => onChange({ grayscale: v })} />
         <Slider label="Hue Shift"  value={state.hueRotate ?? 0} min={-180} max={180} unit="°" onChange={v => onChange({ hueRotate: v })} />
-        <Toggle label="Invert Colors"     value={state.invert ?? false}  onChange={v => onChange({ invert: v })} />
-        <Toggle label="Flip Horizontal"   value={state.flipX}            onChange={v => onChange({ flipX: v })} />
-        <Toggle label="Flip Vertical"     value={state.flipY ?? false}   onChange={v => onChange({ flipY: v })} />
+        <Toggle label="Invert Colors"   value={state.invert ?? false}  onChange={v => onChange({ invert: v })} />
+        <Toggle label="Flip Horizontal" value={state.flipX}            onChange={v => onChange({ flipX: v })} />
+        <Toggle label="Flip Vertical"   value={state.flipY ?? false}   onChange={v => onChange({ flipY: v })} />
         <ResetBtn onClick={() => onChange({ sepia: 0, grayscale: 0, hueRotate: 0, invert: false, flipX: false, flipY: false })} label="Reset Filters" />
       </Card>
 
@@ -819,6 +913,64 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 </button>
               ))}
             </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Split Tone</SectionLabel>
+        <Toggle label="Enable Split Tone" value={state.splitTone ?? false} onChange={v => onChange({ splitTone: v })}
+          desc="Tints highlights & shadows with different colors" />
+        {(state.splitTone ?? false) && (
+          <>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-white/35 w-20">Highlights</span>
+              <input type="color" value={state.splitToneHighlightColor ?? '#ffcc66'}
+                onChange={e => onChange({ splitToneHighlightColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex-1 h-8 rounded-lg ring-1 ring-white/10" style={{ background: state.splitToneHighlightColor }} />
+            </div>
+            <Slider label="Highlight Strength" value={state.splitToneHighlightStrength ?? 30} min={0} max={100}
+              onChange={v => onChange({ splitToneHighlightStrength: v })} />
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-white/35 w-20">Shadows</span>
+              <input type="color" value={state.splitToneShadowColor ?? '#3366cc'}
+                onChange={e => onChange({ splitToneShadowColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex-1 h-8 rounded-lg ring-1 ring-white/10" style={{ background: state.splitToneShadowColor }} />
+            </div>
+            <Slider label="Shadow Strength" value={state.splitToneShadowStrength ?? 30} min={0} max={100}
+              onChange={v => onChange({ splitToneShadowStrength: v })} />
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { h: '#ffcc66', s: '#3366cc', l: 'Classic' },
+                { h: '#ff9966', s: '#6633cc', l: 'Warm/Cool' },
+                { h: '#ffeeaa', s: '#2244aa', l: 'Sepia/Blue' },
+                { h: '#aaffcc', s: '#334488', l: 'Teal/Navy' },
+                { h: '#ffccff', s: '#224422', l: 'Pink/Grn' },
+                { h: '#ffffff', s: '#334466', l: 'White/Blue' },
+              ].map(p => (
+                <button key={p.l}
+                  onClick={() => onChange({ splitToneHighlightColor: p.h, splitToneShadowColor: p.s })}
+                  className="py-2 rounded-lg text-[9px] text-white/40 ring-1 ring-white/[0.06] hover:bg-white/[0.07] transition-all overflow-hidden relative">
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${p.s}, ${p.h})` }} />
+                  <span className="relative z-10 font-medium text-white/80">{p.l}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tilt Shift (Miniature)</SectionLabel>
+        <Toggle label="Enable Tilt Shift" value={state.tiltShift ?? false} onChange={v => onChange({ tiltShift: v })}
+          desc="Blurs top & bottom, leaving a sharp band in the middle" />
+        {(state.tiltShift ?? false) && (
+          <>
+            <Slider label="Blur Amount" value={state.tiltShiftBlur ?? 10}   min={1}  max={30}  unit="px" onChange={v => onChange({ tiltShiftBlur: v })} />
+            <Slider label="Center"      value={state.tiltShiftCenter ?? 50} min={10} max={90} unit="%"  onChange={v => onChange({ tiltShiftCenter: v })} />
+            <Slider label="Sharp Range" value={state.tiltShiftRange ?? 30}  min={5}  max={80} unit="%"  onChange={v => onChange({ tiltShiftRange: v })} />
           </>
         )}
       </Card>
@@ -923,16 +1075,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
           <Card>
             <SectionLabel>Typography</SectionLabel>
-            <Slider label="Title Size"     value={state.titleSize}          min={12} max={96} unit="px" onChange={v => onChange({ titleSize: v })} />
-            <Slider label="Subtitle Size"  value={state.subtitleSize}       min={10} max={48} unit="px" onChange={v => onChange({ subtitleSize: v })} />
+            <Slider label="Title Size"     value={state.titleSize}           min={12} max={96} unit="px" onChange={v => onChange({ titleSize: v })} />
+            <Slider label="Subtitle Size"  value={state.subtitleSize}        min={10} max={48} unit="px" onChange={v => onChange({ subtitleSize: v })} />
             {state.bodyText && (
               <Slider label="Body Size" value={state.bodySize ?? 14} min={10} max={36} unit="px" onChange={v => onChange({ bodySize: v })} />
             )}
-            <Slider label="Letter Spacing" value={state.letterSpacing ?? 0} min={0}  max={20} unit="px" onChange={v => onChange({ letterSpacing: v })} />
-            <Slider label="Line Height"    value={state.lineHeight ?? 1.25} min={1}  max={3}  step={0.05}
+            <Slider label="Letter Spacing" value={state.letterSpacing ?? 0}  min={0}  max={20} unit="px" onChange={v => onChange({ letterSpacing: v })} />
+            <Slider label="Word Spacing"   value={state.wordSpacing ?? 0}    min={0}  max={20} unit="px" onChange={v => onChange({ wordSpacing: v })} />
+            <Slider label="Line Height"    value={state.lineHeight ?? 1.25}  min={1}  max={3}  step={0.05}
               onChange={v => onChange({ lineHeight: v })} />
             <Slider label="Title Opacity"  value={state.titleOpacity ?? 100} min={10} max={100} unit="%"
               onChange={v => onChange({ titleOpacity: v })} />
+            <Slider label="Text Rotation"  value={state.textRotation ?? 0}   min={-45} max={45} unit="°"
+              onChange={v => onChange({ textRotation: v })} />
             <div className="grid grid-cols-4 gap-1.5 mt-1">
               {TITLE_FONTS.map(f => (
                 <button key={f.id} onClick={() => onChange({ titleFont: f.id })}
@@ -959,6 +1114,31 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               <Toggle label="All Caps" value={state.titleAllCaps ?? false} onChange={v => onChange({ titleAllCaps: v })} />
             </div>
             <Toggle label="Text Shadow" value={state.titleShadow ?? false} onChange={v => onChange({ titleShadow: v })} />
+          </Card>
+
+          <Card>
+            <SectionLabel>Neon Glow Text</SectionLabel>
+            <Toggle label="Enable Neon Glow" value={state.neonTextGlow ?? false} onChange={v => onChange({ neonTextGlow: v })}
+              desc="Adds a glowing neon effect to the title text" />
+            {(state.neonTextGlow ?? false) && (
+              <>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-white/35">Glow Color</span>
+                  <input type="color" value={state.neonGlowColor ?? '#00ffff'}
+                    onChange={e => onChange({ neonGlowColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <div className="flex gap-1.5 ml-auto">
+                    {['#00ffff', '#ff00ff', '#00ff00', '#ffff00', '#ff6600', '#ffffff'].map(c => (
+                      <button key={c} onClick={() => onChange({ neonGlowColor: c })}
+                        className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                        style={{ background: c, boxShadow: `0 0 6px ${c}` }} />
+                    ))}
+                  </div>
+                </div>
+                <Slider label="Glow Intensity" value={state.neonGlowIntensity ?? 60} min={10} max={120}
+                  onChange={v => onChange({ neonGlowIntensity: v })} />
+              </>
+            )}
           </Card>
 
           <Card>
@@ -1039,6 +1219,74 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       )}
 
       <Card>
+        <SectionLabel>Badge / Label</SectionLabel>
+        <input type="text" placeholder="Badge text (e.g. NEW, BETA, PRO)…" value={state.badge ?? ''}
+          onChange={e => onChange({ badge: e.target.value })}
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.06] text-white text-sm
+            placeholder:text-white/20 ring-1 ring-white/[0.09] focus:ring-brand-500/50
+            focus:bg-white/[0.09] outline-none transition-all" />
+        {(state.badge ?? '').length > 0 && (
+          <>
+            <div className="grid grid-cols-3 gap-1.5">
+              <p className="col-span-3 text-[9.5px] text-white/25">Quick Labels</p>
+              {['NEW', 'HOT', 'PRO', 'BETA', 'SALE', '🔥'].map(b => (
+                <QuickChip key={b} active={state.badge === b} onClick={() => onChange({ badge: b })}>{b}</QuickChip>
+              ))}
+            </div>
+            <div>
+              <p className="text-[9.5px] text-white/25 mb-1.5">Position</p>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { id: 'tl', label: '↖ TL' }, { id: 'tc', label: '↑ TC' }, { id: 'tr', label: '↗ TR' },
+                  { id: 'bl', label: '↙ BL' }, { id: 'bc', label: '↓ BC' }, { id: 'br', label: '↘ BR' },
+                ].map(p => (
+                  <QuickChip key={p.id} active={(state.badgePosition ?? 'tr') === p.id}
+                    onClick={() => onChange({ badgePosition: p.id })}>{p.label}</QuickChip>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.badgeColor ?? '#8b5cf6'}
+                onChange={e => onChange({ badgeColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#3b82f6'].map(c => (
+                  <button key={c} onClick={() => onChange({ badgeColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Emoji Sticker</SectionLabel>
+        <input type="text" placeholder="Paste an emoji (e.g. 🔥 🎉 ✨)…" value={state.emojiOverlay ?? ''}
+          onChange={e => onChange({ emojiOverlay: e.target.value })}
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.06] text-white text-2xl
+            placeholder:text-white/20 ring-1 ring-white/[0.09] focus:ring-brand-500/50
+            focus:bg-white/[0.09] outline-none transition-all" />
+        {(state.emojiOverlay ?? '').length > 0 && (
+          <>
+            <div className="grid grid-cols-6 gap-1.5">
+              {['🔥', '✨', '🎉', '💎', '🚀', '⚡', '❤️', '🌊', '🎯', '💫', '🏆', '👑'].map(e => (
+                <button key={e} onClick={() => onChange({ emojiOverlay: e })}
+                  className="py-2 text-xl rounded-lg ring-1 ring-white/[0.06] hover:bg-white/[0.08] transition-all">
+                  {e}
+                </button>
+              ))}
+            </div>
+            <Slider label="Size"    value={state.emojiSize ?? 48}      min={16} max={160} unit="px" onChange={v => onChange({ emojiSize: v })} />
+            <Slider label="X Pos"   value={state.emojiPositionX ?? 50} min={0}  max={100} unit="%"  onChange={v => onChange({ emojiPositionX: v })} />
+            <Slider label="Y Pos"   value={state.emojiPositionY ?? 50} min={0}  max={100} unit="%"  onChange={v => onChange({ emojiPositionY: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
         <SectionLabel>Logo / Watermark</SectionLabel>
         <input ref={logoInputRef} type="file" accept="image/*,.svg" className="hidden" onChange={handleLogoUpload} />
         <div className="flex gap-2">
@@ -1112,7 +1360,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             ))}
           </div>
           <div className="text-[9px] text-white/20">
-            {fmt === 'png' && 'Lossless · best for text & UI · supports transparency'}
+            {fmt === 'png'  && 'Lossless · best for text & UI · supports transparency'}
             {fmt === 'jpeg' && 'Smaller file · no transparency · great for photos'}
             {fmt === 'webp' && 'Best compression · modern browsers only'}
           </div>

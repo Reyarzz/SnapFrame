@@ -166,6 +166,53 @@ export interface EditorState {
   watermark: boolean;
   isPro: boolean;
   previewGrid: boolean;
+  // Image clip & transform extras
+  imageClipShape: string;  // 'none' | 'circle' | 'hexagon' | 'diamond' | 'star' | 'arch' | 'rounded'
+  imageOpacity: number;    // 0-100
+  imageRotation: number;   // -180 to 180
+  // Film look simulation
+  filmLook: string;
+  // Split tone
+  splitTone: boolean;
+  splitToneHighlightColor: string;
+  splitToneShadowColor: string;
+  splitToneHighlightStrength: number;
+  splitToneShadowStrength: number;
+  // Tilt shift (miniature effect)
+  tiltShift: boolean;
+  tiltShiftBlur: number;
+  tiltShiftCenter: number;  // 0-100%
+  tiltShiftRange: number;   // width of sharp band %
+  // Badge / label overlay
+  badge: string;
+  badgePosition: string;
+  badgeColor: string;
+  // Emoji sticker
+  emojiOverlay: string;
+  emojiSize: number;
+  emojiPositionX: number;
+  emojiPositionY: number;
+  // Neon text glow
+  neonTextGlow: boolean;
+  neonGlowColor: string;
+  neonGlowIntensity: number;
+  // Typography extras
+  textRotation: number;
+  wordSpacing: number;
+  // Canvas visual effects
+  prismEffect: number;
+  sunburst: number;
+  sunburstX: number;
+  sunburstY: number;
+  sunburstColor: string;
+  shadowSpread: number;
+  vibrance: number;
+  // Per-side padding
+  uniformPadding: boolean;
+  paddingTop: number;
+  paddingRight: number;
+  paddingBottom: number;
+  paddingLeft: number;
 }
 
 export interface StyleTemplate {
@@ -193,6 +240,10 @@ export const ASPECT_PRESETS: AspectPreset[] = [
   { id: 'pinterest', name: 'Pin',       width: 1000, height: 1500, label: 'Pinterest' },
   { id: 'tiktok',    name: 'TikTok',    width: 1080, height: 1920, label: 'TikTok' },
   { id: 'discord',   name: 'Discord',   width: 1280, height: 720,  label: 'Discord' },
+  { id: 'facebook',  name: 'FB',        width: 1200, height: 628,  label: 'Facebook Ad' },
+  { id: 'twitch',    name: 'Twitch',    width: 1280, height: 720,  label: 'Twitch' },
+  { id: 'behance',   name: 'Behance',   width: 808,  height: 1000, label: 'Behance' },
+  { id: '5:4',       name: '5:4',       width: 1250, height: 1000, label: 'Photo Print' },
 ];
 
 /* ── Mesh gradient presets ─────────────────────── */
@@ -313,6 +364,22 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
   { id: 'solid-gray',  name: 'Gray',   category: 'solid', style: '#3f3f46',     css: '#3f3f46' },
   { id: 'solid-slate', name: 'Slate',  category: 'solid', style: '#1e293b',     css: '#1e293b' },
   { id: 'transparent', name: 'None',   category: 'solid', style: 'transparent', css: 'transparent' },
+];
+
+export const FILM_LOOKS = [
+  { id: 'none',     name: 'None',      filters: '' },
+  { id: 'portra',   name: 'Portra',    filters: 'contrast(95%) saturate(115%) sepia(8%)' },
+  { id: 'velvia',   name: 'Velvia',    filters: 'contrast(115%) saturate(145%) brightness(98%)' },
+  { id: 'cross',    name: 'Cross',     filters: 'contrast(110%) saturate(130%) hue-rotate(30deg)' },
+  { id: 'bleach',   name: 'Bleach',    filters: 'contrast(95%) saturate(65%) brightness(112%)' },
+  { id: 'goldenhr', name: 'Golden Hr', filters: 'sepia(20%) saturate(110%) brightness(102%) hue-rotate(-10deg)' },
+  { id: 'bluehr',   name: 'Blue Hr',   filters: 'hue-rotate(195deg) saturate(80%) contrast(105%)' },
+  { id: 'lomo',     name: 'Lomo',      filters: 'contrast(125%) saturate(125%) sepia(20%)' },
+  { id: 'vintage',  name: 'Vintage',   filters: 'sepia(45%) saturate(80%) contrast(88%) brightness(108%)' },
+  { id: 'cinema',   name: 'Cinema',    filters: 'grayscale(20%) contrast(112%) brightness(94%)' },
+  { id: 'chrome',   name: 'Chrome',    filters: 'contrast(112%) saturate(108%) brightness(102%)' },
+  { id: 'bw',       name: 'B&W',       filters: 'grayscale(100%) contrast(108%)' },
+  { id: 'fuji',     name: 'Fuji',      filters: 'saturate(118%) contrast(104%) sepia(6%)' },
 ];
 
 export const SHADOW_COLORS = [
@@ -500,6 +567,43 @@ export const DEFAULT_STATE: EditorState = {
   exportFilename: '',
   exportTransparent: false,
   exportQuality: 92,
+  imageClipShape: 'none',
+  imageOpacity: 100,
+  imageRotation: 0,
+  filmLook: 'none',
+  splitTone: false,
+  splitToneHighlightColor: '#ffcc66',
+  splitToneShadowColor: '#3366cc',
+  splitToneHighlightStrength: 30,
+  splitToneShadowStrength: 30,
+  tiltShift: false,
+  tiltShiftBlur: 10,
+  tiltShiftCenter: 50,
+  tiltShiftRange: 30,
+  badge: '',
+  badgePosition: 'tr',
+  badgeColor: '#8b5cf6',
+  emojiOverlay: '',
+  emojiSize: 48,
+  emojiPositionX: 50,
+  emojiPositionY: 50,
+  neonTextGlow: false,
+  neonGlowColor: '#00ffff',
+  neonGlowIntensity: 60,
+  textRotation: 0,
+  wordSpacing: 0,
+  prismEffect: 0,
+  sunburst: 0,
+  sunburstX: 50,
+  sunburstY: 50,
+  sunburstColor: '#ffee88',
+  shadowSpread: 0,
+  vibrance: 0,
+  uniformPadding: true,
+  paddingTop: 64,
+  paddingRight: 64,
+  paddingBottom: 64,
+  paddingLeft: 64,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
