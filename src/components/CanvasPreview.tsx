@@ -375,6 +375,69 @@ const FigmaFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ child
   </div>
 );
 
+const IPhone15Frame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => {
+  const r = Math.max(br, 36) + 8;
+  return (
+    <div style={{ background: 'linear-gradient(160deg, #2c2c2e 0%, #1a1a1c 100%)', borderRadius: r, padding: '12px 8px', position: 'relative', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10 }}>
+        <div style={{ width: 110, height: 32, borderRadius: 16, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#111', border: '1.5px solid #222' }} />
+          <div style={{ width: 44, height: 12, borderRadius: 6, background: '#111' }} />
+        </div>
+      </div>
+      <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 24) }}>{children}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
+        <div style={{ width: 100, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.3)' }} />
+      </div>
+    </div>
+  );
+};
+
+const AndroidFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => {
+  const r = Math.max(br, 20) + 10;
+  return (
+    <div style={{ background: 'linear-gradient(160deg, #1c1c1e 0%, #0d0d0f 100%)', borderRadius: r, padding: '10px 7px', position: 'relative', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.07)' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: Math.max(br, 16) }}>
+        <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 10, height: 10, borderRadius: '50%', background: '#111', border: '2px solid #222', zIndex: 10 }} />
+        {children}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-around', paddingTop: 10, paddingBottom: 2, paddingLeft: 12, paddingRight: 12 }}>
+        {['◁', '●', '□'].map((icon, i) => (
+          <div key={i} style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', userSelect: 'none', fontFamily: 'system-ui' }}>{icon}</div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const VisionProFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
+  <div style={{ background: 'linear-gradient(180deg, #1f1f1f 0%, #0a0a0a 100%)', borderRadius: Math.max(br, 36) + 16, padding: '22px 14px 18px', position: 'relative', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), 0 0 80px rgba(0,0,0,0.8)' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 12, alignItems: 'center', gap: 8 }}>
+      <div style={{ width: 40, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.08)' }} />
+      <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }} />
+      <div style={{ width: 40, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.08)' }} />
+    </div>
+    <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 28), boxShadow: 'inset 0 0 30px rgba(0,0,0,0.6)' }}>{children}</div>
+    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 14 }}>
+      <div style={{ width: 64, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.18)' }} />
+    </div>
+  </div>
+);
+
+const PosterFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ children, br }) => (
+  <div style={{ background: '#0a0a0a', padding: '16px 16px 20px', borderRadius: Math.max(br, 4), position: 'relative', boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.07)' }}>
+    <div style={{ overflow: 'hidden', borderRadius: Math.max(br - 4, 0) }}>{children}</div>
+    <div style={{ marginTop: 14 }}>
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', marginBottom: 8 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ height: 1, flex: 1, background: 'rgba(255,255,255,0.06)' }} />
+        <span style={{ fontSize: 7, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.35em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', whiteSpace: 'nowrap' }}>★  FEATURE PRESENTATION  ★</span>
+        <div style={{ height: 1, flex: 1, background: 'rgba(255,255,255,0.06)' }} />
+      </div>
+    </div>
+  </div>
+);
+
 /* ── Pattern helpers ─────────────────────────────── */
 function getPatternSvg(pattern: string, opacity: number, scale: number = 20): string {
   const o = opacity;
@@ -530,6 +593,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     textDropShadow, textShadowX, textShadowY, textShadowBlur, textShadowColor,
     paperTexture,
     reflectionGap,
+    // Batch 4
+    gradientMap, gradientMapColor1, gradientMapColor2,
+    frameColor, frameOpacity,
+    depthOfField, depthOfFieldRadius,
+    retroWave, retroWaveOpacity, retroWaveAngle,
+    gridLines, crosshair, crosshairColor,
+    rainbowBorder,
+    badgeSize, badgeRadius,
+    imageBlendMode,
+    bokehOverlay, bokehColor,
+    stampEffect, stampColor,
   } = state;
 
   if (!image) return null;
@@ -731,6 +805,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       case 'notion':    return <NotionFrame     br={borderRadius}>{renderImageEl(0)}</NotionFrame>;
       case 'retrotv':   return <RetroTVFrame    br={borderRadius}>{renderImageEl(0)}</RetroTVFrame>;
       case 'figma':     return <FigmaFrame      br={borderRadius}>{renderImageEl(0)}</FigmaFrame>;
+      case 'iphone15':  return <IPhone15Frame   br={borderRadius}>{renderImageEl(0)}</IPhone15Frame>;
+      case 'android':   return <AndroidFrame    br={borderRadius}>{renderImageEl(0)}</AndroidFrame>;
+      case 'vision':    return <VisionProFrame  br={borderRadius}>{renderImageEl(0)}</VisionProFrame>;
+      case 'poster':    return <PosterFrame     br={borderRadius}>{renderImageEl(0)}</PosterFrame>;
       default:          return renderImageEl(borderRadius);
     }
   };
@@ -935,6 +1013,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           transform: imageTransform, transition: 'transform 0.2s ease',
           maxWidth: (frame === 'phone' || frame === 'samsung') ? 320 : '100%',
           filter: (pixelate ?? 0) > 0 ? `url(#pixelate-filter)` : ((glitch ?? 0) > 0 ? `url(#glitch-filter)` : undefined),
+          mixBlendMode: (imageBlendMode ?? 'normal') !== 'normal' ? (imageBlendMode as React.CSSProperties['mixBlendMode']) : undefined,
         }}>
           {renderFinalImage()}
 
@@ -979,6 +1058,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           </>
         )}
 
+        {/* Depth of field (radial blur — edges blurred, center sharp) */}
+        {(depthOfField ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[17]" style={{
+            backdropFilter: `blur(${Math.round(16 - (depthOfFieldRadius ?? 40) * 0.12)}px)`,
+            WebkitBackdropFilter: `blur(${Math.round(16 - (depthOfFieldRadius ?? 40) * 0.12)}px)`,
+            maskImage: `radial-gradient(circle ${depthOfFieldRadius ?? 40}% at 50% 50%, transparent 0%, transparent ${Math.round((depthOfFieldRadius ?? 40) * 0.5)}%, black 100%)`,
+            WebkitMaskImage: `radial-gradient(circle ${depthOfFieldRadius ?? 40}% at 50% 50%, transparent 0%, transparent ${Math.round((depthOfFieldRadius ?? 40) * 0.5)}%, black 100%)`,
+          }} />
+        )}
+
         {/* Bloom effect (center glow) */}
         {(bloomEffect ?? 0) > 0 && (
           <div className="absolute inset-0 pointer-events-none z-[18]" style={{
@@ -1021,6 +1110,23 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           <div className="absolute inset-0 pointer-events-none z-[20]" style={{
             background: `linear-gradient(135deg, rgba(255,0,0,0.15), rgba(255,165,0,0.15), rgba(255,255,0,0.12), rgba(0,200,80,0.12), rgba(0,100,255,0.15), rgba(100,0,200,0.15), rgba(220,100,220,0.12))`,
             opacity: (prismEffect ?? 0) / 100, mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Gradient map (tone-map dark→color1, light→color2) */}
+        {(gradientMap ?? false) && (
+          <>
+            <div className="absolute inset-0 pointer-events-none z-[20]" style={{ background: gradientMapColor1 ?? '#000000', mixBlendMode: 'multiply' }} />
+            <div className="absolute inset-0 pointer-events-none z-[20]" style={{ background: gradientMapColor2 ?? '#ffffff', mixBlendMode: 'screen' }} />
+          </>
+        )}
+
+        {/* Retro wave / vaporwave gradient */}
+        {(retroWave ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[20]" style={{
+            background: `linear-gradient(${retroWaveAngle ?? 0}deg, rgba(255,0,255,0.35) 0%, rgba(0,200,255,0.3) 33%, rgba(120,0,255,0.3) 66%, rgba(255,100,0,0.3) 100%)`,
+            opacity: (retroWaveOpacity ?? 60) / 100,
+            mixBlendMode: 'screen',
           }} />
         )}
 
@@ -1094,7 +1200,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Badge overlay */}
         {badge && badge.length > 0 && (
           <div style={{ position: 'absolute', zIndex: 27, ...getBadgePositionStyle(badgePosition ?? 'tr') }}>
-            <div style={{ padding: '4px 10px', borderRadius: 6, background: badgeColor ?? '#8b5cf6', color: '#fff', fontSize: 10, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Inter, system-ui, sans-serif', boxShadow: `0 2px 8px ${badgeColor ?? '#8b5cf6'}80`, whiteSpace: 'nowrap' }}>
+            <div style={{ padding: '4px 10px', borderRadius: badgeRadius ?? 6, background: badgeColor ?? '#8b5cf6', color: '#fff', fontSize: badgeSize ?? 10, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Inter, system-ui, sans-serif', boxShadow: `0 2px 8px ${badgeColor ?? '#8b5cf6'}80`, whiteSpace: 'nowrap' }}>
               {badge}
             </div>
           </div>
@@ -1157,6 +1263,92 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               </React.Fragment>
             ))}
           </div>
+        )}
+
+        {/* Grid lines overlay */}
+        {(gridLines ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+            opacity: (gridLines ?? 0) / 100 * 0.5,
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+          }} />
+        )}
+
+        {/* Crosshair overlay */}
+        {(crosshair ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[29]">
+            <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+              <line x1="50%" y1="0" x2="50%" y2="100%" stroke={crosshairColor ?? 'rgba(255,255,255,0.6)'} strokeWidth="1" />
+              <line x1="0" y1="50%" x2="100%" y2="50%" stroke={crosshairColor ?? 'rgba(255,255,255,0.6)'} strokeWidth="1" />
+              <circle cx="50%" cy="50%" r="20" stroke={crosshairColor ?? 'rgba(255,255,255,0.6)'} strokeWidth="1" fill="none" />
+              <circle cx="50%" cy="50%" r="4" fill={crosshairColor ?? 'rgba(255,255,255,0.6)'} />
+            </svg>
+          </div>
+        )}
+
+        {/* Rainbow border overlay */}
+        {(rainbowBorder ?? false) && (
+          <div className="absolute pointer-events-none z-[30]" style={{
+            inset: 0, borderRadius,
+            background: `conic-gradient(from 0deg, #ff0000, #ff7700, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)`,
+            padding: 3,
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+          }} />
+        )}
+
+        {/* Bokeh / bubble overlay */}
+        {(bokehOverlay ?? 0) > 0 && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-[20]">
+            {Array.from({ length: Math.round((bokehOverlay ?? 0) / 8) + 2 }).map((_, i) => {
+              const x = (i * 37 + 13) % 100;
+              const y = (i * 53 + 29) % 100;
+              const size = 16 + (i * 17) % 50;
+              return (
+                <div key={i} style={{
+                  position: 'absolute', left: `${x}%`, top: `${y}%`,
+                  width: size, height: size, borderRadius: '50%',
+                  background: bokehColor ?? 'rgba(255,255,255,0.3)',
+                  transform: 'translate(-50%, -50%)',
+                  mixBlendMode: 'screen',
+                  opacity: (bokehOverlay ?? 0) / 100 * 0.8,
+                  filter: `blur(${Math.round(size * 0.3)}px)`,
+                }} />
+              );
+            })}
+          </div>
+        )}
+
+        {/* Stamp / ink effect */}
+        {(stampEffect ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{
+              width: 160, height: 160, borderRadius: '50%',
+              border: `8px solid ${stampColor ?? '#cc0000'}`,
+              opacity: 0.65,
+              boxShadow: `0 0 0 3px ${stampColor ?? '#cc0000'}30, inset 0 0 0 3px ${stampColor ?? '#cc0000'}30`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transform: 'rotate(-28deg)',
+              filter: 'blur(0.4px)',
+            }}>
+              <div style={{ textAlign: 'center', color: stampColor ?? '#cc0000', fontFamily: 'Georgia, serif', fontWeight: 900 }}>
+                <div style={{ fontSize: 13, letterSpacing: '0.3em', textTransform: 'uppercase' }}>APPROVED</div>
+                <div style={{ height: 1, background: stampColor ?? '#cc0000', margin: '4px 0', opacity: 0.5 }} />
+                <div style={{ fontSize: 8, letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.7 }}>VERIFIED ★ 2025</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Frame color tint overlay */}
+        {frame !== 'none' && (frameColor ?? '') !== '' && (
+          <div className="absolute inset-0 pointer-events-none z-[3]" style={{
+            background: frameColor,
+            opacity: 1 - (frameOpacity ?? 100) / 100,
+            borderRadius: frameBR,
+            mixBlendMode: 'color',
+          }} />
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}

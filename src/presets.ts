@@ -255,6 +255,36 @@ export interface EditorState {
   paperTexture: number;
   // Reflection gap
   reflectionGap: number;
+  // Gradient map (tone-map image to two colors)
+  gradientMap: boolean;
+  gradientMapColor1: string;
+  gradientMapColor2: string;
+  // Frame chrome customization
+  frameColor: string;
+  frameOpacity: number;
+  // Depth of field (radial center blur)
+  depthOfField: boolean;
+  depthOfFieldRadius: number;
+  // Retro wave overlay
+  retroWave: boolean;
+  retroWaveOpacity: number;
+  retroWaveAngle: number;
+  // Overlay decorations
+  gridLines: number;           // 0-100 canvas grid line intensity
+  crosshair: boolean;          // crosshair/reticle over canvas
+  crosshairColor: string;
+  rainbowBorder: boolean;      // rainbow gradient border
+  // Badge extras
+  badgeSize: number;
+  badgeRadius: number;
+  // Image blend mode
+  imageBlendMode: string;      // 'normal' | 'multiply' | 'screen' | 'overlay' | 'luminosity' | 'color'
+  // Bokeh / bubble overlay
+  bokehOverlay: number;
+  bokehColor: string;
+  // Stamp / ink effect
+  stampEffect: boolean;
+  stampColor: string;
 }
 
 export interface StyleTemplate {
@@ -676,6 +706,27 @@ export const DEFAULT_STATE: EditorState = {
   textShadowColor: 'rgba(0,0,0,0.6)',
   paperTexture: 0,
   reflectionGap: 2,
+  gradientMap: false,
+  gradientMapColor1: '#000000',
+  gradientMapColor2: '#ffffff',
+  frameColor: '',
+  frameOpacity: 100,
+  depthOfField: false,
+  depthOfFieldRadius: 40,
+  retroWave: false,
+  retroWaveOpacity: 60,
+  retroWaveAngle: 0,
+  gridLines: 0,
+  crosshair: false,
+  crosshairColor: 'rgba(255,255,255,0.6)',
+  rainbowBorder: false,
+  badgeSize: 11,
+  badgeRadius: 6,
+  imageBlendMode: 'normal',
+  bokehOverlay: 0,
+  bokehColor: 'rgba(255,255,255,0.3)',
+  stampEffect: false,
+  stampColor: '#cc0000',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1044,6 +1095,74 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       frame: 'polaroid', tiltX: 0, tiltY: 0, scale: 1, rotation: -2,
       filmLook: 'vintage', sepia: 25, vignette: 35, filmGrain: 45,
       paperTexture: 40,
+    },
+  },
+  {
+    id: 'cyberpunk',
+    name: 'Cyber',
+    emoji: '🤖',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0d0d 0%, #1a0033 50%, #000d1a 100%)', backgroundId: 'solid-dark',
+      padding: 48, borderRadius: 0, shadow: 80, shadowColor: 'rgba(0,255,255,0.3)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bgPattern: 'grid', bgPatternOpacity: 0.12,
+      borderWidth: 2, borderColor: 'rgba(0,255,255,0.6)',
+      glowIntensity: 70, glowColor: 'rgba(0,255,255,0.8)',
+      rainbowBorder: false, scanlines: 12, filmGrain: 8,
+      neonTextGlow: true, neonGlowColor: '#00ffff', neonGlowIntensity: 80,
+    },
+  },
+  {
+    id: 'dreamy',
+    name: 'Dreamy',
+    emoji: '💭',
+    overrides: {
+      background: 'radial-gradient(ellipse 80% 70% at 30% 20%, rgba(255,180,200,0.85) 0%, transparent 55%), radial-gradient(ellipse 60% 80% at 70% 70%, rgba(180,200,255,0.75) 0%, transparent 50%), #100818',
+      backgroundId: 'mesh-spring',
+      padding: 72, borderRadius: 32, shadow: 60, shadowColor: 'rgba(200,150,255,0.3)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      bloomEffect: 35, vignette: 20, vignetteColor: '#1a0030',
+      filmGrain: 15, glowIntensity: 25, glowColor: 'rgba(180,150,255,0.6)',
+      saturation: 115, fade: 10,
+    },
+  },
+  {
+    id: 'bold-card',
+    name: 'Bold',
+    emoji: '💥',
+    overrides: {
+      background: '#0a0a0a', backgroundId: 'solid-black',
+      padding: 64, borderRadius: 20, shadow: 100, shadowColor: 'rgba(0,0,0,0.8)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 0.88, rotation: 0,
+      borderWidth: 3, borderColor: '#ffffff',
+      doubleShadow: true, shadow2Color: 'rgba(255,255,255,0.08)', shadow2X: 0, shadow2Y: -6, shadow2Blur: 30,
+      contrast: 108, brightness: 102,
+    },
+  },
+  {
+    id: 'depth-focus',
+    name: 'Focus',
+    emoji: '🎯',
+    overrides: {
+      background: 'radial-gradient(ellipse 80% 60% at 20% 30%, rgba(120,0,220,0.9) 0%, transparent 55%), radial-gradient(ellipse 60% 80% at 80% 70%, rgba(0,80,220,0.8) 0%, transparent 50%), #050010',
+      backgroundId: 'mesh-cosmic',
+      padding: 80, borderRadius: 16, shadow: 70, shadowColor: 'rgba(139,92,246,0.4)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      depthOfField: true, depthOfFieldRadius: 45,
+      glowIntensity: 20, glowColor: 'rgba(139,92,246,0.7)',
+    },
+  },
+  {
+    id: 'stamp-art',
+    name: 'Stamp',
+    emoji: '🔖',
+    overrides: {
+      background: '#f5f0e8', backgroundId: 'solid-white',
+      padding: 48, borderRadius: 4, shadow: 20, shadowColor: 'rgba(0,0,0,0.2)', shadowX: 4,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 1,
+      stampEffect: true, stampColor: '#cc0000',
+      sepia: 20, vignette: 25, paperTexture: 30,
+      borderWidth: 3, borderColor: 'rgba(0,0,0,0.15)',
     },
   },
 ];

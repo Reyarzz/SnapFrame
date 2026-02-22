@@ -290,6 +290,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             { id: 'notion',    name: 'Notion',   Icon: BookOpen },
             { id: 'retrotv',   name: 'Retro TV', Icon: Tv2 },
             { id: 'figma',     name: 'Figma',    Icon: Layers },
+            { id: 'iphone15',  name: 'iPhone 15',Icon: Smartphone },
+            { id: 'android',   name: 'Android',  Icon: Smartphone },
+            { id: 'vision',    name: 'Vision',   Icon: MonitorSmartphone },
+            { id: 'poster',    name: 'Poster',   Icon: Camera },
           ].map(f => (
             <button key={f.id} onClick={() => onChange({ frame: f.id })}
               className={`flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-[9px] font-medium transition-all ring-1 ${
@@ -666,6 +670,43 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   /* ── FX tab ─────────────────────────────────────── */
   const renderFxTab = () => (
     <div className="space-y-3">
+      {state.frame !== 'none' && (
+        <Card>
+          <SectionLabel>Frame Tint</SectionLabel>
+          <p className="text-[8.5px] text-white/20">Apply a color tone to the frame chrome</p>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.frameColor || '#8b5cf6'}
+              onChange={e => onChange({ frameColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            {(state.frameColor ?? '') !== '' && (
+              <button onClick={() => onChange({ frameColor: '' })} className="text-[10px] text-white/25 hover:text-white/50 ml-auto">Clear</button>
+            )}
+          </div>
+          {(state.frameColor ?? '') !== '' && (
+            <Slider label="Strength" value={100 - (state.frameOpacity ?? 100)} min={0} max={80} unit="%"
+              onChange={v => onChange({ frameOpacity: 100 - v })} />
+          )}
+        </Card>
+      )}
+
+      <Card>
+        <SectionLabel>Image Blend Mode</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { id: 'normal',    l: 'Normal' },
+            { id: 'multiply',  l: 'Multiply' },
+            { id: 'screen',    l: 'Screen' },
+            { id: 'overlay',   l: 'Overlay' },
+            { id: 'luminosity',l: 'Luma' },
+            { id: 'color',     l: 'Color' },
+          ].map(m => (
+            <QuickChip key={m.id} active={(state.imageBlendMode ?? 'normal') === m.id}
+              onClick={() => onChange({ imageBlendMode: m.id })}>{m.l}</QuickChip>
+          ))}
+        </div>
+      </Card>
+
       <Card>
         <SectionLabel>Drop Shadow</SectionLabel>
         <Slider label="Intensity"   value={state.shadow}              min={0}   max={120}      onChange={v => onChange({ shadow: v })} />
@@ -937,6 +978,128 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <Slider label="Intensity" value={state.paperTexture ?? 0} min={0} max={100}
           onChange={v => onChange({ paperTexture: v })} />
         {(state.paperTexture ?? 0) > 0 && <p className="text-[8.5px] text-white/20">Adds a subtle paper grain overlay</p>}
+      </Card>
+
+      <Card>
+        <SectionLabel>Gradient Map</SectionLabel>
+        <Toggle label="Enable" value={state.gradientMap ?? false} onChange={v => onChange({ gradientMap: v })}
+          desc="Maps image shadows & highlights to custom colors" />
+        {(state.gradientMap ?? false) && (
+          <>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-white/35 w-20">Shadows</span>
+              <input type="color" value={state.gradientMapColor1 ?? '#000000'}
+                onChange={e => onChange({ gradientMapColor1: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex-1 h-8 rounded-lg ring-1 ring-white/10" style={{ background: `linear-gradient(to right, ${state.gradientMapColor1 ?? '#000000'}, ${state.gradientMapColor2 ?? '#ffffff'})` }} />
+              <input type="color" value={state.gradientMapColor2 ?? '#ffffff'}
+                onChange={e => onChange({ gradientMapColor2: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <span className="text-[10px] text-white/35 w-20 text-right">Highlights</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { c1: '#000000', c2: '#ffffff', l: 'B&W' },
+                { c1: '#0a0033', c2: '#ff6600', l: 'Sunset' },
+                { c1: '#001a4a', c2: '#00ffcc', l: 'Ocean' },
+                { c1: '#1a0033', c2: '#ff00ff', l: 'Neon' },
+                { c1: '#000a00', c2: '#00ff88', l: 'Matrix' },
+                { c1: '#330000', c2: '#ff4400', l: 'Ember' },
+              ].map(p => (
+                <button key={p.l}
+                  onClick={() => onChange({ gradientMapColor1: p.c1, gradientMapColor2: p.c2 })}
+                  className="py-2 rounded-lg text-[9px] text-white/40 ring-1 ring-white/[0.06] hover:bg-white/[0.07] transition-all overflow-hidden relative">
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${p.c1}, ${p.c2})` }} />
+                  <span className="relative z-10 font-medium text-white/80">{p.l}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Retro Wave</SectionLabel>
+        <Toggle label="Enable" value={state.retroWave ?? false} onChange={v => onChange({ retroWave: v })}
+          desc="Vaporwave / synthwave color gradient overlay" />
+        {(state.retroWave ?? false) && (
+          <>
+            <Slider label="Intensity" value={state.retroWaveOpacity ?? 60} min={10} max={100} unit="%"
+              onChange={v => onChange({ retroWaveOpacity: v })} />
+            <Slider label="Angle" value={state.retroWaveAngle ?? 0} min={0} max={360} unit="°"
+              onChange={v => onChange({ retroWaveAngle: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Depth of Field</SectionLabel>
+        <Toggle label="Enable" value={state.depthOfField ?? false} onChange={v => onChange({ depthOfField: v })}
+          desc="Blurs edges, keeps center sharp (simulated DoF)" />
+        {(state.depthOfField ?? false) && (
+          <Slider label="Sharp Radius" value={state.depthOfFieldRadius ?? 40} min={10} max={80} unit="%"
+            onChange={v => onChange({ depthOfFieldRadius: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Canvas Decorations</SectionLabel>
+        <Slider label="Grid Lines" value={state.gridLines ?? 0} min={0} max={100}
+          onChange={v => onChange({ gridLines: v })} />
+        <Toggle label="Crosshair" value={state.crosshair ?? false} onChange={v => onChange({ crosshair: v })}
+          desc="Reticle overlay at canvas center" />
+        {(state.crosshair ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.crosshairColor?.startsWith('rgba') ? '#ffffff' : (state.crosshairColor ?? '#ffffff')}
+              onChange={e => onChange({ crosshairColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+          </div>
+        )}
+        <Toggle label="Rainbow Border" value={state.rainbowBorder ?? false} onChange={v => onChange({ rainbowBorder: v })}
+          desc="Conic-gradient rainbow frame around canvas" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Bokeh Overlay</SectionLabel>
+        <Slider label="Intensity" value={state.bokehOverlay ?? 0} min={0} max={100}
+          onChange={v => onChange({ bokehOverlay: v })} />
+        {(state.bokehOverlay ?? 0) > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.bokehColor?.startsWith('rgba') ? '#ffffff' : (state.bokehColor ?? '#ffffff')}
+              onChange={e => onChange({ bokehColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#ffffff', '#8b5cf6', '#ec4899', '#38bdf8', '#fbbf24', '#34d399'].map(c => (
+                <button key={c} onClick={() => onChange({ bokehColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c, boxShadow: `0 0 4px ${c}` }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Stamp Effect</SectionLabel>
+        <Toggle label="Enable" value={state.stampEffect ?? false} onChange={v => onChange({ stampEffect: v })}
+          desc="Rubber stamp / ink seal overlay" />
+        {(state.stampEffect ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.stampColor ?? '#cc0000'}
+              onChange={e => onChange({ stampColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#cc0000', '#0033cc', '#006600', '#cc6600', '#660066', '#000000'].map(c => (
+                <button key={c} onClick={() => onChange({ stampColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       <ResetBtn
@@ -1428,6 +1591,12 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                     style={{ background: c }} />
                 ))}
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Slider label="Font Size" value={state.badgeSize ?? 10} min={7} max={20} unit="px"
+                onChange={v => onChange({ badgeSize: v })} />
+              <Slider label="Radius" value={state.badgeRadius ?? 6} min={0} max={24} unit="px"
+                onChange={v => onChange({ badgeRadius: v })} />
             </div>
           </>
         )}
