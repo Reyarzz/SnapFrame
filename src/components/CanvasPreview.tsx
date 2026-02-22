@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EditorState, ASPECT_PRESETS, FILM_LOOKS } from '../presets';
+import { EditorState, ASPECT_PRESETS, FILM_LOOKS, IMAGE_PRESETS } from '../presets';
 
 interface CanvasPreviewProps {
   state: EditorState;
@@ -604,11 +604,30 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     imageBlendMode,
     bokehOverlay, bokehColor,
     stampEffect, stampColor,
+    // Batch 5
+    overlayPatternColor, overlayPatternOpacity, overlayPatternType,
+    splitScreen, splitScreenColor1, splitScreenColor2, splitScreenAngle,
+    textOutline, textOutlineColor,
+    imagePreset,
+    frameInnerPadding,
+    accentColor, useAccentColor,
+    warpEffect,
+    subtitleAllCaps,
+    borderRadiusTL, borderRadiusTR, borderRadiusBR, borderRadiusBL, usePerCornerRadius,
   } = state;
 
   if (!image) return null;
 
   const aspectPreset = ASPECT_PRESETS.find(a => a.id === aspectRatio);
+
+  /* ── Accent color — overrides glow/shadow when enabled ── */
+  const effGlowColor   = (useAccentColor ?? false) && (accentColor ?? '') ? accentColor : glowColor;
+  const effShadowColor = (useAccentColor ?? false) && (accentColor ?? '') ? `${accentColor}80` : shadowColor;
+
+  /* ── Effective canvas border radius ── */
+  const canvasBR: React.CSSProperties['borderRadius'] = (usePerCornerRadius ?? false)
+    ? `${borderRadiusTL ?? 12}px ${borderRadiusTR ?? 12}px ${borderRadiusBR ?? 12}px ${borderRadiusBL ?? 12}px`
+    : borderRadius;
 
   /* ── Per-side padding ── */
   const paddingStyle: React.CSSProperties = uniformPadding !== false
@@ -627,7 +646,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     ...paddingStyle,
     position: 'relative',
     overflow: 'hidden',
+    borderRadius: canvasBR,
   };
+
+  // Warp effect (positive = barrel rounded corners, negative = pincushion octagon clip)
+  if ((warpEffect ?? 0) > 0) {
+    canvasStyle.borderRadius = `${Math.min(38, (warpEffect ?? 0) / 2.5)}%`;
+  } else if ((warpEffect ?? 0) < 0) {
+    const pct = Math.abs(warpEffect ?? 0) * 0.15;
+    canvasStyle.borderRadius = undefined;
+    canvasStyle.clipPath = `polygon(${pct}% 0%,${100-pct}% 0%,100% ${pct}%,100% ${100-pct}%,${100-pct}% 100%,${pct}% 100%,0% ${100-pct}%,0% ${pct}%)`;
+  }
 
   if (canvasRotation !== 0) {
     canvasStyle.transform = `rotate(${canvasRotation}deg)`;
@@ -651,12 +680,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const sb = shadowBlur > 0 ? shadowBlur : (shadow > 0 ? shadow * 2 : 0);
     const spread = shadowSpread ?? 0;
     if (shadow > 0) {
-      parts.push(`${sx}px ${shadow + sy}px ${sb}px ${spread}px ${shadowColor}`);
-      parts.push(`${sx * 0.5}px ${(shadow + sy) / 2}px ${shadow}px 0px ${shadowColor.replace(/[\d.]+\)$/, m => `${parseFloat(m) * 0.5})`)}`);
+      parts.push(`${sx}px ${shadow + sy}px ${sb}px ${spread}px ${effShadowColor}`);
+      parts.push(`${sx * 0.5}px ${(shadow + sy) / 2}px ${shadow}px 0px ${effShadowColor.replace(/[\d.]+\)$/, m => `${parseFloat(m) * 0.5})`)}`);
     }
     if (glowIntensity > 0) {
-      parts.push(`0 0 ${Math.round(glowIntensity * 0.5)}px ${glowColor}`);
-      parts.push(`0 0 ${glowIntensity}px ${glowColor}`);
+      parts.push(`0 0 ${Math.round(glowIntensity * 0.5)}px ${effGlowColor}`);
+      parts.push(`0 0 ${glowIntensity}px ${effGlowColor}`);
     }
     // Double shadow (Batch 3)
     if (doubleShadow ?? false) {
@@ -702,6 +731,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (filmLook && filmLook !== 'none') {
     const look = FILM_LOOKS.find(f => f.id === filmLook);
     if (look?.filters) imageFilterParts.push(look.filters);
+  }
+  // Instagram-like image preset (Batch 5)
+  if ((imagePreset ?? 'none') !== 'none') {
+    const preset = IMAGE_PRESETS.find(p => p.id === imagePreset);
+    if (preset?.filters) imageFilterParts.push(preset.filters);
   }
   // Image glow (Batch 3) — drop-shadow specifically on the image
   if ((imageGlow ?? 0) > 0) {
@@ -787,28 +821,32 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
   /* ── Frame shell ── */
   const renderFrameShell = () => {
+    const innerPad = (frameInnerPadding ?? 0) > 0;
+    const innerContent = innerPad
+      ? <div style={{ padding: frameInnerPadding }}>{renderImageEl(0)}</div>
+      : renderImageEl(0);
     switch (frame) {
-      case 'browser':   return <BrowserFrame   br={borderRadius}>{renderImageEl(0)}</BrowserFrame>;
-      case 'macos':     return <MacFrame        br={borderRadius}>{renderImageEl(0)}</MacFrame>;
-      case 'phone':     return <PhoneFrame      br={borderRadius}>{renderImageEl(0)}</PhoneFrame>;
-      case 'ipad':      return <IPadFrame       br={borderRadius}>{renderImageEl(0)}</IPadFrame>;
-      case 'imac':      return <IMacFrame       br={borderRadius}>{renderImageEl(0)}</IMacFrame>;
-      case 'terminal':  return <TerminalFrame   br={borderRadius}>{renderImageEl(0)}</TerminalFrame>;
-      case 'arc':       return <ArcFrame        br={borderRadius}>{renderImageEl(0)}</ArcFrame>;
-      case 'samsung':   return <SamsungFrame    br={borderRadius}>{renderImageEl(0)}</SamsungFrame>;
-      case 'macbook':   return <MacBookFrame    br={borderRadius}>{renderImageEl(0)}</MacBookFrame>;
-      case 'polaroid':  return <PolaroidFrame   br={borderRadius}>{renderImageEl(0)}</PolaroidFrame>;
-      case 'newspaper': return <NewspaperFrame  br={borderRadius}>{renderImageEl(0)}</NewspaperFrame>;
-      case 'smarttv':   return <SmartTVFrame    br={borderRadius}>{renderImageEl(0)}</SmartTVFrame>;
-      case 'kindle':    return <KindleFrame     br={borderRadius}>{renderImageEl(0)}</KindleFrame>;
-      case 'windows':   return <WindowsFrame    br={borderRadius}>{renderImageEl(0)}</WindowsFrame>;
-      case 'notion':    return <NotionFrame     br={borderRadius}>{renderImageEl(0)}</NotionFrame>;
-      case 'retrotv':   return <RetroTVFrame    br={borderRadius}>{renderImageEl(0)}</RetroTVFrame>;
-      case 'figma':     return <FigmaFrame      br={borderRadius}>{renderImageEl(0)}</FigmaFrame>;
-      case 'iphone15':  return <IPhone15Frame   br={borderRadius}>{renderImageEl(0)}</IPhone15Frame>;
-      case 'android':   return <AndroidFrame    br={borderRadius}>{renderImageEl(0)}</AndroidFrame>;
-      case 'vision':    return <VisionProFrame  br={borderRadius}>{renderImageEl(0)}</VisionProFrame>;
-      case 'poster':    return <PosterFrame     br={borderRadius}>{renderImageEl(0)}</PosterFrame>;
+      case 'browser':   return <BrowserFrame   br={borderRadius}>{innerContent}</BrowserFrame>;
+      case 'macos':     return <MacFrame        br={borderRadius}>{innerContent}</MacFrame>;
+      case 'phone':     return <PhoneFrame      br={borderRadius}>{innerContent}</PhoneFrame>;
+      case 'ipad':      return <IPadFrame       br={borderRadius}>{innerContent}</IPadFrame>;
+      case 'imac':      return <IMacFrame       br={borderRadius}>{innerContent}</IMacFrame>;
+      case 'terminal':  return <TerminalFrame   br={borderRadius}>{innerContent}</TerminalFrame>;
+      case 'arc':       return <ArcFrame        br={borderRadius}>{innerContent}</ArcFrame>;
+      case 'samsung':   return <SamsungFrame    br={borderRadius}>{innerContent}</SamsungFrame>;
+      case 'macbook':   return <MacBookFrame    br={borderRadius}>{innerContent}</MacBookFrame>;
+      case 'polaroid':  return <PolaroidFrame   br={borderRadius}>{innerContent}</PolaroidFrame>;
+      case 'newspaper': return <NewspaperFrame  br={borderRadius}>{innerContent}</NewspaperFrame>;
+      case 'smarttv':   return <SmartTVFrame    br={borderRadius}>{innerContent}</SmartTVFrame>;
+      case 'kindle':    return <KindleFrame     br={borderRadius}>{innerContent}</KindleFrame>;
+      case 'windows':   return <WindowsFrame    br={borderRadius}>{innerContent}</WindowsFrame>;
+      case 'notion':    return <NotionFrame     br={borderRadius}>{innerContent}</NotionFrame>;
+      case 'retrotv':   return <RetroTVFrame    br={borderRadius}>{innerContent}</RetroTVFrame>;
+      case 'figma':     return <FigmaFrame      br={borderRadius}>{innerContent}</FigmaFrame>;
+      case 'iphone15':  return <IPhone15Frame   br={borderRadius}>{innerContent}</IPhone15Frame>;
+      case 'android':   return <AndroidFrame    br={borderRadius}>{innerContent}</AndroidFrame>;
+      case 'vision':    return <VisionProFrame  br={borderRadius}>{innerContent}</VisionProFrame>;
+      case 'poster':    return <PosterFrame     br={borderRadius}>{innerContent}</PosterFrame>;
       default:          return renderImageEl(borderRadius);
     }
   };
@@ -908,10 +946,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       };
     }
 
+    const strokeVal = isTitle && (textOutline ?? 0) > 0
+      ? `${textOutline}px ${textOutlineColor ?? '#000000'}`
+      : (isTitle && (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined);
     return {
       ...base,
       color,
-      WebkitTextStroke: isTitle && (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined,
+      WebkitTextStroke: strokeVal,
       textShadow: customDropShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
     };
   };
@@ -939,7 +980,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       <div className="relative z-[2]" style={padStyle}>
         <div style={{ ...wrapperStyle, ...rotateStyle }}>
           {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
-          {subtitleText && <div style={getTextStyle(subtitleSize, subtitleColor, 400)}>{subtitleText}</div>}
+          {subtitleText && <div style={{ ...getTextStyle(subtitleSize, subtitleColor, 400), textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined }}>{subtitleText}</div>}
           {bodyText && <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
         </div>
       </div>
@@ -1350,6 +1391,56 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             mixBlendMode: 'color',
           }} />
         )}
+
+        {/* Split screen diagonal overlay (Batch 5) */}
+        {(splitScreen ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[28]" style={{ overflow: 'hidden' }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `linear-gradient(${splitScreenAngle ?? 135}deg, ${splitScreenColor1 ?? '#000000'} 50%, transparent 50%)`,
+              opacity: 0.35, mixBlendMode: 'overlay',
+            }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `linear-gradient(${splitScreenAngle ?? 135}deg, transparent 50%, ${splitScreenColor2 ?? '#ffffff'} 50%)`,
+              opacity: 0.25, mixBlendMode: 'screen',
+            }} />
+          </div>
+        )}
+
+        {/* Overlay pattern layer (Batch 5) */}
+        {(overlayPatternType ?? 'none') !== 'none' && (overlayPatternOpacity ?? 0) > 0 && (() => {
+          const col = overlayPatternColor ?? '#ffffff';
+          const op = (overlayPatternOpacity ?? 30) / 100;
+          const patternMap: Record<string, React.CSSProperties> = {
+            dots2: {
+              backgroundImage: `radial-gradient(circle, ${col} 1.5px, transparent 1.5px)`,
+              backgroundSize: '20px 20px',
+            },
+            hearts: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M10 16s-7-5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 17 7c0 4-7 9-7 9z' fill='${encodeURIComponent(col)}'/%3E%3C/svg%3E")`,
+              backgroundSize: '24px 24px',
+            },
+            stars2: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpolygon points='10,2 12.5,8 19,8 13.5,12 15.5,18 10,14 4.5,18 6.5,12 1,8 7.5,8' fill='${encodeURIComponent(col)}'/%3E%3C/svg%3E")`,
+              backgroundSize: '28px 28px',
+            },
+            confetti: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect x='3' y='3' width='6' height='3' rx='1' fill='${encodeURIComponent(col)}' opacity='0.7' transform='rotate(30 6 4.5)'/%3E%3Crect x='20' y='15' width='5' height='2.5' rx='1' fill='${encodeURIComponent(col)}' opacity='0.5' transform='rotate(-20 22 16)'/%3E%3Crect x='28' y='4' width='4' height='2' rx='1' fill='${encodeURIComponent(col)}' opacity='0.6' transform='rotate(50 30 5)'/%3E%3Crect x='10' y='28' width='7' height='3' rx='1' fill='${encodeURIComponent(col)}' opacity='0.55' transform='rotate(-10 13 29)'/%3E%3C/svg%3E")`,
+              backgroundSize: '40px 40px',
+            },
+            snow: {
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ccircle cx='5' cy='5' r='2' fill='${encodeURIComponent(col)}' opacity='0.8'/%3E%3Ccircle cx='20' cy='15' r='1.5' fill='${encodeURIComponent(col)}' opacity='0.6'/%3E%3Ccircle cx='12' cy='25' r='1' fill='${encodeURIComponent(col)}' opacity='0.5'/%3E%3Ccircle cx='27' cy='7' r='1' fill='${encodeURIComponent(col)}' opacity='0.7'/%3E%3C/svg%3E")`,
+              backgroundSize: '30px 30px',
+            },
+          };
+          const ps = patternMap[overlayPatternType ?? ''] ?? {};
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[28]" style={{
+              opacity: op, backgroundRepeat: 'repeat', mixBlendMode: 'normal', ...ps,
+            }} />
+          );
+        })()}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
         {watermark && (

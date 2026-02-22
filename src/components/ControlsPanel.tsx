@@ -12,7 +12,7 @@ import {
 import {
   EditorState, GRADIENT_PRESETS, MESH_PRESETS,
   SHADOW_COLORS, GLOW_COLORS, ASPECT_PRESETS,
-  BG_PATTERNS, TITLE_FONTS, STYLE_TEMPLATES, FILM_LOOKS,
+  BG_PATTERNS, TITLE_FONTS, STYLE_TEMPLATES, FILM_LOOKS, IMAGE_PRESETS,
 } from '../presets';
 
 interface ControlsPanelProps {
@@ -564,6 +564,21 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         </div>
         <Slider label="Image Radius" value={state.imageBorderRadius ?? 0} min={0} max={60} unit="px"
           onChange={v => onChange({ imageBorderRadius: v })} />
+        <Toggle label="Per-Corner Radius" value={state.usePerCornerRadius ?? false}
+          onChange={v => onChange({ usePerCornerRadius: v })}
+          desc="Override each corner independently" />
+        {(state.usePerCornerRadius ?? false) && (
+          <div className="grid grid-cols-2 gap-2">
+            <Slider label="↖ TL" value={state.borderRadiusTL ?? 12} min={0} max={80} unit="px"
+              onChange={v => onChange({ borderRadiusTL: v })} />
+            <Slider label="↗ TR" value={state.borderRadiusTR ?? 12} min={0} max={80} unit="px"
+              onChange={v => onChange({ borderRadiusTR: v })} />
+            <Slider label="↙ BL" value={state.borderRadiusBL ?? 12} min={0} max={80} unit="px"
+              onChange={v => onChange({ borderRadiusBL: v })} />
+            <Slider label="↘ BR" value={state.borderRadiusBR ?? 12} min={0} max={80} unit="px"
+              onChange={v => onChange({ borderRadiusBR: v })} />
+          </div>
+        )}
       </Card>
 
       <Card>
@@ -689,6 +704,37 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           )}
         </Card>
       )}
+
+      {state.frame !== 'none' && (
+        <Card>
+          <SectionLabel>Frame Inner Padding</SectionLabel>
+          <Slider label="Padding" value={state.frameInnerPadding ?? 0} min={0} max={32} unit="px"
+            onChange={v => onChange({ frameInnerPadding: v })} />
+          <p className="text-[8.5px] text-white/20">Adds space between frame chrome and image</p>
+        </Card>
+      )}
+
+      <Card>
+        <SectionLabel>Accent Color</SectionLabel>
+        <Toggle label="Use Accent Color" value={state.useAccentColor ?? false}
+          onChange={v => onChange({ useAccentColor: v })}
+          desc="Overrides shadow and glow with accent color" />
+        {(state.useAccentColor ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Color</span>
+            <input type="color" value={state.accentColor ?? '#8b5cf6'}
+              onChange={e => onChange({ accentColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444'].map(c => (
+                <button key={c} onClick={() => onChange({ accentColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c, boxShadow: `0 0 6px ${c}80` }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
 
       <Card>
         <SectionLabel>Image Blend Mode</SectionLabel>
@@ -1102,6 +1148,68 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      <Card>
+        <SectionLabel>Overlay Pattern</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { id: 'none',     l: 'None' },
+            { id: 'dots2',    l: 'Dots' },
+            { id: 'hearts',   l: 'Hearts' },
+            { id: 'stars2',   l: 'Stars' },
+            { id: 'confetti', l: 'Confetti' },
+            { id: 'snow',     l: 'Snow' },
+          ].map(p => (
+            <QuickChip key={p.id} active={(state.overlayPatternType ?? 'none') === p.id}
+              onClick={() => onChange({ overlayPatternType: p.id })}>{p.l}</QuickChip>
+          ))}
+        </div>
+        {(state.overlayPatternType ?? 'none') !== 'none' && (
+          <>
+            <Slider label="Opacity" value={state.overlayPatternOpacity ?? 30} min={5} max={100}
+              onChange={v => onChange({ overlayPatternOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.overlayPatternColor ?? '#ffffff'}
+                onChange={e => onChange({ overlayPatternColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#ffffff', '#000000', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'].map(c => (
+                  <button key={c} onClick={() => onChange({ overlayPatternColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Split Screen</SectionLabel>
+        <Toggle label="Enable" value={state.splitScreen ?? false} onChange={v => onChange({ splitScreen: v })}
+          desc="Diagonal two-tone color overlay" />
+        {(state.splitScreen ?? false) && (
+          <>
+            <div className="flex gap-2">
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color 1</span>
+                <input type="color" value={state.splitScreenColor1 ?? '#000000'}
+                  onChange={e => onChange({ splitScreenColor1: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color 2</span>
+                <input type="color" value={state.splitScreenColor2 ?? '#ffffff'}
+                  onChange={e => onChange({ splitScreenColor2: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            </div>
+            <Slider label="Angle" value={state.splitScreenAngle ?? 135} min={0} max={360} unit="°"
+              onChange={v => onChange({ splitScreenAngle: v })} />
+          </>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -1155,6 +1263,23 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   : 'bg-white/[0.03] text-white/35 ring-white/[0.06] hover:bg-white/[0.08]'
               }`}>
               {f.name}
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Photo Presets</SectionLabel>
+        <p className="text-[8.5px] text-white/20">Instagram-style filter presets</p>
+        <div className="grid grid-cols-4 gap-1.5">
+          {IMAGE_PRESETS.map(p => (
+            <button key={p.id} onClick={() => onChange({ imagePreset: p.id })}
+              className={`py-2 rounded-lg text-[9px] font-medium transition-all ring-1 ${
+                (state.imagePreset ?? 'none') === p.id
+                  ? 'bg-brand-500/20 text-brand-300 ring-brand-500/40'
+                  : 'bg-white/[0.03] text-white/35 ring-white/[0.06] hover:bg-white/[0.08]'
+              }`}>
+              {p.name}
             </button>
           ))}
         </div>
@@ -1275,6 +1400,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <Slider label="Pixelate" value={state.pixelate ?? 0} min={0} max={40}
           onChange={v => onChange({ pixelate: v })} />
         {(state.pixelate ?? 0) > 0 && <p className="text-[8.5px] text-white/20">Higher = larger pixels, more blocky look</p>}
+      </Card>
+
+      <Card>
+        <SectionLabel>Warp / Distortion</SectionLabel>
+        <Slider label="Warp" value={state.warpEffect ?? 0} min={-100} max={100}
+          onChange={v => onChange({ warpEffect: v })} />
+        <p className="text-[8.5px] text-white/20">
+          {(state.warpEffect ?? 0) > 0 ? 'Barrel distortion →' : (state.warpEffect ?? 0) < 0 ? '← Diamond / pincushion' : 'No distortion'}
+        </p>
+        {(state.warpEffect ?? 0) !== 0 && (
+          <button onClick={() => onChange({ warpEffect: 0 })}
+            className="text-[9px] text-white/25 hover:text-white/50">Reset</button>
+        )}
       </Card>
     </div>
   );
@@ -1525,6 +1663,30 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   style={{ background: `linear-gradient(135deg, ${state.titleColor}, ${state.titleGradientColor2 ?? '#ec4899'})` }} />
               </div>
             )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Text Outline</SectionLabel>
+            <Slider label="Outline Width" value={state.textOutline ?? 0} min={0} max={10} unit="px"
+              onChange={v => onChange({ textOutline: v })} />
+            {(state.textOutline ?? 0) > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color</span>
+                <input type="color" value={state.textOutlineColor ?? '#000000'}
+                  onChange={e => onChange({ textOutlineColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                <div className="flex gap-1.5 ml-auto">
+                  {['#000000', '#ffffff', '#8b5cf6', '#ec4899', '#f59e0b', '#ef4444'].map(c => (
+                    <button key={c} onClick={() => onChange({ textOutlineColor: c })}
+                      className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                      style={{ background: c }} />
+                  ))}
+                </div>
+              </div>
+            )}
+            <Toggle label="Subtitle All Caps" value={state.subtitleAllCaps ?? false}
+              onChange={v => onChange({ subtitleAllCaps: v })}
+              desc="Transforms subtitle/tagline to uppercase" />
           </Card>
 
           <Card>

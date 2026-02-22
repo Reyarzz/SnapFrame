@@ -285,6 +285,36 @@ export interface EditorState {
   // Stamp / ink effect
   stampEffect: boolean;
   stampColor: string;
+  // Batch 5
+  // Overlay pattern (2nd pattern layer with custom color)
+  overlayPatternColor: string;
+  overlayPatternOpacity: number;
+  overlayPatternType: string;   // 'none' | 'confetti' | 'snow' | 'hearts' | 'stars2' | 'dots2'
+  // Split screen diagonal overlay
+  splitScreen: boolean;
+  splitScreenColor1: string;
+  splitScreenColor2: string;
+  splitScreenAngle: number;
+  // Text outline (SVG paint-order)
+  textOutline: number;
+  textOutlineColor: string;
+  // Image filter presets (Instagram-like)
+  imagePreset: string;
+  // Frame inner padding (space between frame chrome and image)
+  frameInnerPadding: number;
+  // Global accent color applied to primary shadow & glow
+  accentColor: string;
+  useAccentColor: boolean;
+  // Warp / distortion
+  warpEffect: number;   // positive = barrel, negative = pincushion
+  // Subtitle/body text transform
+  subtitleAllCaps: boolean;
+  // Canvas border radius override per corner (top-left, top-right, bottom-right, bottom-left)
+  borderRadiusTL: number;
+  borderRadiusTR: number;
+  borderRadiusBR: number;
+  borderRadiusBL: number;
+  usePerCornerRadius: boolean;
 }
 
 export interface StyleTemplate {
@@ -727,6 +757,26 @@ export const DEFAULT_STATE: EditorState = {
   bokehColor: 'rgba(255,255,255,0.3)',
   stampEffect: false,
   stampColor: '#cc0000',
+  overlayPatternColor: 'rgba(255,255,255,0.8)',
+  overlayPatternOpacity: 40,
+  overlayPatternType: 'none',
+  splitScreen: false,
+  splitScreenColor1: 'rgba(139,92,246,0.3)',
+  splitScreenColor2: 'rgba(236,72,153,0.3)',
+  splitScreenAngle: 45,
+  textOutline: 0,
+  textOutlineColor: '#000000',
+  imagePreset: 'none',
+  frameInnerPadding: 0,
+  accentColor: '#8b5cf6',
+  useAccentColor: false,
+  warpEffect: 0,
+  subtitleAllCaps: false,
+  borderRadiusTL: 12,
+  borderRadiusTR: 12,
+  borderRadiusBR: 12,
+  borderRadiusBL: 12,
+  usePerCornerRadius: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1165,4 +1215,72 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       borderWidth: 3, borderColor: 'rgba(0,0,0,0.15)',
     },
   },
+  {
+    id: 'split-diagonal',
+    name: 'Split',
+    emoji: '⬡',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', backgroundId: 'midnight',
+      padding: 64, borderRadius: 16, shadow: 60, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      splitScreen: true, splitScreenColor1: 'rgba(139,92,246,0.25)', splitScreenColor2: 'rgba(236,72,153,0.25)', splitScreenAngle: 45,
+    },
+  },
+  {
+    id: 'accent-neon',
+    name: 'Accent',
+    emoji: '🎨',
+    overrides: {
+      background: '#0a0a12', backgroundId: 'solid-dark',
+      padding: 72, borderRadius: 16, shadow: 80, shadowColor: 'rgba(139,92,246,0.5)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      useAccentColor: true, accentColor: '#8b5cf6',
+      borderWidth: 1, borderStyle: 'gradient',
+      glowIntensity: 40, bgPattern: 'dots', bgPatternOpacity: 0.06,
+    },
+  },
+  {
+    id: 'snow-scene',
+    name: 'Snow',
+    emoji: '❄️',
+    overrides: {
+      background: 'linear-gradient(180deg, #1a2a4a 0%, #0a1628 100%)', backgroundId: 'cobalt',
+      padding: 64, borderRadius: 16, shadow: 50, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      overlayPatternType: 'snow', overlayPatternColor: 'rgba(255,255,255,0.85)', overlayPatternOpacity: 55,
+      vignette: 30, vignetteColor: '#000a1a', filmGrain: 10,
+    },
+  },
+  {
+    id: 'confetti-pop',
+    name: 'Party',
+    emoji: '🎊',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0533 0%, #0a1a2e 100%)', backgroundId: 'midnight',
+      padding: 56, borderRadius: 20, shadow: 50, shadowColor: 'rgba(0,0,0,0.5)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      overlayPatternType: 'confetti', overlayPatternOpacity: 60,
+      glowIntensity: 20, glowColor: 'rgba(255,200,50,0.5)',
+    },
+  },
+];
+
+/* ── Image filter presets ──────────────────────── */
+export const IMAGE_PRESETS: { id: string; name: string; filters: string }[] = [
+  { id: 'none',       name: 'None',       filters: '' },
+  { id: 'clarendon',  name: 'Clarendon',  filters: 'contrast(120%) saturate(125%) brightness(105%)' },
+  { id: 'juno',       name: 'Juno',       filters: 'sepia(15%) contrast(115%) brightness(108%) saturate(130%)' },
+  { id: 'lark',       name: 'Lark',       filters: 'brightness(110%) contrast(95%) saturate(110%)' },
+  { id: 'ludwig',     name: 'Ludwig',     filters: 'saturate(90%) brightness(105%) contrast(105%)' },
+  { id: 'moon',       name: 'Moon',       filters: 'grayscale(100%) brightness(110%) contrast(110%)' },
+  { id: 'reyes',      name: 'Reyes',      filters: 'sepia(25%) brightness(110%) contrast(85%) saturate(75%)' },
+  { id: 'rise',       name: 'Rise',       filters: 'brightness(105%) sepia(25%) saturate(130%) contrast(90%)' },
+  { id: 'sierra',     name: 'Sierra',     filters: 'contrast(90%) saturate(90%) brightness(105%)' },
+  { id: 'slumber',    name: 'Slumber',    filters: 'saturate(60%) brightness(95%) sepia(15%)' },
+  { id: 'valencia',   name: 'Valencia',   filters: 'contrast(110%) brightness(105%) sepia(20%) saturate(80%)' },
+  { id: 'xpro2',      name: 'X-Pro II',   filters: 'sepia(30%) contrast(120%) brightness(95%) saturate(130%)' },
+  { id: 'willow',     name: 'Willow',     filters: 'grayscale(50%) contrast(95%) brightness(90%)' },
+  { id: 'inkwell',    name: 'Inkwell',    filters: 'grayscale(100%) contrast(110%) brightness(90%)' },
+  { id: 'kelvin',     name: 'Kelvin',     filters: 'sepia(50%) saturate(150%) brightness(110%) contrast(105%)' },
+  { id: 'mayfair',    name: 'Mayfair',    filters: 'contrast(110%) saturate(110%) brightness(108%)' },
 ];
