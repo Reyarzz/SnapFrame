@@ -213,6 +213,48 @@ export interface EditorState {
   paddingRight: number;
   paddingBottom: number;
   paddingLeft: number;
+  // Custom watermark text
+  watermarkText: string;
+  watermarkOpacity: number;
+  watermarkPosition: string;
+  watermarkSize: number;
+  // Double shadow
+  doubleShadow: boolean;
+  shadow2Color: string;
+  shadow2X: number;
+  shadow2Y: number;
+  shadow2Blur: number;
+  // Image glow (filter drop-shadow on image)
+  imageGlow: number;
+  imageGlowColor: string;
+  // Pixelate / mosaic
+  pixelate: number;
+  // Background tint overlay
+  bgTint: number;
+  bgTintColor: string;
+  // Cursor overlay
+  cursorOverlay: boolean;
+  cursorX: number;
+  cursorY: number;
+  // Burn & bloom
+  burnEffect: number;
+  bloomEffect: number;
+  // Image outline ring
+  imageOutline: number;
+  imageOutlineColor: string;
+  // Spotlight position
+  spotlightX: number;
+  spotlightY: number;
+  // Custom text drop shadow
+  textDropShadow: boolean;
+  textShadowX: number;
+  textShadowY: number;
+  textShadowBlur: number;
+  textShadowColor: string;
+  // Paper texture overlay
+  paperTexture: number;
+  // Reflection gap
+  reflectionGap: number;
 }
 
 export interface StyleTemplate {
@@ -604,6 +646,36 @@ export const DEFAULT_STATE: EditorState = {
   paddingRight: 64,
   paddingBottom: 64,
   paddingLeft: 64,
+  watermarkText: '',
+  watermarkOpacity: 70,
+  watermarkPosition: 'br',
+  watermarkSize: 11,
+  doubleShadow: false,
+  shadow2Color: 'rgba(139,92,246,0.3)',
+  shadow2X: 20,
+  shadow2Y: 20,
+  shadow2Blur: 40,
+  imageGlow: 0,
+  imageGlowColor: 'rgba(255,255,255,0.8)',
+  pixelate: 0,
+  bgTint: 0,
+  bgTintColor: '#8b5cf6',
+  cursorOverlay: false,
+  cursorX: 50,
+  cursorY: 50,
+  burnEffect: 0,
+  bloomEffect: 0,
+  imageOutline: 0,
+  imageOutlineColor: '#ffffff',
+  spotlightX: 50,
+  spotlightY: 50,
+  textDropShadow: false,
+  textShadowX: 2,
+  textShadowY: 2,
+  textShadowBlur: 8,
+  textShadowColor: 'rgba(0,0,0,0.6)',
+  paperTexture: 0,
+  reflectionGap: 2,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -923,6 +995,55 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       frame: 'phone', tiltX: 0, tiltY: 8, scale: 0.85, rotation: 0,
       glowIntensity: 25, glowColor: 'rgba(0,147,233,0.6)',
       aspectRatio: '4:5',
+    },
+  },
+  {
+    id: 'miniature-look',
+    name: 'Miniature',
+    emoji: '🔭',
+    overrides: {
+      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', backgroundId: 'forest',
+      padding: 64, borderRadius: 12, shadow: 50, shadowColor: 'rgba(0,0,0,0.4)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      tiltShift: true, tiltShiftBlur: 12, tiltShiftCenter: 50, tiltShiftRange: 25,
+      filmLook: 'velvia', saturation: 120,
+    },
+  },
+  {
+    id: 'double-shadow-hero',
+    name: 'Elevated',
+    emoji: '⬆️',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', backgroundId: 'cobalt',
+      padding: 72, borderRadius: 16, shadow: 60, shadowColor: 'rgba(0,0,0,0.6)', shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      doubleShadow: true, shadow2Color: 'rgba(59,130,246,0.2)', shadow2X: 0, shadow2Y: 50, shadow2Blur: 80,
+      glowIntensity: 30, glowColor: 'rgba(59,130,246,0.6)',
+    },
+  },
+  {
+    id: 'film-noir',
+    name: 'Noir',
+    emoji: '🎞️',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 0, shadow: 0, shadowX: 0,
+      frame: 'none', tiltX: 0, tiltY: 0, scale: 1, rotation: 0,
+      filmLook: 'bw', grayscale: 100, contrast: 115, fade: 15,
+      vignette: 70, vignetteColor: '#000000', burnEffect: 60,
+      scanlines: 8, filmGrain: 35,
+    },
+  },
+  {
+    id: 'vintage-photo',
+    name: 'Vintage',
+    emoji: '📸',
+    overrides: {
+      background: '#f0ebe3', backgroundId: 'solid-white',
+      padding: 40, borderRadius: 4, shadow: 30, shadowColor: 'rgba(0,0,0,0.2)', shadowX: 4,
+      frame: 'polaroid', tiltX: 0, tiltY: 0, scale: 1, rotation: -2,
+      filmLook: 'vintage', sepia: 25, vignette: 35, filmGrain: 45,
+      paperTexture: 40,
     },
   },
 ];
