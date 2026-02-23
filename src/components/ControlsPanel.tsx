@@ -2556,6 +2556,101 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 19 FX controls */}
+      <Card>
+        <SectionLabel>Holographic Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayHolographic ?? false} onChange={v => onChange({ overlayHolographic: v })}
+          desc="Iridescent rainbow sheen overlay" />
+        {(state.overlayHolographic ?? false) && (
+          <Slider label="Opacity" value={state.overlayHolographicOpacity ?? 35} min={5} max={100} unit="%"
+            onChange={v => onChange({ overlayHolographicOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Canvas Border Glow</SectionLabel>
+        <Toggle label="Enable" value={state.canvasBorderGlow ?? false} onChange={v => onChange({ canvasBorderGlow: v })}
+          desc="Outer glow pulsing around the canvas" />
+        {(state.canvasBorderGlow ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.canvasBorderGlowColor ?? '#8b5cf6'}
+              onChange={e => onChange({ canvasBorderGlowColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Glow Orb</SectionLabel>
+        <Toggle label="Enable" value={state.bgGlowOrb ?? false} onChange={v => onChange({ bgGlowOrb: v })}
+          desc="Large radial glow orb in background" />
+        {(state.bgGlowOrb ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgGlowOrbColor ?? '#7c3aed'}
+                onChange={e => onChange({ bgGlowOrbColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="X Position" value={state.bgGlowOrbX ?? 50} min={0} max={100} unit="%"
+              onChange={v => onChange({ bgGlowOrbX: v })} />
+            <Slider label="Y Position" value={state.bgGlowOrbY ?? 50} min={0} max={100} unit="%"
+              onChange={v => onChange({ bgGlowOrbY: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Bloom Light</SectionLabel>
+        <Toggle label="Enable" value={state.imageBloomLight ?? false} onChange={v => onChange({ imageBloomLight: v })}
+          desc="Bloom light haze from top of canvas" />
+        {(state.imageBloomLight ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.imageBloomLightColor ?? '#ffffff'}
+              onChange={e => onChange({ imageBloomLightColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Card Glass Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.cardGlassOverlay ?? false} onChange={v => onChange({ cardGlassOverlay: v })}
+          desc="Frosted glass panel in front of image" />
+        {(state.cardGlassOverlay ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Tint</span>
+            <input type="color" value={(state.cardGlassOverlayBg ?? '#ffffff18').slice(0, 7)}
+              onChange={e => onChange({ cardGlassOverlayBg: e.target.value + '18' })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Diamond Pattern</SectionLabel>
+        <Toggle label="Enable" value={state.bgDiamondPattern ?? false} onChange={v => onChange({ bgDiamondPattern: v })}
+          desc="Argyle diamond tile on background" />
+        {(state.bgDiamondPattern ?? false) && (
+          <Slider label="Opacity" value={state.bgDiamondOpacity ?? 15} min={3} max={60} unit="%"
+            onChange={v => onChange({ bgDiamondOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tiled Watermark</SectionLabel>
+        <Toggle label="Enable" value={state.watermarkTiled ?? false} onChange={v => onChange({ watermarkTiled: v })}
+          desc="Repeated diagonal watermark text" />
+        {(state.watermarkTiled ?? false) && (
+          <input type="text" placeholder="Watermark text..."
+            value={state.watermarkTiledText ?? 'CONFIDENTIAL'}
+            onChange={e => onChange({ watermarkTiledText: e.target.value })}
+            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2 text-[12px] text-white/80 placeholder-white/25 outline-none focus:border-brand-500/50" />
+        )}
+      </Card>
+
       {/* Batch 18 FX controls */}
       <Card>
         <SectionLabel>Gradient Mesh</SectionLabel>
@@ -3628,6 +3723,35 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 19 text controls */}
+          <Card>
+            <SectionLabel>Title Glitch</SectionLabel>
+            <Toggle label="Enable" value={state.titleGlitch ?? false} onChange={v => onChange({ titleGlitch: v })}
+              desc="Offset color glitch layers on title" />
+            {(state.titleGlitch ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleGlitchColor ?? '#ec4899'}
+                  onChange={e => onChange({ titleGlitchColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Text Highlight Block</SectionLabel>
+            <Toggle label="Enable" value={state.textHighlightBlock ?? false} onChange={v => onChange({ textHighlightBlock: v })}
+              desc="Colored block highlight behind title" />
+            {(state.textHighlightBlock ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.textHighlightBlockColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ textHighlightBlockColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>

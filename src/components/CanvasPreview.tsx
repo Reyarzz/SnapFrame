@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 19
+    titleGlitch, titleGlitchColor,
+    bgDiamondPattern, bgDiamondOpacity,
+    overlayHolographic, overlayHolographicOpacity,
+    canvasBorderGlow, canvasBorderGlowColor,
+    textHighlightBlock, textHighlightBlockColor,
+    bgGlowOrb, bgGlowOrbColor, bgGlowOrbX, bgGlowOrbY,
+    imageBloomLight, imageBloomLightColor,
+    cardGlassOverlay, cardGlassOverlayBg,
+    watermarkTiled, watermarkTiledText,
     // Batch 18
     imageLomo, imageXProcess,
     overlayGradientMesh, overlayGradientMeshOpacity,
@@ -827,6 +837,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if ((canvasInsetShadow ?? 0) > 0) {
     const cis = canvasInsetShadow ?? 0;
     canvasStyle.boxShadow = `inset 0 0 ${cis}px rgba(0,0,0,${Math.min(0.85, cis / 100 * 0.9).toFixed(2)})`;
+  }
+  // Batch 19 — canvas border glow (outer glow appended to boxShadow)
+  if (canvasBorderGlow ?? false) {
+    const cgc = canvasBorderGlowColor ?? '#8b5cf6';
+    const glowStr = `0 0 20px ${cgc}80, 0 0 50px ${cgc}50, 0 0 80px ${cgc}30`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow
+      ? `${canvasStyle.boxShadow}, ${glowStr}`
+      : glowStr;
   }
 
   /* ── Shadow / glow compositing ── */
@@ -1322,6 +1340,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...((textOutlineStroke ?? false) ? {
         WebkitTextStroke: `1.5px ${textOutlineStrokeColor ?? '#8b5cf6'}`,
       } : {}),
+      // Batch 19 — full-width highlight block behind title
+      ...((textHighlightBlock ?? false) ? {
+        background: `${textHighlightBlockColor ?? '#8b5cf6'}30`,
+        borderLeft: `3px solid ${textHighlightBlockColor ?? '#8b5cf6'}`,
+        paddingLeft: Math.max(textBoxPadding ?? 0, 10),
+        paddingTop: 6, paddingBottom: 6,
+        borderRadius: 4,
+      } : {}),
     };
 
     return (
@@ -1338,7 +1364,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           </div>
         )}
         <div style={boxPadStyle}>
-          <div style={{ ...wrapperStyle, ...rotateStyle }}>
+          <div style={{ ...wrapperStyle, ...rotateStyle, ...((titleGlitch ?? false) ? { position: 'relative' } : {}) }}>
             {/* Quote style — large decorative marks (Batch 13) */}
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', marginBottom: 4 }}>"</div>
@@ -1360,6 +1386,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', textAlign: 'right', marginTop: 4 }}>"</div>
             )}
+            {/* Batch 19 — title glitch offset layers */}
+            {(titleGlitch ?? false) && titleText && (() => {
+              const ts = getTextStyle(titleSize, titleGlitchColor ?? '#ec4899', titleWeight === 'normal' ? 400 : 700, true);
+              return (
+                <>
+                  <div style={{ ...ts, position: 'absolute', top: 0, left: 0, right: 0, transform: 'translate(-2px, 1px)', opacity: 0.6, mixBlendMode: 'screen', pointerEvents: 'none' }}>{titleText}</div>
+                  <div style={{ ...ts, position: 'absolute', top: 0, left: 0, right: 0, transform: 'translate(2px, -1px)', opacity: 0.5, mixBlendMode: 'screen', filter: 'hue-rotate(180deg)', pointerEvents: 'none' }}>{titleText}</div>
+                </>
+              );
+            })()}
             {/* Batch 18 — typewriter cursor underline */}
             {(titleTypewriter ?? false) && titleText && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
@@ -2597,6 +2633,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 19 — large glow orb behind everything */}
+        {(bgGlowOrb ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: `radial-gradient(ellipse 70% 70% at ${bgGlowOrbX ?? 50}% ${bgGlowOrbY ?? 50}%, ${bgGlowOrbColor ?? '#7c3aed'}70 0%, ${bgGlowOrbColor ?? '#7c3aed'}20 40%, transparent 70%)`,
+          }} />
+        )}
+
+        {/* Batch 19 — diamond/argyle background pattern */}
+        {(bgDiamondPattern ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 0 L40 20 L20 40 L0 20 Z' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='0.8'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgDiamondOpacity ?? 15) / 100,
+          }} />
+        )}
+
         {/* Batch 18 — background waves SVG */}
         {(bgWaves ?? false) && (() => {
           const wc = encodeURIComponent(bgWavesColor ?? '#7c3aed');
@@ -2622,12 +2674,58 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           }} />
         )}
 
+        {/* Batch 19 — holographic iridescent overlay */}
+        {(overlayHolographic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: `conic-gradient(from 0deg at 50% 50%, rgba(255,0,128,0.18) 0deg, rgba(255,128,0,0.14) 45deg, rgba(255,255,0,0.12) 90deg, rgba(0,255,128,0.14) 135deg, rgba(0,200,255,0.16) 180deg, rgba(100,0,255,0.14) 225deg, rgba(255,0,200,0.16) 270deg, rgba(255,0,128,0.18) 360deg)`,
+            opacity: (overlayHolographicOpacity ?? 35) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 19 — image bloom light from top */}
+        {(imageBloomLight ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[7]" style={{
+            background: `radial-gradient(ellipse 80% 40% at 50% 0%, ${imageBloomLightColor ?? '#ffffff'}40 0%, transparent 65%)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 19 — card glass overlay panel */}
+        {(cardGlassOverlay ?? false) && (
+          <div className="absolute pointer-events-none z-[37]" style={{
+            left: '5%', right: '5%', bottom: '5%',
+            height: '45%',
+            background: cardGlassOverlayBg ?? '#ffffff18',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            borderRadius: 16,
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
+          }} />
+        )}
+
         {/* Batch 18 — canvas spotlight radial */}
         {(canvasSpotlight ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[6]" style={{
             background: `radial-gradient(ellipse 55% 55% at 50% 45%, ${canvasSpotlightColor ?? '#ffffff'}${Math.round((canvasSpotlightStrength ?? 50) / 100 * 80).toString(16).padStart(2,'0')} 0%, transparent 70%)`,
             mixBlendMode: 'screen',
           }} />
+        )}
+
+        {/* Batch 19 — tiled diagonal watermark text */}
+        {(watermarkTiled ?? false) && (watermarkTiledText ?? '').length > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[25] overflow-hidden" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
+            {Array.from({ length: 6 }).map((_, row) => (
+              <div key={row} style={{ display: 'flex', gap: 40, transform: `translateX(${row % 2 === 0 ? 0 : -80}px) rotate(-25deg)`, whiteSpace: 'nowrap', opacity: 0.12 }}>
+                {Array.from({ length: 5 }).map((_, col) => (
+                  <span key={col} style={{ fontSize: 13, fontWeight: 700, color: '#ffffff', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, system-ui', userSelect: 'none' }}>
+                    {watermarkTiledText}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
         )}
 
         {watermark && (

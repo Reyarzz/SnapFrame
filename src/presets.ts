@@ -645,6 +645,27 @@ export interface EditorState {
   canvasSpotlight: boolean;     // spotlight radial from center
   canvasSpotlightColor: string;
   canvasSpotlightStrength: number;
+  // Batch 19
+  titleGlitch: boolean;
+  titleGlitchColor: string;
+  bgDiamondPattern: boolean;
+  bgDiamondOpacity: number;
+  overlayHolographic: boolean;
+  overlayHolographicOpacity: number;
+  canvasBorderGlow: boolean;
+  canvasBorderGlowColor: string;
+  textHighlightBlock: boolean;
+  textHighlightBlockColor: string;
+  bgGlowOrb: boolean;
+  bgGlowOrbColor: string;
+  bgGlowOrbX: number;
+  bgGlowOrbY: number;
+  imageBloomLight: boolean;
+  imageBloomLightColor: string;
+  cardGlassOverlay: boolean;
+  cardGlassOverlayBg: string;
+  watermarkTiled: boolean;
+  watermarkTiledText: string;
 }
 
 export interface StyleTemplate {
@@ -1428,6 +1449,27 @@ export const DEFAULT_STATE: EditorState = {
   canvasSpotlight: false,
   canvasSpotlightColor: '#ffffff',
   canvasSpotlightStrength: 50,
+  // Batch 19
+  titleGlitch: false,
+  titleGlitchColor: '#ec4899',
+  bgDiamondPattern: false,
+  bgDiamondOpacity: 15,
+  overlayHolographic: false,
+  overlayHolographicOpacity: 35,
+  canvasBorderGlow: false,
+  canvasBorderGlowColor: '#8b5cf6',
+  textHighlightBlock: false,
+  textHighlightBlockColor: '#8b5cf6',
+  bgGlowOrb: false,
+  bgGlowOrbColor: '#7c3aed',
+  bgGlowOrbX: 50,
+  bgGlowOrbY: 50,
+  imageBloomLight: false,
+  imageBloomLightColor: '#ffffff',
+  cardGlassOverlay: false,
+  cardGlassOverlayBg: '#ffffff18',
+  watermarkTiled: false,
+  watermarkTiledText: 'CONFIDENTIAL',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2417,6 +2459,53 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 19 templates
+  {
+    id: 'glitch-title',
+    name: 'Glitch',
+    emoji: '⚡',
+    overrides: {
+      background: '#000000', backgroundId: 'pure-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      titleGlitch: true, titleGlitchColor: '#00ffff',
+      canvasBorderGlow: true, canvasBorderGlowColor: '#ff0080',
+      scanlines: 20, filmGrain: 15,
+    },
+  },
+  {
+    id: 'holographic',
+    name: 'Holographic',
+    emoji: '🌈',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 100%)', backgroundId: 'cosmic',
+      padding: 56, borderRadius: 24, shadow: 60,
+      overlayHolographic: true, overlayHolographicOpacity: 45,
+      titleGradient: true, frameMatte: false,
+    },
+  },
+  {
+    id: 'glow-orb',
+    name: 'Glow Orb',
+    emoji: '🔮',
+    overrides: {
+      background: '#020208', backgroundId: 'pure-black',
+      padding: 64, borderRadius: 20, shadow: 80,
+      bgGlowOrb: true, bgGlowOrbColor: '#8b5cf6', bgGlowOrbX: 50, bgGlowOrbY: 35,
+      canvasSpotlight: true, canvasSpotlightStrength: 30,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'glass-card-frosted',
+    name: 'Frosted',
+    emoji: '🧊',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a3e 0%, #0a1a3e 100%)', backgroundId: 'navy-dark',
+      padding: 52, borderRadius: 24, shadow: 60,
+      cardGlassOverlay: true, cardGlassOverlayBg: '#ffffff14',
+      overlayHolographic: true, overlayHolographicOpacity: 20,
     },
   },
   // Batch 18 templates
