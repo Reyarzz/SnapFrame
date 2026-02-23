@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 23
+    bgTrianglePattern, bgTriangleColor, bgTriangleOpacity,
+    overlayColorBurn, overlayColorBurnColor, overlayColorBurnOpacity,
+    imageAquaEffect, titleShadowDouble, titleShadowDoubleColor,
+    frameGoldLeaf, frameGoldLeafWidth,
+    bgSpiral, bgSpiralColor, bgSpiralOpacity,
+    imageWatercolor, textBoxGlass, textBoxGlassOpacity,
+    overlayFogBottom, overlayFogBottomColor, overlayFogBottomOpacity,
+    imageMirrorSplit,
+    bgColorWash, bgColorWashColor, bgColorWashOpacity,
     // Batch 22
     bgSunburst, bgSunburstColor, bgSunburstOpacity,
     imageVaporwave, overlaySnow, overlaySnowOpacity,
@@ -883,6 +893,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 23 — gold leaf inset border
+  if (frameGoldLeaf ?? false) {
+    const gw = frameGoldLeafWidth ?? 6;
+    const goldShadow = `inset 0 0 0 ${gw}px #d4af37, inset 0 0 0 ${gw + 2}px #92400e60, inset 0 0 0 ${gw - 1}px #ffd70080`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${goldShadow}` : goldShadow;
+  }
+  // Batch 23 — mirror split: horizontal flip applied to canvas (scaleX on image handled via filter)
+  if (imageMirrorSplit ?? false) {
+    const existing = canvasStyle.transform ?? '';
+    canvasStyle.transform = existing ? `${existing} scaleX(-1)` : 'scaleX(-1)';
+  }
 
   /* ── Shadow / glow compositing ── */
   const buildShadow = (includeInner = false) => {
@@ -984,6 +1005,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 23 — aqua: cool teal/underwater tone
+  if (imageAquaEffect ?? false) imageFilterParts.push('hue-rotate(175deg) saturate(130%) brightness(108%) contrast(105%)');
+  // Batch 23 — watercolor: soft washed-out painterly
+  if (imageWatercolor ?? false) imageFilterParts.push('brightness(115%) saturate(75%) contrast(82%)');
   // Batch 22 — vaporwave: pink+teal hue shift
   if (imageVaporwave ?? false) imageFilterParts.push('hue-rotate(300deg) saturate(180%) contrast(110%) brightness(105%)');
   // Batch 22 — dream glow: soft overexposed dreamy bloom
@@ -1405,6 +1430,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...((textGlowBox ?? false) ? {
         boxShadow: `0 0 20px ${textGlowBoxColor ?? '#8b5cf6'}60, 0 0 50px ${textGlowBoxColor ?? '#8b5cf6'}30`,
       } : {}),
+      // Batch 23 — frosted glass panel behind text
+      ...((textBoxGlass ?? false) ? {
+        background: `rgba(255,255,255,${((textBoxGlassOpacity ?? 50) / 100) * 0.12})`,
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        border: '1px solid rgba(255,255,255,0.18)',
+        borderRadius: 12,
+        padding: Math.max(textBoxPadding ?? 0, 12),
+      } : {}),
     };
 
     return (
@@ -1436,6 +1470,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               }
               // Batch 20 — wide kerning preset
               if (textKerningWide ?? false) ts.letterSpacing = '0.25em';
+              // Batch 23 — double layered text shadow for depth
+              if (titleShadowDouble ?? false) {
+                const sc = titleShadowDoubleColor ?? '#8b5cf6';
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}2px 2px 0px ${sc}, 5px 5px 0px ${sc}60`;
+              }
               // Batch 22 — glowing outline only (no fill)
               if (titleOutlineGlow ?? false) {
                 const ogc = titleOutlineGlowColor ?? '#00ffff';
@@ -2711,6 +2751,65 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 23 — translucent color wash over background */}
+        {(bgColorWash ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: bgColorWashColor ?? '#8b5cf6',
+            opacity: (bgColorWashOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 23 — triangle tessellation background */}
+        {(bgTrianglePattern ?? false) && (() => {
+          const tc = encodeURIComponent(bgTriangleColor ?? '#8b5cf6');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='44'%3E%3Cpolygon points='25,2 48,42 2,42' fill='none' stroke='${tc}' stroke-width='0.8' opacity='0.7'/%3E%3Cpolygon points='0,44 50,44 25,4' fill='none' stroke='${tc}' stroke-width='0.8' opacity='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: '50px 44px',
+              opacity: (bgTriangleOpacity ?? 10) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 23 — animated spiral on background (SVG path) */}
+        {(bgSpiral ?? false) && (() => {
+          const sc = encodeURIComponent(bgSpiralColor ?? '#8b5cf6');
+          const steps = 200, turns = 3;
+          const pts: string[] = [];
+          for (let i = 0; i <= steps; i++) {
+            const t = (i / steps) * turns * 2 * Math.PI;
+            const r = (i / steps) * 44;
+            pts.push(`${(50 + r * Math.cos(t)).toFixed(1)},${(50 + r * Math.sin(t)).toFixed(1)}`);
+          }
+          const d = encodeURIComponent('M' + pts.join('L'));
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='${d}' fill='none' stroke='${sc}' stroke-width='0.5'/%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
+              opacity: (bgSpiralOpacity ?? 15) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 23 — color-burn dark overlay */}
+        {(overlayColorBurn ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: overlayColorBurnColor ?? '#1a0a2e',
+            mixBlendMode: 'multiply',
+            opacity: (overlayColorBurnOpacity ?? 40) / 100,
+          }} />
+        )}
+
+        {/* Batch 23 — bottom fog bank */}
+        {(overlayFogBottom ?? false) && (
+          <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[35]" style={{
+            height: '45%',
+            background: `linear-gradient(to top, ${overlayFogBottomColor ?? '#ffffff'} 0%, ${overlayFogBottomColor ?? '#ffffff'}80 30%, transparent 80%)`,
+            opacity: (overlayFogBottomOpacity ?? 40) / 100,
+          }} />
+        )}
+
         {/* Batch 22 — radial sunburst rays on background */}
         {(bgSunburst ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{

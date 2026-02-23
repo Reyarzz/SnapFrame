@@ -729,6 +729,31 @@ export interface EditorState {
   bgLinenTexture: boolean;          // subtle linen cloth texture on background
   bgLinenTextureOpacity: number;
   imageDreamGlow: boolean;          // soft dreamy overexposed bloom on image
+  // Batch 23
+  bgTrianglePattern: boolean;       // triangular tessellation on background
+  bgTriangleColor: string;
+  bgTriangleOpacity: number;
+  overlayColorBurn: boolean;        // dark color-burn blend over canvas
+  overlayColorBurnColor: string;
+  overlayColorBurnOpacity: number;
+  imageAquaEffect: boolean;         // cool aqua/underwater blue-green tone
+  titleShadowDouble: boolean;       // double layered text shadow for depth
+  titleShadowDoubleColor: string;
+  frameGoldLeaf: boolean;           // gold/metallic border frame
+  frameGoldLeafWidth: number;
+  bgSpiral: boolean;                // spiral/swirl pattern on background
+  bgSpiralColor: string;
+  bgSpiralOpacity: number;
+  imageWatercolor: boolean;         // watercolor wash effect on image
+  textBoxGlass: boolean;            // frosted glass panel behind text
+  textBoxGlassOpacity: number;
+  overlayFogBottom: boolean;        // dense fog bank at bottom of canvas
+  overlayFogBottomColor: string;
+  overlayFogBottomOpacity: number;
+  imageMirrorSplit: boolean;        // mirror/kaleidoscope split on image
+  bgColorWash: boolean;             // solid translucent color wash over BG
+  bgColorWashColor: string;
+  bgColorWashOpacity: number;
 }
 
 export interface StyleTemplate {
@@ -1596,6 +1621,31 @@ export const DEFAULT_STATE: EditorState = {
   bgLinenTexture: false,
   bgLinenTextureOpacity: 12,
   imageDreamGlow: false,
+  // Batch 23
+  bgTrianglePattern: false,
+  bgTriangleColor: '#8b5cf6',
+  bgTriangleOpacity: 10,
+  overlayColorBurn: false,
+  overlayColorBurnColor: '#1a0a2e',
+  overlayColorBurnOpacity: 40,
+  imageAquaEffect: false,
+  titleShadowDouble: false,
+  titleShadowDoubleColor: '#8b5cf6',
+  frameGoldLeaf: false,
+  frameGoldLeafWidth: 6,
+  bgSpiral: false,
+  bgSpiralColor: '#8b5cf6',
+  bgSpiralOpacity: 15,
+  imageWatercolor: false,
+  textBoxGlass: false,
+  textBoxGlassOpacity: 50,
+  overlayFogBottom: false,
+  overlayFogBottomColor: '#ffffff',
+  overlayFogBottomOpacity: 40,
+  imageMirrorSplit: false,
+  bgColorWash: false,
+  bgColorWashColor: '#8b5cf6',
+  bgColorWashOpacity: 20,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2585,6 +2635,56 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 23 templates
+  {
+    id: 'gold-leaf',
+    name: 'Gold Leaf',
+    emoji: '🏆',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0f00 0%, #3d2200 100%)', backgroundId: 'mocha',
+      padding: 52, borderRadius: 8, shadow: 70,
+      frameGoldLeaf: true, frameGoldLeafWidth: 8,
+      bgColorWash: true, bgColorWashColor: '#92400e', bgColorWashOpacity: 15,
+      titleColor: '#fbbf24', titleFont: 'Georgia',
+    },
+  },
+  {
+    id: 'watercolor-dream',
+    name: 'Watercolor',
+    emoji: '🎨',
+    overrides: {
+      background: 'linear-gradient(135deg, #ede9fe 0%, #fce7f3 100%)', backgroundId: 'lavender',
+      padding: 56, borderRadius: 20, shadow: 40,
+      imageWatercolor: true,
+      overlayFogBottom: true, overlayFogBottomColor: '#ede9fe', overlayFogBottomOpacity: 35,
+      textBoxGlass: true, textBoxGlassOpacity: 40,
+    },
+  },
+  {
+    id: 'triangle-geo',
+    name: 'Geometric',
+    emoji: '🔺',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', backgroundId: 'cobalt',
+      padding: 52, borderRadius: 0, shadow: 60,
+      bgTrianglePattern: true, bgTriangleColor: '#a78bfa', bgTriangleOpacity: 15,
+      frameDiamondCut: true,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'aqua-depths',
+    name: 'Aqua',
+    emoji: '🌊',
+    overrides: {
+      background: 'linear-gradient(180deg, #001a3a 0%, #003366 100%)', backgroundId: 'cobalt',
+      padding: 56, borderRadius: 20, shadow: 70,
+      imageAquaEffect: true,
+      overlayFogBottom: true, overlayFogBottomColor: '#0ea5e9', overlayFogBottomOpacity: 25,
+      bgWaves: true, bgWavesColor: '#38bdf8', bgWavesOpacity: 20,
+      titleGradient: true,
     },
   },
   // Batch 22 templates
