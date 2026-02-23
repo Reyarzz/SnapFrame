@@ -70,21 +70,21 @@ const Slider: React.FC<{
   }, [min, max, onChange, value]);
 
   return (
-    <div className="space-y-[5px]">
+    <div className="space-y-[7px]">
       <div className="flex items-center justify-between">
-        <span className="text-[10.5px] text-white/50 tracking-tight">{label}</span>
-        <div className="flex items-center gap-1">
+        <span className="text-[12px] text-white/55 tracking-tight">{label}</span>
+        <div className="flex items-center gap-1.5">
           <input
             type="number" min={min} max={max} step={step}
             value={raw}
             onChange={e => setRaw(e.target.value)}
             onBlur={e => commit(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') commit((e.target as HTMLInputElement).value); }}
-            className="no-spinner w-12 text-right text-[10.5px] text-white/80 font-mono tabular-nums
-              bg-white/[0.08] px-2 py-[3px] rounded-md outline-none
+            className="no-spinner w-14 text-right text-[11.5px] text-white/80 font-mono tabular-nums
+              bg-white/[0.08] px-2 py-1 rounded-md outline-none
               focus:ring-1 focus:ring-brand-500/60 transition-all"
           />
-          {unit && <span className="text-[9.5px] text-white/25 w-3.5 flex-shrink-0 select-none">{unit}</span>}
+          {unit && <span className="text-[10px] text-white/25 w-4 flex-shrink-0 select-none">{unit}</span>}
         </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
@@ -97,32 +97,32 @@ const Slider: React.FC<{
 };
 
 const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void; desc?: string }> = ({ label, value, onChange, desc }) => (
-  <div className="flex items-center justify-between gap-3 py-[3px]">
+  <div className="flex items-center justify-between gap-3 py-1">
     <div className="min-w-0">
-      <span className="text-[11px] text-white/55 leading-none">{label}</span>
-      {desc && <p className="text-[9px] text-white/25 leading-snug mt-[3px]">{desc}</p>}
+      <span className="text-[12.5px] text-white/65 leading-none">{label}</span>
+      {desc && <p className="text-[10.5px] text-white/30 leading-snug mt-1">{desc}</p>}
     </div>
     <button onClick={() => onChange(!value)} role="switch" aria-checked={value}
-      className={`relative w-[38px] h-[21px] rounded-full transition-all duration-200 flex-shrink-0
+      className={`relative w-[42px] h-[24px] rounded-full transition-all duration-200 flex-shrink-0
         ${value
           ? 'bg-gradient-to-r from-brand-600 to-brand-400 shadow-sm shadow-brand-600/40'
           : 'bg-white/[0.10]'
         }`}>
-      <div className={`absolute top-[3px] w-[15px] h-[15px] rounded-full shadow-md transition-all duration-200
-        ${value ? 'left-[20px] bg-white' : 'left-[3px] bg-white/70'}`} />
+      <div className={`absolute top-[4px] w-[16px] h-[16px] rounded-full shadow-md transition-all duration-200
+        ${value ? 'left-[22px] bg-white' : 'left-[3px] bg-white/70'}`} />
     </button>
   </div>
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
-  <div className="flex items-center justify-between gap-2 pb-1">
-    <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/30 select-none">{children}</p>
-    {action ?? <div className="flex-1 h-px bg-white/[0.05] ml-1" />}
+  <div className="flex items-center justify-between gap-2 pb-1.5">
+    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/35 select-none">{children}</p>
+    {action ?? <div className="flex-1 h-px bg-white/[0.06] ml-1.5" />}
   </div>
 );
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
-  <div className={`rounded-[14px] p-4 space-y-3.5 transition-colors duration-150 ${
+  <div className={`rounded-2xl p-5 space-y-4 transition-colors duration-150 ${
     highlight
       ? 'bg-brand-600/[0.10] ring-1 ring-brand-500/30'
       : 'sf-card hover:bg-[#151528]'
@@ -155,7 +155,7 @@ const ColorDots: React.FC<{
 
 const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
   <button onClick={onClick}
-    className={`px-2.5 py-[7px] rounded-lg text-[10px] font-semibold transition-all duration-100 leading-none ${
+    className={`px-3 py-2 rounded-lg text-[11px] font-semibold transition-all duration-100 leading-none ${
       active
         ? 'bg-brand-600/25 text-brand-300 ring-1 ring-brand-500/50'
         : 'bg-white/[0.04] text-white/35 ring-1 ring-white/[0.06] hover:bg-white/[0.08] hover:text-white/60'
@@ -4384,11 +4384,11 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   const fmt = state.exportFormat ?? 'png';
 
   return (
-    <div className="w-full lg:w-[22rem] xl:w-[23rem] shrink-0 flex flex-col sf-panel
+    <div className="w-full lg:w-[24rem] xl:w-[26rem] shrink-0 flex flex-col sf-panel
       lg:border-l border-white/[0.06] lg:h-[calc(100vh-4.25rem)] lg:overflow-hidden">
 
       {/* ── Header ── */}
-      <div className="shrink-0 px-4 pt-4 pb-3 border-b border-white/[0.05]">
+      <div className="shrink-0 px-5 pt-5 pb-4 border-b border-white/[0.05]">
         <div className="flex items-center gap-3">
           {/* Logomark */}
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-600 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-600/30 flex-shrink-0">
@@ -4400,9 +4400,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               <path d="M9 25h14" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
             </svg>
           </div>
-          <div className="flex flex-col gap-0">
-            <span className="font-black text-[13.5px] text-white tracking-[-0.02em] leading-none">SnapFrame</span>
-            <span className="text-[8.5px] text-white/25 tracking-[0.08em] uppercase leading-tight">Studio</span>
+          <div className="flex flex-col gap-0.5">
+            <span className="font-black text-[15px] text-white tracking-[-0.02em] leading-none">SnapFrame</span>
+            <span className="text-[9px] text-white/25 tracking-[0.1em] uppercase leading-tight">Studio</span>
           </div>
           {state.isPro && (
             <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-[8.5px] font-bold ring-1 ring-amber-500/25">
@@ -4425,18 +4425,18 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="shrink-0 flex bg-[#080810] border-b border-white/[0.05] overflow-x-auto no-scrollbar px-2 pt-2 gap-0.5">
+      <div className="shrink-0 flex bg-[#060609] border-b border-white/[0.06] overflow-x-auto no-scrollbar px-2 pt-2 gap-0.5">
         {TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button key={id} onClick={() => setActiveTab(id)}
-              className={`relative flex-1 min-w-[2.8rem] flex flex-col items-center gap-1 pb-2.5 pt-2 transition-colors duration-150 rounded-t-lg ${
+              className={`relative flex-1 min-w-[3.2rem] flex flex-col items-center gap-1.5 pb-3 pt-2.5 transition-colors duration-150 rounded-t-lg ${
                 isActive ? 'text-white' : 'text-white/25 hover:text-white/50'
               }`}>
-              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-brand-400' : ''}`} />
-              <span className={`text-[7.5px] font-bold uppercase tracking-wider ${isActive ? 'text-white/80' : ''}`}>{label}</span>
+              <Icon className={`w-[15px] h-[15px] ${isActive ? 'text-brand-400' : ''}`} />
+              <span className={`text-[8px] font-bold uppercase tracking-wider ${isActive ? 'text-white/80' : ''}`}>{label}</span>
               {isActive && (
-                <div className="absolute bottom-0 left-1 right-1 h-[2.5px] rounded-t-full bg-gradient-to-r from-brand-500 to-pink-500" />
+                <div className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-t-full bg-gradient-to-r from-brand-500 to-pink-500" />
               )}
             </button>
           );
@@ -4444,13 +4444,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Scrollable content ── */}
-      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-3 py-3.5 space-y-2.5">
+      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-4 py-4 space-y-3">
         {renderTabContent()}
       </div>
 
       {/* ── Bottom action bar ── */}
       {activeTab !== 'export' && (
-        <div className="shrink-0 border-t border-white/[0.06] px-3 pt-3 pb-3.5 space-y-2 sf-panel">
+        <div className="shrink-0 border-t border-white/[0.06] px-4 pt-4 pb-4 space-y-2.5 sf-panel">
           {/* Primary export row */}
           <button onClick={() => onExport(fmt)} disabled={isExporting}
             className="w-full py-3 rounded-xl font-bold text-white text-[13px]
