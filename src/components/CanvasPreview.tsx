@@ -693,6 +693,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayLinear, overlayLinearColor1, overlayLinearColor2, overlayLinearOpacity,
     quoteStyle, quoteMarkColor,
     colorDuotoneMap, colorDuotoneMapColor1, colorDuotoneMapColor2,
+    // Batch 16
+    overlayHaze, overlayHazeColor, overlayHazeOpacity,
+    overlayBokeh, overlayBokehColor, overlayBokehOpacity,
+    imageEdgeGlow, imageEdgeGlowColor, imageEdgeGlowBlur,
+    textUpperBand, textUpperBandBg, textUpperBandColor, textUpperBandText,
+    overlayPrismatic, overlayPrismaticOpacity,
+    bgLayeredCards, bgLayeredCardsColor, bgLayeredCardsCount,
+    titleDropCap,
+    logoText, logoTextSize, logoTextColor,
     // Batch 15
     overlayRainbow, overlayRainbowOpacity,
     textNeonPulse, textNeonPulseColor, textNeonPulseIntensity,
@@ -896,6 +905,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   // Batch 14 — hue shift + drop shadow
   if ((imageHueShift ?? 0) !== 0) imageFilterParts.push(`hue-rotate(${imageHueShift}deg)`);
   if (imageShadow ?? false) imageFilterParts.push(`drop-shadow(0 8px ${imageShadowBlur ?? 20}px ${imageShadowColor ?? '#000000'})`);
+  // Batch 16 — edge glow halo
+  if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -1269,7 +1280,20 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', marginBottom: 4 }}>"</div>
             )}
-            {titleText && <div style={{ ...getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true), ...((titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {}) }}>{titleText}</div>}
+            {titleText && (() => {
+              const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              if (titleDropCap ?? false) {
+                const [first, ...rest] = titleText;
+                return (
+                  <div style={{ ...ts, ...skewStyle }}>
+                    <span style={{ float: 'left', fontSize: titleSize * 2.2, lineHeight: 0.75, marginRight: 4, fontWeight: 900, paddingTop: 4 }}>{first}</span>
+                    {rest.join('')}
+                  </div>
+                );
+              }
+              return <div style={{ ...ts, ...skewStyle }}>{titleText}</div>;
+            })()}
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', textAlign: 'right', marginTop: 4 }}>"</div>
             )}
@@ -1348,6 +1372,25 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         </svg>
       )}
 
+      {/* Layered cards behind canvas (Batch 16) */}
+      {(bgLayeredCards ?? false) && (() => {
+        const count = Math.min(bgLayeredCardsCount ?? 3, 4);
+        const col = bgLayeredCardsColor ?? '#1a1a2e';
+        return (
+          <div style={{ position: 'absolute', width: canvasStyle.width, height: canvasStyle.height, pointerEvents: 'none' }}>
+            {Array.from({ length: count }).map((_, i) => (
+              <div key={i} style={{
+                position: 'absolute', inset: 0,
+                background: col,
+                borderRadius: canvasBR,
+                transform: `translate(${(i + 1) * 6}px, ${(i + 1) * 6}px) scale(${1 - (i + 1) * 0.02})`,
+                opacity: 0.45 - i * 0.1,
+              }} />
+            ))}
+          </div>
+        );
+      })()}
+
       {/* Card stack behind canvas (Batch 9) */}
       {(cardStack ?? false) && (() => {
         const off = cardStackOffset ?? 8;
@@ -1386,6 +1429,55 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.07) 70%, transparent 100%)',
             mixBlendMode: 'overlay',
           }} />
+        )}
+
+        {/* Haze overlay (Batch 16) */}
+        {(overlayHaze ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: `radial-gradient(ellipse 100% 80% at 50% 100%, ${overlayHazeColor ?? '#c8d8ff'} 0%, transparent 70%)`,
+            opacity: (overlayHazeOpacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Bokeh overlay (Batch 16) */}
+        {(overlayBokeh ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[7]" style={{
+            backgroundImage: [
+              `radial-gradient(circle 40px at 15% 20%, ${overlayBokehColor ?? '#ffffff'}40 0%, transparent 70%)`,
+              `radial-gradient(circle 25px at 75% 15%, ${overlayBokehColor ?? '#ffffff'}30 0%, transparent 70%)`,
+              `radial-gradient(circle 55px at 85% 55%, ${overlayBokehColor ?? '#ffffff'}20 0%, transparent 70%)`,
+              `radial-gradient(circle 35px at 25% 75%, ${overlayBokehColor ?? '#ffffff'}35 0%, transparent 70%)`,
+              `radial-gradient(circle 20px at 60% 85%, ${overlayBokehColor ?? '#ffffff'}25 0%, transparent 70%)`,
+              `radial-gradient(circle 45px at 40% 40%, ${overlayBokehColor ?? '#ffffff'}15 0%, transparent 70%)`,
+            ].join(', '),
+            opacity: (overlayBokehOpacity ?? 20) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Prismatic overlay (Batch 16) */}
+        {(overlayPrismatic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[8]" style={{
+            background: 'linear-gradient(135deg, rgba(255,0,128,0.15) 0%, rgba(255,128,0,0.1) 20%, rgba(255,255,0,0.08) 35%, rgba(0,255,128,0.1) 50%, rgba(0,128,255,0.12) 65%, rgba(128,0,255,0.15) 80%, rgba(255,0,255,0.1) 100%)',
+            opacity: (overlayPrismaticOpacity ?? 25) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Upper band (Batch 16) */}
+        {(textUpperBand ?? false) && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 41, pointerEvents: 'none',
+            background: textUpperBandBg ?? '#8b5cf6',
+            color: textUpperBandColor ?? '#ffffff',
+            fontSize: 10, fontWeight: 800, letterSpacing: '0.1em',
+            textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+            padding: '6px 16px',
+            textAlign: 'center',
+          }}>
+            {(textUpperBandText ?? '').length > 0 ? textUpperBandText : '★  ANNOUNCEMENT  ★'}
+          </div>
         )}
 
         {/* Aurora overlay (Batch 15) */}
@@ -1635,6 +1727,21 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {logoImage && (logoOpacity ?? 100) > 0 && (
           <div style={{ position: 'absolute', zIndex: 26, opacity: (logoOpacity ?? 100) / 100, ...getLogoPositionStyle(logoPosition ?? 'br', logoPadding ?? 16) }}>
             <img src={logoImage} alt="Logo" draggable={false} style={{ width: logoSize ?? 60, height: logoSize ?? 60, objectFit: 'contain', display: 'block', transform: (logoRotation ?? 0) !== 0 ? `rotate(${logoRotation}deg)` : undefined }} />
+          </div>
+        )}
+
+        {/* Text-only logo (Batch 16) */}
+        {(logoText ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', zIndex: 26,
+            ...getLogoPositionStyle(logoPosition ?? 'br', logoPadding ?? 16),
+            fontSize: logoTextSize ?? 13, fontWeight: 800,
+            color: logoTextColor ?? '#ffffff',
+            fontFamily: titleFont ?? 'Inter, system-ui',
+            letterSpacing: '0.05em', opacity: (logoOpacity ?? 100) / 100,
+            textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+          }}>
+            {logoText}
           </div>
         )}
 

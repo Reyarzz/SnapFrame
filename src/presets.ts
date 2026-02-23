@@ -578,6 +578,29 @@ export interface EditorState {
   canvasGrainOpacity: number;
   titleBoxShadow: boolean;      // box shadow around title text wrapper
   titleBoxShadowColor: string;
+  // Batch 16
+  overlayHaze: boolean;         // soft haze/fog layer over canvas
+  overlayHazeColor: string;
+  overlayHazeOpacity: number;
+  overlayBokeh: boolean;        // soft blurred bokeh circles overlay
+  overlayBokehColor: string;
+  overlayBokehOpacity: number;
+  imageEdgeGlow: boolean;       // glowing halo around image edges
+  imageEdgeGlowColor: string;
+  imageEdgeGlowBlur: number;
+  textUpperBand: boolean;       // colored label band at top of canvas
+  textUpperBandBg: string;
+  textUpperBandColor: string;
+  textUpperBandText: string;
+  overlayPrismatic: boolean;    // prismatic/iridescent light overlay
+  overlayPrismaticOpacity: number;
+  bgLayeredCards: boolean;      // stacked card layers behind main image
+  bgLayeredCardsColor: string;
+  bgLayeredCardsCount: number;
+  titleDropCap: boolean;        // enlarged first letter of title
+  logoText: string;             // text-only logo (no image needed)
+  logoTextSize: number;
+  logoTextColor: string;
 }
 
 export interface StyleTemplate {
@@ -1294,6 +1317,29 @@ export const DEFAULT_STATE: EditorState = {
   canvasGrainOpacity: 20,
   titleBoxShadow: false,
   titleBoxShadowColor: '#8b5cf6',
+  // Batch 16
+  overlayHaze: false,
+  overlayHazeColor: '#c8d8ff',
+  overlayHazeOpacity: 30,
+  overlayBokeh: false,
+  overlayBokehColor: '#ffffff',
+  overlayBokehOpacity: 20,
+  imageEdgeGlow: false,
+  imageEdgeGlowColor: '#8b5cf6',
+  imageEdgeGlowBlur: 24,
+  textUpperBand: false,
+  textUpperBandBg: '#8b5cf6',
+  textUpperBandColor: '#ffffff',
+  textUpperBandText: '',
+  overlayPrismatic: false,
+  overlayPrismaticOpacity: 25,
+  bgLayeredCards: false,
+  bgLayeredCardsColor: '#1a1a2e',
+  bgLayeredCardsCount: 3,
+  titleDropCap: false,
+  logoText: '',
+  logoTextSize: 13,
+  logoTextColor: '#ffffff',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2194,6 +2240,51 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 8, shadow: 70,
       imageVintageFrame: true, imageVintageFrameColor: '#c8a97e',
       imageSepia: 40, imageSaturationBoost: -20,
+    },
+  },
+  // Batch 16 templates
+  {
+    id: 'haze-dream',
+    name: 'Haze Dream',
+    emoji: '🌫',
+    overrides: {
+      background: 'linear-gradient(135deg, #e0e7ff 0%, #f0e6ff 100%)', backgroundId: 'pastel-violet',
+      padding: 52, borderRadius: 24, shadow: 40,
+      overlayHaze: true, overlayHazeColor: '#c8d8ff', overlayHazeOpacity: 45,
+      imageSepia: 10, fade: 20,
+    },
+  },
+  {
+    id: 'bokeh-night',
+    name: 'Bokeh',
+    emoji: '✦',
+    overrides: {
+      background: 'linear-gradient(135deg, #020818 0%, #0a0022 100%)', backgroundId: 'deep-dark',
+      padding: 52, borderRadius: 20, shadow: 70,
+      overlayBokeh: true, overlayBokehColor: '#8b5cf6', overlayBokehOpacity: 35,
+      titleGradient: true, glowIntensity: 15,
+    },
+  },
+  {
+    id: 'prismatic-light',
+    name: 'Prismatic',
+    emoji: '💎',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0f1a 0%, #1a0f1a 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 20, shadow: 60,
+      overlayPrismatic: true, overlayPrismaticOpacity: 40,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'band-announce',
+    name: 'Band',
+    emoji: '📢',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', backgroundId: 'navy-dark',
+      padding: 48, borderRadius: 16, shadow: 50,
+      textUpperBand: true, textUpperBandBg: '#ec4899', textUpperBandText: '🔥 NEW RELEASE',
+      accentLine: true, accentLineColor: '#ec4899', accentLinePosition: 'bottom',
     },
   },
 ];
