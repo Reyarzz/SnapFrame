@@ -107,21 +107,22 @@ const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) =
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
-  <div className="flex items-center justify-between gap-2">
-    <div className="flex items-center gap-1.5">
-      <div className="w-1 h-3 rounded-full bg-gradient-to-b from-brand-400 to-pink-400 opacity-70 flex-shrink-0" />
-      <p className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/35">{children}</p>
+  <div className="flex items-center justify-between gap-2 mb-0.5">
+    <div className="flex items-center gap-2">
+      <div className="w-[3px] h-3.5 rounded-full bg-gradient-to-b from-brand-400 via-purple-400 to-pink-400 flex-shrink-0" />
+      <p className="text-[9px] font-black uppercase tracking-[0.12em] text-white/40">{children}</p>
     </div>
     {action}
   </div>
 );
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
-  <div className={`rounded-2xl p-3.5 space-y-3 transition-all ${
+  <div className={`rounded-2xl p-3.5 space-y-3 transition-all duration-200 relative overflow-hidden ${
     highlight
-      ? 'bg-brand-500/[0.06] ring-1 ring-brand-500/25'
-      : 'bg-white/[0.035] ring-1 ring-white/[0.07] hover:ring-white/[0.1]'
+      ? 'bg-brand-500/[0.07] ring-1 ring-brand-500/30 shadow-sm shadow-brand-500/10'
+      : 'bg-white/[0.03] ring-1 ring-white/[0.06] hover:ring-white/[0.12] hover:bg-white/[0.045]'
   } ${className}`}>
+    <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent pointer-events-none" />
     {children}
   </div>
 );
@@ -2258,6 +2259,100 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           onChange={v => onChange({ bgAnimatedGradient: v })} desc="Light shimmer overlay on background" />
       </Card>
 
+      {/* Batch 15 FX controls */}
+      <Card>
+        <SectionLabel>Rainbow Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayRainbow ?? false} onChange={v => onChange({ overlayRainbow: v })}
+          desc="Full-spectrum rainbow gradient over canvas" />
+        {(state.overlayRainbow ?? false) && (
+          <Slider label="Opacity" value={state.overlayRainbowOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayRainbowOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Aurora Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayAurora ?? false} onChange={v => onChange({ overlayAurora: v })}
+          desc="Northern lights radial gradient effect" />
+        {(state.overlayAurora ?? false) && (
+          <>
+            <Slider label="Opacity" value={state.overlayAuroraOpacity ?? 40} min={10} max={100} unit="%"
+              onChange={v => onChange({ overlayAuroraOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color 1</span>
+              <input type="color" value={state.overlayAuroraColor1 ?? '#10b981'}
+                onChange={e => onChange({ overlayAuroraColor1: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <span className="text-[10px] text-white/35">Color 2</span>
+              <input type="color" value={state.overlayAuroraColor2 ?? '#8b5cf6'}
+                onChange={e => onChange({ overlayAuroraColor2: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Canvas Grain</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGrain ?? false} onChange={v => onChange({ canvasGrain: v })}
+          desc="Fine grain texture over entire canvas" />
+        {(state.canvasGrain ?? false) && (
+          <Slider label="Opacity" value={state.canvasGrainOpacity ?? 20} min={5} max={60} unit="%"
+            onChange={v => onChange({ canvasGrainOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Frame Badge</SectionLabel>
+        <input
+          type="text"
+          placeholder="Badge text (e.g. NEW, SALE)..."
+          value={state.frameBadge ?? ''}
+          onChange={e => onChange({ frameBadge: e.target.value })}
+          className="w-full bg-white/[0.06] text-white/70 text-[11px] rounded-xl px-3 py-2 outline-none border border-white/[0.08] focus:border-brand-500/50 placeholder-white/20"
+        />
+        {(state.frameBadge ?? '').length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Bg</span>
+            <input type="color" value={state.frameBadgeBg ?? '#ec4899'}
+              onChange={e => onChange({ frameBadgeBg: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <span className="text-[10px] text-white/35">Text</span>
+            <input type="color" value={state.frameBadgeColor ?? '#ffffff'}
+              onChange={e => onChange({ frameBadgeColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#ec4899','#8b5cf6','#f59e0b','#10b981','#3b82f6','#ef4444'].map(c => (
+                <button key={c} onClick={() => onChange({ frameBadgeBg: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Vintage Image Frame</SectionLabel>
+        <Toggle label="Enable" value={state.imageVintageFrame ?? false} onChange={v => onChange({ imageVintageFrame: v })}
+          desc="Decorative inset border on image" />
+        {(state.imageVintageFrame ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Frame Color</span>
+            <input type="color" value={state.imageVintageFrameColor ?? '#c8a97e'}
+              onChange={e => onChange({ imageVintageFrameColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#c8a97e','#ffffff','#d4af37','#8b7355','#a0522d','#deb887'].map(c => (
+                <button key={c} onClick={() => onChange({ imageVintageFrameColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -2487,6 +2582,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             Warm Tone
           </QuickChip>
         </div>
+      </Card>
+
+      {/* Batch 15 adjust controls */}
+      <Card>
+        <SectionLabel>Image Skew</SectionLabel>
+        <Slider label="Skew X" value={state.imageSkewX ?? 0} min={-20} max={20} unit="°"
+          onChange={v => onChange({ imageSkewX: v })} />
+        <Slider label="Skew Y" value={state.imageSkewY ?? 0} min={-20} max={20} unit="°"
+          onChange={v => onChange({ imageSkewY: v })} />
+        {((state.imageSkewX ?? 0) !== 0 || (state.imageSkewY ?? 0) !== 0) && (
+          <button onClick={() => onChange({ imageSkewX: 0, imageSkewY: 0 })}
+            className="text-[9px] text-white/25 hover:text-white/50">Reset</button>
+        )}
       </Card>
 
       {/* Batch 14 adjust controls */}
@@ -3125,6 +3233,63 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               <QuickChip active={state.subtitleUnderline ?? false}
                 onClick={() => onChange({ subtitleUnderline: !(state.subtitleUnderline ?? false) })}>Underline</QuickChip>
             </div>
+          </Card>
+
+          {/* Batch 15 text controls */}
+          <Card>
+            <SectionLabel>Neon Text Glow</SectionLabel>
+            <Toggle label="Enable" value={state.textNeonPulse ?? false} onChange={v => onChange({ textNeonPulse: v })}
+              desc="Neon glow effect on title text" />
+            {(state.textNeonPulse ?? false) && (
+              <>
+                <Slider label="Intensity" value={state.textNeonPulseIntensity ?? 60} min={10} max={120} unit="px"
+                  onChange={v => onChange({ textNeonPulseIntensity: v })} />
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/35">Glow Color</span>
+                  <input type="color" value={state.textNeonPulseColor ?? '#8b5cf6'}
+                    onChange={e => onChange({ textNeonPulseColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <div className="flex gap-1.5 ml-auto">
+                    {['#8b5cf6','#ec4899','#00ffcc','#ff6600','#00aaff','#ffff00'].map(c => (
+                      <button key={c} onClick={() => onChange({ textNeonPulseColor: c })}
+                        className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                        style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Text Background Gradient</SectionLabel>
+            <Toggle label="Enable" value={state.textBgGradient ?? false} onChange={v => onChange({ textBgGradient: v })}
+              desc="Gradient fill behind title text block" />
+            {(state.textBgGradient ?? false) && (
+              <div className="flex items-center gap-2">
+                <input type="color" value={state.textBgGradientColor1 ?? '#8b5cf6'}
+                  onChange={e => onChange({ textBgGradientColor1: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                <span className="text-[10px] text-white/25">→</span>
+                <input type="color" value={state.textBgGradientColor2 ?? '#ec4899'}
+                  onChange={e => onChange({ textBgGradientColor2: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Title Drop Glow</SectionLabel>
+            <Toggle label="Enable" value={state.titleBoxShadow ?? false} onChange={v => onChange({ titleBoxShadow: v })}
+              desc="Drop glow filter under title element" />
+            {(state.titleBoxShadow ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Glow Color</span>
+                <input type="color" value={state.titleBoxShadowColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ titleBoxShadowColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
           </Card>
 
           {/* Batch 14 text controls */}

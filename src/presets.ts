@@ -554,6 +554,30 @@ export interface EditorState {
   tiltShiftImageBlur: number;
   tiltShiftImageCenter: number; // 0-100% center of sharp band
   imagePerspective: string;     // 'flat'|'left'|'right'|'top'|'bottom' (CSS perspective)
+  // Batch 15
+  overlayRainbow: boolean;      // rainbow gradient overlay
+  overlayRainbowOpacity: number;
+  textNeonPulse: boolean;       // neon glow on title text
+  textNeonPulseColor: string;
+  textNeonPulseIntensity: number;
+  imageSkewX: number;           // -20 to 20 horizontal skew on image
+  imageSkewY: number;           // -20 to 20 vertical skew on image
+  frameBadge: string;           // text in a corner status badge
+  frameBadgeColor: string;
+  frameBadgeBg: string;
+  textBgGradient: boolean;      // gradient behind text block
+  textBgGradientColor1: string;
+  textBgGradientColor2: string;
+  overlayAurora: boolean;       // aurora borealis gradient overlay
+  overlayAuroraColor1: string;
+  overlayAuroraColor2: string;
+  overlayAuroraOpacity: number;
+  imageVintageFrame: boolean;   // decorative vintage border on image
+  imageVintageFrameColor: string;
+  canvasGrain: boolean;         // grain on entire canvas (not just image)
+  canvasGrainOpacity: number;
+  titleBoxShadow: boolean;      // box shadow around title text wrapper
+  titleBoxShadowColor: string;
 }
 
 export interface StyleTemplate {
@@ -1246,6 +1270,30 @@ export const DEFAULT_STATE: EditorState = {
   tiltShiftImageBlur: 8,
   tiltShiftImageCenter: 50,
   imagePerspective: 'flat',
+  // Batch 15
+  overlayRainbow: false,
+  overlayRainbowOpacity: 30,
+  textNeonPulse: false,
+  textNeonPulseColor: '#8b5cf6',
+  textNeonPulseIntensity: 60,
+  imageSkewX: 0,
+  imageSkewY: 0,
+  frameBadge: '',
+  frameBadgeColor: '#ffffff',
+  frameBadgeBg: '#ec4899',
+  textBgGradient: false,
+  textBgGradientColor1: '#8b5cf6',
+  textBgGradientColor2: '#ec4899',
+  overlayAurora: false,
+  overlayAuroraColor1: '#10b981',
+  overlayAuroraColor2: '#8b5cf6',
+  overlayAuroraOpacity: 40,
+  imageVintageFrame: false,
+  imageVintageFrameColor: '#c8a97e',
+  canvasGrain: false,
+  canvasGrainOpacity: 20,
+  titleBoxShadow: false,
+  titleBoxShadowColor: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2100,6 +2148,52 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       textReveal: true, textRevealColor: '#8b5cf6',
       titleGradient: true, titleSize: 52,
       glowIntensity: 20, glowColor: '#8b5cf6',
+    },
+  },
+  // Batch 15 templates
+  {
+    id: 'rainbow-pop',
+    name: 'Rainbow',
+    emoji: '🌈',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 20, shadow: 50,
+      overlayRainbow: true, overlayRainbowOpacity: 35,
+      imageGrayscale: 10,
+    },
+  },
+  {
+    id: 'neon-glow-text',
+    name: 'Neon Text',
+    emoji: '💡',
+    overrides: {
+      background: '#050510', backgroundId: 'pure-black',
+      padding: 56, borderRadius: 20, shadow: 80,
+      textNeonPulse: true, textNeonPulseColor: '#a78bfa', textNeonPulseIntensity: 80,
+      titleSize: 56, titleColor: '#ffffff',
+      canvasGrain: true, canvasGrainOpacity: 15,
+    },
+  },
+  {
+    id: 'aurora-bg',
+    name: 'Aurora',
+    emoji: '🌌',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a1a 0%, #001a0a 100%)', backgroundId: 'deep-dark',
+      padding: 52, borderRadius: 24, shadow: 60,
+      overlayAurora: true, overlayAuroraColor1: '#10b981', overlayAuroraColor2: '#8b5cf6', overlayAuroraOpacity: 50,
+      titleGradient: true, titleGradientColor2: '#10b981',
+    },
+  },
+  {
+    id: 'vintage-frame',
+    name: 'Vintage',
+    emoji: '🖼',
+    overrides: {
+      background: 'linear-gradient(135deg, #2a1a0a 0%, #3d2a0f 100%)', backgroundId: 'warm-dark',
+      padding: 48, borderRadius: 8, shadow: 70,
+      imageVintageFrame: true, imageVintageFrameColor: '#c8a97e',
+      imageSepia: 40, imageSaturationBoost: -20,
     },
   },
 ];

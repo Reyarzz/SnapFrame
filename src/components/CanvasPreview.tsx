@@ -693,6 +693,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayLinear, overlayLinearColor1, overlayLinearColor2, overlayLinearOpacity,
     quoteStyle, quoteMarkColor,
     colorDuotoneMap, colorDuotoneMapColor1, colorDuotoneMapColor2,
+    // Batch 15
+    overlayRainbow, overlayRainbowOpacity,
+    textNeonPulse, textNeonPulseColor, textNeonPulseIntensity,
+    imageSkewX, imageSkewY,
+    frameBadge, frameBadgeColor, frameBadgeBg,
+    textBgGradient, textBgGradientColor1, textBgGradientColor2,
+    overlayAurora, overlayAuroraColor1, overlayAuroraColor2, overlayAuroraOpacity,
+    imageVintageFrame, imageVintageFrameColor,
+    canvasGrain, canvasGrainOpacity,
+    titleBoxShadow, titleBoxShadowColor,
     // Batch 14
     textReveal, textRevealColor,
     backdropBlurCard, backdropBlurCardBg, backdropBlurCardBlur, backdropBlurCardOpacity,
@@ -950,6 +960,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const tiltTransform = ((imageTiltX ?? 0) !== 0 || (imageTiltY ?? 0) !== 0)
       ? `perspective(600px) rotateY(${imageTiltX ?? 0}deg) rotateX(${-(imageTiltY ?? 0)}deg)`
       : '';
+    // Batch 15 — image skew
+    const skewTransform = ((imageSkewX ?? 0) !== 0 || (imageSkewY ?? 0) !== 0)
+      ? `skew(${imageSkewX ?? 0}deg, ${imageSkewY ?? 0}deg)`
+      : '';
     // Batch 14 — imagePerspective preset
     const perspMap: Record<string, string> = {
       left:  'perspective(900px) rotateY(12deg)',
@@ -968,7 +982,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       filter: imageFilter,
       opacity: imgOpacity,
       clipPath: clipPath || undefined,
-      transform: [tiltTransform, perspTransform, imgRotation !== 0 ? `rotate(${imgRotation}deg)` : ''].filter(Boolean).join(' ') || undefined,
+      transform: [tiltTransform, perspTransform, skewTransform, imgRotation !== 0 ? `rotate(${imgRotation}deg)` : ''].filter(Boolean).join(' ') || undefined,
       maskImage: tsiMask,
       WebkitMaskImage: tsiMask,
       ...imgOutlineStyle,
@@ -1182,6 +1196,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       WebkitTextStroke: strokeVal,
       textDecoration: isTitle && (titleUnderline ?? false) ? 'underline' : undefined,
       textShadow: glitchShadow ?? customDropShadow ?? titleBlurShadow ?? neonShadow
+        // Batch 15 — neon pulse
+        ?? (isTitle && (textNeonPulse ?? false)
+          ? `0 0 ${(textNeonPulseIntensity ?? 60) * 0.3}px ${textNeonPulseColor ?? '#8b5cf6'}, 0 0 ${(textNeonPulseIntensity ?? 60) * 0.6}px ${textNeonPulseColor ?? '#8b5cf6'}, 0 0 ${textNeonPulseIntensity ?? 60}px ${textNeonPulseColor ?? '#8b5cf6'}80`
+          : undefined)
         ?? (isTitle && (textShadowPreset ?? 'none') !== 'none' ? {
             soft:  '0 2px 8px rgba(0,0,0,0.5)',
             hard:  '2px 2px 0px rgba(0,0,0,0.9)',
@@ -1189,6 +1207,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             retro: '3px 3px 0 #000, -1px -1px 0 #000',
           }[textShadowPreset ?? ''] : undefined)
         ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
+      // Batch 15 — box shadow on title
+      ...(isTitle && (titleBoxShadow ?? false) ? {
+        filter: `drop-shadow(0 4px 16px ${titleBoxShadowColor ?? '#8b5cf6'}80)`,
+      } : {}),
     };
   };
 
@@ -1206,6 +1228,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       padding: textBg === 'pill' ? '6px 20px' : '8px 14px',
       borderRadius: textBg === 'pill' ? 999 : 8,
       background: `${textBgColor ?? '#000000'}${Math.round((textBgOpacity ?? 50) / 100 * 255).toString(16).padStart(2, '0')}`,
+    } : (textBgGradient ?? false) ? {
+      // Batch 15 — gradient behind text
+      display: 'inline-block', padding: '8px 16px', borderRadius: 10,
+      background: `linear-gradient(135deg, ${textBgGradientColor1 ?? '#8b5cf6'}80, ${textBgGradientColor2 ?? '#ec4899'}80)`,
     } : {};
     const rotateStyle: React.CSSProperties = (textRotation ?? 0) !== 0
       ? { transform: `rotate(${textRotation}deg)`, display: 'inline-block' }
@@ -1358,6 +1384,33 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {(bgAnimatedGradient ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{
             background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.07) 70%, transparent 100%)',
+            mixBlendMode: 'overlay',
+          }} />
+        )}
+
+        {/* Aurora overlay (Batch 15) */}
+        {(overlayAurora ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[4]" style={{
+            background: `radial-gradient(ellipse 120% 60% at 20% 0%, ${overlayAuroraColor1 ?? '#10b981'}60 0%, transparent 60%), radial-gradient(ellipse 100% 50% at 80% 10%, ${overlayAuroraColor2 ?? '#8b5cf6'}50 0%, transparent 55%)`,
+            opacity: (overlayAuroraOpacity ?? 40) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Rainbow overlay (Batch 15) */}
+        {(overlayRainbow ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[5]" style={{
+            background: 'linear-gradient(135deg, #ff000022 0%, #ff7f0022 14%, #ffff0022 28%, #00ff0022 42%, #0000ff22 57%, #8b00ff22 71%, #ff00ff22 85%, #ff000022 100%)',
+            opacity: (overlayRainbowOpacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Canvas grain overlay (Batch 15) */}
+        {(canvasGrain ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[40]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='cg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23cg)'/%3E%3C/svg%3E")`,
+            opacity: (canvasGrainOpacity ?? 20) / 100,
             mixBlendMode: 'overlay',
           }} />
         )}
@@ -2227,6 +2280,32 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             pointerEvents: 'none', zIndex: 34,
             opacity: 0.7,
           }} />
+        )}
+
+        {/* Vintage image frame (Batch 15) — decorative border inset */}
+        {(imageVintageFrame ?? false) && (
+          <div style={{
+            position: 'absolute', inset: 8, zIndex: 26, pointerEvents: 'none',
+            border: `3px solid ${imageVintageFrameColor ?? '#c8a97e'}`,
+            boxShadow: `inset 0 0 0 1px ${imageVintageFrameColor ?? '#c8a97e'}60, 0 0 0 1px ${imageVintageFrameColor ?? '#c8a97e'}40`,
+            borderRadius: 2,
+            opacity: 0.75,
+          }} />
+        )}
+
+        {/* Frame badge (Batch 15) — status badge top-right */}
+        {(frameBadge ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', top: 12, right: 12, zIndex: 40, pointerEvents: 'none',
+            background: frameBadgeBg ?? '#ec4899',
+            color: frameBadgeColor ?? '#ffffff',
+            fontSize: 9, fontWeight: 800, letterSpacing: '0.08em',
+            textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+            padding: '3px 8px', borderRadius: 999,
+            boxShadow: `0 2px 8px ${frameBadgeBg ?? '#ec4899'}60`,
+          }}>
+            {frameBadge}
+          </div>
         )}
 
         {/* VHS overlay (Batch 14) — scanline + color bleed effect */}
