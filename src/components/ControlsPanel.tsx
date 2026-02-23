@@ -2556,6 +2556,93 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 25 FX controls */}
+      <Card>
+        <SectionLabel>Zigzag Stripes</SectionLabel>
+        <Toggle label="Enable" value={state.bgZigzagStripes ?? false} onChange={v => onChange({ bgZigzagStripes: v })}
+          desc="Zigzag chevron stripe background" />
+        {(state.bgZigzagStripes ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgZigzagStripesColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgZigzagStripesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgZigzagStripesOpacity ?? 12} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgZigzagStripesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Mandala</SectionLabel>
+        <Toggle label="Enable" value={state.bgMandala ?? false} onChange={v => onChange({ bgMandala: v })}
+          desc="Radial mandala/flower pattern" />
+        {(state.bgMandala ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgMandalaColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgMandalaColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgMandalaOpacity ?? 12} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgMandalaOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Prismatic Sheen</SectionLabel>
+        <Toggle label="Enable" value={state.bgPrismaticSheen ?? false} onChange={v => onChange({ bgPrismaticSheen: v })}
+          desc="Iridescent rainbow sheen on background" />
+        {(state.bgPrismaticSheen ?? false) && (
+          <Slider label="Opacity" value={state.bgPrismaticSheenOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ bgPrismaticSheenOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Vignette Mask</SectionLabel>
+        <Toggle label="Enable" value={state.frameVignetteMask ?? false} onChange={v => onChange({ frameVignetteMask: v })}
+          desc="Soft dark vignette at canvas edges" />
+        {(state.frameVignetteMask ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameVignetteMaskColor ?? '#000000'}
+              onChange={e => onChange({ frameVignetteMaskColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Glare / Shine</SectionLabel>
+        <Toggle label="Enable" value={state.overlayGlare ?? false} onChange={v => onChange({ overlayGlare: v })}
+          desc="Directional glare reflection band" />
+        {(state.overlayGlare ?? false) && (
+          <Slider label="Opacity" value={state.overlayGlareOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayGlareOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Confetti</SectionLabel>
+        <Toggle label="Enable" value={state.overlayConfetti ?? false} onChange={v => onChange({ overlayConfetti: v })}
+          desc="Colorful confetti dot overlay" />
+        {(state.overlayConfetti ?? false) && (
+          <Slider label="Opacity" value={state.overlayConfettiOpacity ?? 25} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayConfettiOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Outline Canvas</SectionLabel>
+        <Toggle label="Enable" value={state.canvasOutlineOnly ?? false} onChange={v => onChange({ canvasOutlineOnly: v })}
+          desc="Transparent canvas with outline border only" />
+      </Card>
+
       {/* Batch 24 FX controls */}
       <Card>
         <SectionLabel>Crosshatch</SectionLabel>
@@ -3443,6 +3530,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 25 adjust controls */}
+      <Card>
+        <SectionLabel>X-Ray</SectionLabel>
+        <Toggle label="Enable" value={state.imageXRay ?? false} onChange={v => onChange({ imageXRay: v })}
+          desc="Inverted negative X-ray effect" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Glitch Scan</SectionLabel>
+        <Toggle label="Enable" value={state.imageGlitchScan ?? false} onChange={v => onChange({ imageGlitchScan: v })}
+          desc="Glitchy scan-line color contrast" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Cross Process 2</SectionLabel>
+        <Toggle label="Enable" value={state.imageCrossProcess2 ?? false} onChange={v => onChange({ imageCrossProcess2: v })}
+          desc="Green-shadows alternate cross-process" />
+      </Card>
+
       {/* Batch 24 adjust controls */}
       <Card>
         <SectionLabel>Flat Color Pop</SectionLabel>
@@ -4255,6 +4361,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 25 text controls */}
+          <Card>
+            <SectionLabel>Wide Word Spacing</SectionLabel>
+            <Toggle label="Enable" value={state.titleWordSpacingWide ?? false} onChange={v => onChange({ titleWordSpacingWide: v })}
+              desc="Extra word spacing on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Backdrop Blur</SectionLabel>
+            <Toggle label="Enable" value={state.titleBackdropBlur ?? false} onChange={v => onChange({ titleBackdropBlur: v })}
+              desc="Blurred backdrop behind title text" />
+            {(state.titleBackdropBlur ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleBackdropBlurColor ?? '#000000'}
+                  onChange={e => onChange({ titleBackdropBlurColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>

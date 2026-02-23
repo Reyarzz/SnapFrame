@@ -733,6 +733,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 25
+    imageXRay, bgMandala, bgMandalaColor, bgMandalaOpacity,
+    overlayGlare, overlayGlareOpacity,
+    titleWordSpacingWide, frameVignetteMask, frameVignetteMaskColor,
+    bgZigzagStripes, bgZigzagStripesColor, bgZigzagStripesOpacity,
+    imageGlitchScan, overlayConfetti, overlayConfettiOpacity,
+    titleBackdropBlur, titleBackdropBlurColor,
+    bgPrismaticSheen, bgPrismaticSheenOpacity,
+    imageCrossProcess2, canvasOutlineOnly,
     // Batch 24
     overlayPixelGrid, overlayPixelGridOpacity,
     imageFlatColor, titleBounce,
@@ -903,6 +912,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 25 — canvas outline only (transparent bg)
+  if (canvasOutlineOnly ?? false) {
+    canvasStyle.background = 'transparent';
+    if (!(canvasBorderWidth ?? 0)) {
+      canvasStyle.border = '2px solid rgba(255,255,255,0.25)';
+    }
+  }
   // Batch 24 — neon tube inset glow border
   if (frameNeonTube ?? false) {
     const ntc = frameNeonTubeColor ?? '#00ffff';
@@ -1027,6 +1043,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 25 — X-ray negative invert
+  if (imageXRay ?? false) imageFilterParts.push('invert(100%) contrast(150%) grayscale(100%)');
+  // Batch 25 — glitch scan: vivid contrast shift
+  if (imageGlitchScan ?? false) imageFilterParts.push('contrast(140%) hue-rotate(15deg) saturate(160%) brightness(95%)');
+  // Batch 25 — cross process 2: green shadows variant
+  if (imageCrossProcess2 ?? false) imageFilterParts.push('hue-rotate(-20deg) saturate(200%) contrast(115%) brightness(95%)');
   // Batch 24 — flat color pop: hard graphic contrast
   if (imageFlatColor ?? false) imageFilterParts.push('contrast(200%) saturate(130%) brightness(100%)');
   // Batch 24 — pastel tone: soft washed-out gentle colors
@@ -1458,6 +1480,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...((textGlowBox ?? false) ? {
         boxShadow: `0 0 20px ${textGlowBoxColor ?? '#8b5cf6'}60, 0 0 50px ${textGlowBoxColor ?? '#8b5cf6'}30`,
       } : {}),
+      // Batch 25 — blurred backdrop behind title area
+      ...((titleBackdropBlur ?? false) ? {
+        background: `${titleBackdropBlurColor ?? '#000000'}55`,
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: 8,
+        padding: Math.max(textBoxPadding ?? 0, 10),
+      } : {}),
       // Batch 23 — frosted glass panel behind text
       ...((textBoxGlass ?? false) ? {
         background: `rgba(255,255,255,${((textBoxGlassOpacity ?? 50) / 100) * 0.12})`,
@@ -1518,6 +1548,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               // Batch 21 — flip title horizontally
               if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              // Batch 25 — wide word spacing
+              if (titleWordSpacingWide ?? false) ts.wordSpacing = '0.5em';
               // Batch 24 — bouncy wave baseline per character
               if (titleBounce ?? false) {
                 const justify = textAlignVal === 'center' ? 'center' : textAlignVal === 'right' ? 'flex-end' : 'flex-start';
@@ -2792,6 +2824,80 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 25 — zigzag stripe background */}
+        {(bgZigzagStripes ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `linear-gradient(135deg, ${bgZigzagStripesColor ?? '#8b5cf6'}60 25%, transparent 25%)`,
+              `linear-gradient(225deg, ${bgZigzagStripesColor ?? '#8b5cf6'}60 25%, transparent 25%)`,
+              `linear-gradient(315deg, ${bgZigzagStripesColor ?? '#8b5cf6'}60 25%, transparent 25%)`,
+              `linear-gradient(45deg, ${bgZigzagStripesColor ?? '#8b5cf6'}60 25%, transparent 25%)`,
+            ].join(', '),
+            backgroundSize: '30px 30px',
+            opacity: (bgZigzagStripesOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 25 — mandala radial SVG pattern */}
+        {(bgMandala ?? false) && (() => {
+          const mc = encodeURIComponent(bgMandalaColor ?? '#8b5cf6');
+          const petals = Array.from({ length: 8 }, (_, i) =>
+            `<ellipse cx="0" cy="-28" rx="8" ry="22" fill="none" stroke="${mc}" stroke-width="0.7" opacity="0.6" transform="rotate(${i * 45})"/>`
+          ).join('');
+          const svg = encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g transform='translate(50,50)'>${petals}<circle cx='0' cy='0' r='10' fill='none' stroke='${mc}' stroke-width='0.7' opacity='0.8'/><circle cx='0' cy='0' r='40' fill='none' stroke='${mc}' stroke-width='0.5' opacity='0.4'/></g></svg>`
+          );
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,${svg}")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
+              opacity: (bgMandalaOpacity ?? 12) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 25 — prismatic iridescent sheen */}
+        {(bgPrismaticSheen ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: 'linear-gradient(135deg, rgba(255,0,128,0.2) 0%, rgba(0,255,200,0.15) 25%, rgba(100,0,255,0.2) 50%, rgba(255,200,0,0.15) 75%, rgba(255,0,128,0.2) 100%)',
+            opacity: (bgPrismaticSheenOpacity ?? 20) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 25 — vignette mask on image/canvas edges */}
+        {(frameVignetteMask ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[5]" style={{
+            background: `radial-gradient(ellipse 75% 75% at 50% 50%, transparent 40%, ${frameVignetteMaskColor ?? '#000000'}dd 100%)`,
+          }} />
+        )}
+
+        {/* Batch 25 — directional glare/shine band */}
+        {(overlayGlare ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: 'linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.25) 42%, rgba(255,255,255,0.28) 46%, transparent 55%)',
+            opacity: (overlayGlareOpacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 25 — colorful confetti dots */}
+        {(overlayConfetti ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+            backgroundImage: [
+              'radial-gradient(circle, rgba(255,80,80,0.85) 1.5px, transparent 1.5px)',
+              'radial-gradient(circle, rgba(80,220,80,0.85) 1.5px, transparent 1.5px)',
+              'radial-gradient(circle, rgba(80,100,255,0.85) 1.5px, transparent 1.5px)',
+              'radial-gradient(circle, rgba(255,220,0,0.85) 1.5px, transparent 1.5px)',
+              'radial-gradient(circle, rgba(255,80,200,0.85) 1.5px, transparent 1.5px)',
+            ].join(', '),
+            backgroundSize: '22px 22px, 30px 30px, 26px 26px, 35px 35px, 18px 18px',
+            backgroundPosition: '0 0, 11px 8px, 4px 16px, 18px 3px, 8px 20px',
+            opacity: (overlayConfettiOpacity ?? 25) / 100,
+          }} />
+        )}
+
         {/* Batch 24 — crosshatch pen-stroke background */}
         {(bgCrossHatch ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{

@@ -778,6 +778,28 @@ export interface EditorState {
   bgSpiralConic: boolean;           // tight conic-gradient spiral look
   bgSpiralConicColor: string;
   bgSpiralConicOpacity: number;
+  // Batch 25
+  imageXRay: boolean;               // X-ray inverted negative effect
+  bgMandala: boolean;               // mandala/flower-of-life radial pattern
+  bgMandalaColor: string;
+  bgMandalaOpacity: number;
+  overlayGlare: boolean;            // directional glare/shine diagonal band
+  overlayGlareOpacity: number;
+  titleWordSpacingWide: boolean;    // extra word spacing on title
+  frameVignetteMask: boolean;       // soft vignette mask on image edges only
+  frameVignetteMaskColor: string;
+  bgZigzagStripes: boolean;         // zig-zag stripe background
+  bgZigzagStripesColor: string;
+  bgZigzagStripesOpacity: number;
+  imageGlitchScan: boolean;         // glitchy horizontal scan line offset
+  overlayConfetti: boolean;         // colorful confetti dot overlay
+  overlayConfettiOpacity: number;
+  titleBackdropBlur: boolean;       // blurred backdrop directly behind title
+  titleBackdropBlurColor: string;
+  bgPrismaticSheen: boolean;        // iridescent prismatic sheen on background
+  bgPrismaticSheenOpacity: number;
+  imageCrossProcess2: boolean;      // alternate cross-process: green shadows
+  canvasOutlineOnly: boolean;       // show canvas as outline box, no fill bg
 }
 
 export interface StyleTemplate {
@@ -1694,6 +1716,28 @@ export const DEFAULT_STATE: EditorState = {
   bgSpiralConic: false,
   bgSpiralConicColor: '#8b5cf6',
   bgSpiralConicOpacity: 15,
+  // Batch 25
+  imageXRay: false,
+  bgMandala: false,
+  bgMandalaColor: '#8b5cf6',
+  bgMandalaOpacity: 12,
+  overlayGlare: false,
+  overlayGlareOpacity: 30,
+  titleWordSpacingWide: false,
+  frameVignetteMask: false,
+  frameVignetteMaskColor: '#000000',
+  bgZigzagStripes: false,
+  bgZigzagStripesColor: '#8b5cf6',
+  bgZigzagStripesOpacity: 12,
+  imageGlitchScan: false,
+  overlayConfetti: false,
+  overlayConfettiOpacity: 25,
+  titleBackdropBlur: false,
+  titleBackdropBlurColor: '#000000',
+  bgPrismaticSheen: false,
+  bgPrismaticSheenOpacity: 20,
+  imageCrossProcess2: false,
+  canvasOutlineOnly: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2683,6 +2727,56 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 25 templates
+  {
+    id: 'xray-vision',
+    name: 'X-Ray',
+    emoji: '🩻',
+    overrides: {
+      background: '#020210', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 8, shadow: 70,
+      imageXRay: true,
+      bgZigzagStripes: true, bgZigzagStripesColor: '#00ffff', bgZigzagStripesOpacity: 8,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#00ffff',
+      titleColor: '#00ffff', titleFont: 'monospace',
+    },
+  },
+  {
+    id: 'mandala-zen',
+    name: 'Mandala',
+    emoji: '🌸',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #24243e 100%)', backgroundId: 'cosmic',
+      padding: 60, borderRadius: 50, shadow: 50,
+      bgMandala: true, bgMandalaColor: '#a78bfa', bgMandalaOpacity: 18,
+      bgPrismaticSheen: true, bgPrismaticSheenOpacity: 25,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'confetti-pop',
+    name: 'Confetti',
+    emoji: '🎊',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a2e 0%, #2e1a0a 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 50,
+      overlayConfetti: true, overlayConfettiOpacity: 30,
+      overlayGlare: true, overlayGlareOpacity: 20,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'outline-minimal',
+    name: 'Outline',
+    emoji: '⬜',
+    overrides: {
+      background: 'transparent', backgroundId: 'transparent',
+      padding: 52, borderRadius: 16, shadow: 0,
+      canvasOutlineOnly: true,
+      borderWidth: 2, borderColor: '#8b5cf6', borderStyle: 'solid',
+      titleColor: '#ffffff',
     },
   },
   // Batch 24 templates
