@@ -4,7 +4,7 @@ import {
   Smartphone, Globe, MonitorSmartphone, X, Type,
   SlidersHorizontal, Maximize, Copy, Check,
   Undo2, Redo2, Wand2, ImagePlus, Trash2,
-  FlipHorizontal2, RotateCw, Layers, Terminal,
+  RotateCw, Layers, Terminal,
   Monitor, Tablet, Share2, Shuffle,
   Camera, Newspaper, Laptop, Grid3X3,
   Tv2, BookOpen,
@@ -61,6 +61,7 @@ const Slider: React.FC<{
 }> = ({ label, value, min, max, step = 1, unit = '', onChange }) => {
   const [raw, setRaw] = useState(String(value));
   useEffect(() => { setRaw(String(value)); }, [value]);
+  const pct = ((value - min) / (max - min) * 100).toFixed(1);
 
   const commit = useCallback((s: string) => {
     const n = parseFloat(s);
@@ -69,9 +70,9 @@ const Slider: React.FC<{
   }, [min, max, onChange, value]);
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] text-white/45 flex-shrink-0">{label}</span>
+    <div className="space-y-[5px]">
+      <div className="flex items-center justify-between">
+        <span className="text-[10.5px] text-white/50 tracking-tight">{label}</span>
         <div className="flex items-center gap-1">
           <input
             type="number" min={min} max={max} step={step}
@@ -79,58 +80,61 @@ const Slider: React.FC<{
             onChange={e => setRaw(e.target.value)}
             onBlur={e => commit(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') commit((e.target as HTMLInputElement).value); }}
-            className="no-spinner w-[3.25rem] text-right text-[11px] text-white/65 font-mono
-              bg-white/[0.07] px-2 py-[3px] rounded-lg outline-none
-              focus:ring-1 focus:ring-brand-500/50 focus:bg-white/[0.1] transition-all"
+            className="no-spinner w-12 text-right text-[10.5px] text-white/80 font-mono tabular-nums
+              bg-white/[0.08] px-2 py-[3px] rounded-md outline-none
+              focus:ring-1 focus:ring-brand-500/60 transition-all"
           />
-          {unit && <span className="text-[10px] text-white/25 w-4 flex-shrink-0">{unit}</span>}
+          {unit && <span className="text-[9.5px] text-white/25 w-3.5 flex-shrink-0 select-none">{unit}</span>}
         </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => { const v = Number(e.target.value); setRaw(String(v)); onChange(v); }}
-        className="w-full" />
+        className="w-full"
+        style={{ '--track-fill': `linear-gradient(to right, #7c3aed 0%, #a78bfa ${pct}%, #1e1e38 ${pct}%)` } as React.CSSProperties}
+      />
     </div>
   );
 };
 
 const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void; desc?: string }> = ({ label, value, onChange, desc }) => (
-  <div className="flex items-center justify-between gap-2 py-0.5">
-    <div>
-      <span className="text-[11px] text-white/45">{label}</span>
-      {desc && <p className="text-[9px] text-white/25 leading-tight mt-0.5">{desc}</p>}
+  <div className="flex items-center justify-between gap-3 py-[3px]">
+    <div className="min-w-0">
+      <span className="text-[11px] text-white/55 leading-none">{label}</span>
+      {desc && <p className="text-[9px] text-white/25 leading-snug mt-[3px]">{desc}</p>}
     </div>
     <button onClick={() => onChange(!value)} role="switch" aria-checked={value}
-      className={`relative w-10 h-5 rounded-full transition-all duration-200 flex-shrink-0 ${value ? 'bg-brand-500' : 'bg-white/[0.12]'}`}>
-      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${value ? 'left-5' : 'left-0.5'}`} />
+      className={`relative w-[38px] h-[21px] rounded-full transition-all duration-200 flex-shrink-0
+        ${value
+          ? 'bg-gradient-to-r from-brand-600 to-brand-400 shadow-sm shadow-brand-600/40'
+          : 'bg-white/[0.10]'
+        }`}>
+      <div className={`absolute top-[3px] w-[15px] h-[15px] rounded-full shadow-md transition-all duration-200
+        ${value ? 'left-[20px] bg-white' : 'left-[3px] bg-white/70'}`} />
     </button>
   </div>
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
-  <div className="flex items-center justify-between gap-2 mb-0.5">
-    <div className="flex items-center gap-2">
-      <div className="w-[3px] h-3.5 rounded-full bg-gradient-to-b from-brand-400 via-purple-400 to-pink-400 flex-shrink-0" />
-      <p className="text-[9px] font-black uppercase tracking-[0.12em] text-white/40">{children}</p>
-    </div>
-    {action}
+  <div className="flex items-center justify-between gap-2 pb-1">
+    <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/30 select-none">{children}</p>
+    {action ?? <div className="flex-1 h-px bg-white/[0.05] ml-1" />}
   </div>
 );
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
-  <div className={`rounded-2xl p-3.5 space-y-3 transition-all duration-200 relative overflow-hidden ${
+  <div className={`rounded-[14px] p-4 space-y-3.5 transition-colors duration-150 ${
     highlight
-      ? 'bg-brand-500/[0.07] ring-1 ring-brand-500/30 shadow-sm shadow-brand-500/10'
-      : 'bg-white/[0.03] ring-1 ring-white/[0.06] hover:ring-white/[0.12] hover:bg-white/[0.045]'
+      ? 'bg-brand-600/[0.10] ring-1 ring-brand-500/30'
+      : 'sf-card hover:bg-[#151528]'
   } ${className}`}>
-    <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent pointer-events-none" />
     {children}
   </div>
 );
 
 const ResetBtn: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Reset' }) => (
   <button onClick={onClick}
-    className="w-full py-1.5 rounded-lg text-[10px] text-white/25 hover:text-white/55 hover:bg-white/[0.06] transition-all flex items-center justify-center gap-1">
-    <span className="text-[9px]">↺</span> {label}
+    className="w-full py-2 rounded-xl text-[9.5px] font-medium text-white/20 hover:text-white/50 hover:bg-white/[0.05] transition-all flex items-center justify-center gap-1.5 border border-transparent hover:border-white/[0.06]">
+    <span className="text-[11px] leading-none">↺</span> {label}
   </button>
 );
 
@@ -151,10 +155,10 @@ const ColorDots: React.FC<{
 
 const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
   <button onClick={onClick}
-    className={`px-2.5 py-1.5 rounded-xl text-[10px] font-semibold transition-all duration-150 ${
+    className={`px-2.5 py-[7px] rounded-lg text-[10px] font-semibold transition-all duration-100 leading-none ${
       active
-        ? 'bg-gradient-to-br from-brand-500/30 to-pink-500/20 text-brand-200 ring-1 ring-brand-400/40 shadow-sm shadow-brand-500/10'
-        : 'bg-white/[0.04] text-white/38 ring-1 ring-white/[0.07] hover:bg-white/[0.09] hover:text-white/60 hover:ring-white/15'
+        ? 'bg-brand-600/25 text-brand-300 ring-1 ring-brand-500/50'
+        : 'bg-white/[0.04] text-white/35 ring-1 ring-white/[0.06] hover:bg-white/[0.08] hover:text-white/60'
     }`}>
     {children}
   </button>
@@ -4006,110 +4010,116 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   const fmt = state.exportFormat ?? 'png';
 
   return (
-    <div className="w-full lg:w-[22rem] xl:w-96 shrink-0 flex flex-col bg-[#0b0b17]
-      lg:border-l border-white/[0.05] lg:h-[calc(100vh-4.25rem)] lg:overflow-hidden">
+    <div className="w-full lg:w-[22rem] xl:w-[23rem] shrink-0 flex flex-col sf-panel
+      lg:border-l border-white/[0.06] lg:h-[calc(100vh-4.25rem)] lg:overflow-hidden">
 
-      {/* Header */}
-      <div className="shrink-0 px-4 py-3 border-b border-white/[0.05]">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-500/20 flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
-              <rect x="6" y="8" width="20" height="14" rx="2" fill="white" opacity="0.9" />
-              <path d="M10 24h12" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      {/* ── Header ── */}
+      <div className="shrink-0 px-4 pt-4 pb-3 border-b border-white/[0.05]">
+        <div className="flex items-center gap-3">
+          {/* Logomark */}
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-600 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-600/30 flex-shrink-0">
+            <svg width="15" height="15" viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="7" width="24" height="16" rx="3" fill="white" opacity="0.92"/>
+              <circle cx="11" cy="15" r="4" fill="none" stroke="rgba(100,50,200,0.9)" strokeWidth="2"/>
+              <rect x="18" y="12" width="7" height="1.5" rx="0.75" fill="rgba(100,50,200,0.7)"/>
+              <rect x="18" y="15.5" width="5" height="1.5" rx="0.75" fill="rgba(100,50,200,0.5)"/>
+              <path d="M9 25h14" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
             </svg>
           </div>
-          <span className="font-bold text-[14px] text-white tracking-tight">SnapFrame</span>
+          <div className="flex flex-col gap-0">
+            <span className="font-black text-[13.5px] text-white tracking-[-0.02em] leading-none">SnapFrame</span>
+            <span className="text-[8.5px] text-white/25 tracking-[0.08em] uppercase leading-tight">Studio</span>
+          </div>
           {state.isPro && (
-            <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 text-[9px] font-bold ring-1 ring-amber-500/30">
+            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-[8.5px] font-bold ring-1 ring-amber-500/25">
               PRO
             </span>
           )}
           <div className="flex-1" />
-          <button onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl+Z)"
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-white/30 hover:text-white/70 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
-            <Undo2 className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={onRedo} disabled={!canRedo} title="Redo"
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-white/30 hover:text-white/70 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
-            <Redo2 className="w-3.5 h-3.5" />
-          </button>
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-0.5 bg-white/[0.04] rounded-xl p-1">
+            <button onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl+Z)"
+              className="w-6 h-6 flex items-center justify-center rounded-lg text-white/35 hover:text-white/75 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
+              <Undo2 className="w-3 h-3" />
+            </button>
+            <button onClick={onRedo} disabled={!canRedo} title="Redo"
+              className="w-6 h-6 flex items-center justify-center rounded-lg text-white/35 hover:text-white/75 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
+              <Redo2 className="w-3 h-3" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Tab bar — GUI restyle Batch 10 */}
-      <div className="shrink-0 flex bg-[#090912] border-b border-white/[0.06] overflow-x-auto no-scrollbar gap-0.5 px-1 pt-1">
+      {/* ── Tab bar ── */}
+      <div className="shrink-0 flex bg-[#080810] border-b border-white/[0.05] overflow-x-auto no-scrollbar px-2 pt-2 gap-0.5">
         {TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button key={id} onClick={() => setActiveTab(id)}
-              className={`relative flex-1 min-w-[3rem] flex flex-col items-center gap-[3px] pb-2.5 pt-2 text-[7px] font-bold uppercase tracking-wider transition-all rounded-t-lg ${
-                isActive
-                  ? 'text-white bg-gradient-to-b from-brand-500/15 to-transparent'
-                  : 'text-white/28 hover:text-white/55 hover:bg-white/[0.03]'
+              className={`relative flex-1 min-w-[2.8rem] flex flex-col items-center gap-1 pb-2.5 pt-2 transition-colors duration-150 rounded-t-lg ${
+                isActive ? 'text-white' : 'text-white/25 hover:text-white/50'
               }`}>
+              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-brand-400' : ''}`} />
+              <span className={`text-[7.5px] font-bold uppercase tracking-wider ${isActive ? 'text-white/80' : ''}`}>{label}</span>
               {isActive && (
-                <div className="absolute top-0 left-2 right-2 h-[2px] rounded-b-full bg-gradient-to-r from-brand-400 to-pink-400 shadow-sm shadow-brand-500/50" />
+                <div className="absolute bottom-0 left-1 right-1 h-[2.5px] rounded-t-full bg-gradient-to-r from-brand-500 to-pink-500" />
               )}
-              <Icon className={`w-[13px] h-[13px] transition-all ${isActive ? 'text-brand-300' : ''}`} />
-              <span className={isActive ? 'text-brand-200' : ''}>{label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Scrollable content */}
-      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-3 py-3 space-y-3">
+      {/* ── Scrollable content ── */}
+      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-3 py-3.5 space-y-2.5">
         {renderTabContent()}
       </div>
 
-      {/* Pinned bottom bar (only when not on export tab) */}
+      {/* ── Bottom action bar ── */}
       {activeTab !== 'export' && (
-        <div className="shrink-0 border-t border-white/[0.07] px-3 pt-2.5 pb-3 space-y-2 bg-[#0b0b17]">
-          <div className="flex gap-1.5">
-            <button onClick={() => onExport(fmt)} disabled={isExporting}
-              className="flex-1 py-2.5 rounded-2xl font-semibold text-white text-sm
-                bg-gradient-to-r from-brand-500 to-pink-500 hover:from-brand-600 hover:to-pink-600
-                transition-all duration-200 hover:shadow-lg hover:shadow-brand-500/30
-                flex items-center justify-center gap-2 active:scale-[0.98]
-                disabled:opacity-60 disabled:cursor-not-allowed">
-              {isExporting ? (
-                <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Exporting…</>
-              ) : (
-                <><Download className="w-3.5 h-3.5" />Export</>
-              )}
-            </button>
-            <button onClick={onCopy} title="Copy (Ctrl+Shift+C)"
-              className={`px-3 py-2.5 rounded-2xl text-sm transition-all duration-200
-                flex items-center justify-center active:scale-[0.98] ring-1 ${
+        <div className="shrink-0 border-t border-white/[0.06] px-3 pt-3 pb-3.5 space-y-2 sf-panel">
+          {/* Primary export row */}
+          <button onClick={() => onExport(fmt)} disabled={isExporting}
+            className="w-full py-3 rounded-xl font-bold text-white text-[13px]
+              bg-gradient-to-r from-brand-600 to-pink-500 hover:from-brand-500 hover:to-pink-400
+              transition-all duration-200 shadow-lg shadow-brand-600/20 hover:shadow-brand-500/30
+              flex items-center justify-center gap-2 active:scale-[0.99]
+              disabled:opacity-50 disabled:cursor-not-allowed tracking-tight">
+            {isExporting ? (
+              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Exporting…</>
+            ) : (
+              <><Download className="w-4 h-4" />Export Image</>
+            )}
+          </button>
+          {/* Secondary row */}
+          <div className="flex gap-2">
+            <button onClick={onCopy} title="Copy to clipboard"
+              className={`flex-1 py-2 rounded-xl text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 ring-1 ${
                 copySuccess
-                  ? 'bg-green-500/20 text-green-300 ring-green-500/30'
-                  : 'bg-white/[0.06] text-white/45 ring-white/10 hover:bg-white/[0.1] hover:text-white/70'
+                  ? 'bg-green-500/15 text-green-300 ring-green-500/25'
+                  : 'bg-white/[0.05] text-white/40 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/65'
               }`}>
-              {copySuccess ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copySuccess ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
             </button>
-            <button onClick={() => setActiveTab('export')} title="Export options"
-              className="px-3 py-2.5 rounded-2xl text-sm bg-white/[0.06] text-white/35
-                ring-1 ring-white/10 hover:bg-white/[0.1] hover:text-white/60 transition-all">
-              <Grid3X3 className="w-4 h-4" />
+            <button onClick={() => setActiveTab('export')} title="Export settings"
+              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/35
+                ring-1 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/60 transition-all">
+              <Grid3X3 className="w-3.5 h-3.5" />
             </button>
-          </div>
-          <div className="flex gap-1.5">
-            <button onClick={onReset}
-              className="flex-1 py-1.5 rounded-xl text-[10px] font-medium bg-white/[0.04] text-white/35
-                hover:bg-white/[0.08] hover:text-white/60 transition-all flex items-center justify-center gap-1">
-              <RotateCcw className="w-3 h-3" /> Reset
+            <button onClick={onReset} title="Reset all settings"
+              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/30
+                ring-1 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/55 transition-all">
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
-            <button onClick={onRemoveImage}
-              className="flex-1 py-1.5 rounded-xl text-[10px] font-medium bg-white/[0.04] text-white/35
-                hover:bg-red-500/[0.1] hover:text-red-400/80 transition-all flex items-center justify-center gap-1">
-              <FlipHorizontal2 className="w-3 h-3" /> Remove
+            <button onClick={onRemoveImage} title="Remove image"
+              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/25
+                ring-1 ring-white/[0.08] hover:bg-red-500/10 hover:text-red-400/70 transition-all">
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
           {state.watermark && (
             <button onClick={onUpgrade}
-              className="w-full py-2 rounded-2xl text-xs font-semibold
-                bg-gradient-to-r from-amber-500/12 to-orange-500/12 text-amber-300
-                hover:from-amber-500/20 hover:to-orange-500/20 transition-all
+              className="w-full py-2 rounded-xl text-[10.5px] font-semibold
+                bg-amber-500/10 text-amber-300/80 hover:bg-amber-500/18 transition-all
                 flex items-center justify-center gap-1.5 ring-1 ring-amber-500/20">
               <Sparkles className="w-3 h-3" /> Remove Watermark — $9.99
             </button>

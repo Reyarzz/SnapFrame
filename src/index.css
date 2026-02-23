@@ -146,30 +146,39 @@ body {
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  background: #2d2d5a;
-  border-radius: 2px;
+  height: 3px;
+  background: var(--track-fill, #1e1e38);
+  border-radius: 99px;
   outline: none;
+  cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: #fff;
   cursor: pointer;
-  border: 2px solid #fff;
+  border: none;
+  box-shadow: 0 0 0 2.5px rgba(139,92,246,0.6), 0 1px 4px rgba(0,0,0,0.5);
+  transition: box-shadow 0.15s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb,
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3.5px rgba(139,92,246,0.9), 0 1px 6px rgba(0,0,0,0.6);
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: #fff;
   cursor: pointer;
-  border: 2px solid #fff;
+  border: none;
+  box-shadow: 0 0 0 2.5px rgba(139,92,246,0.6), 0 1px 4px rgba(0,0,0,0.5);
 }
 
 /* Hide scrollbar but keep scroll behaviour */
@@ -196,6 +205,25 @@ input[type="range"]::-moz-range-thumb {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* ── Studio Panel design system ────────────────── */
+
+/* Panel surface layers */
+.sf-panel        { background: #08080f; }
+.sf-panel-raised { background: #0d0d1a; }
+.sf-card         { background: #111120; border: 1px solid rgba(255,255,255,0.07); }
+.sf-card:hover   { background: #14142a; border-color: rgba(255,255,255,0.11); }
+
+/* Color input swatch */
+input[type="color"] {
+  padding: 0;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: transparent;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
 
 /* Gradient swatch tooltip */
 .swatch-tip {
