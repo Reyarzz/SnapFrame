@@ -401,6 +401,35 @@ export interface EditorState {
   imageInnerGlowColor: string;
   canvasInsetShadow: number;   // inset box-shadow on canvas
   vignetteShape: string;       // 'elliptical' | 'linear-v' | 'linear-h'
+  // Batch 9
+  titleShadowBlur: number;     // text shadow blur on title
+  titleShadowColor: string;
+  titleShadowX: number;
+  titleShadowY: number;
+  subtitleOpacity: number;     // 0-100
+  bodyTextColor: string;
+  bodyTextSize: number;
+  imageSepia: number;          // 0-100 sepia on image
+  imageCoolTone: boolean;      // cool blue cast on image
+  imageWarmTone: boolean;      // warm orange cast on image
+  stripeBg: boolean;           // alternating stripe bg pattern
+  stripeBgColor1: string;
+  stripeBgColor2: string;
+  stripeBgAngle: number;
+  frameDoubleBorder: boolean;  // double border ring inside frame
+  frameDoubleBorderColor: string;
+  frameDoubleBorderGap: number;
+  cardStack: boolean;          // stacked card effect behind canvas
+  cardStackColor: string;
+  cardStackOffset: number;
+  overlayDots: boolean;        // polka dot overlay
+  overlayDotsColor: string;
+  overlayDotsSize: number;
+  overlayDotsOpacity: number;
+  titleCaps: boolean;          // force title uppercase
+  gradientText2: boolean;      // second gradient line on subtitle
+  gradientText2Color1: string;
+  gradientText2Color2: string;
 }
 
 export interface StyleTemplate {
@@ -940,6 +969,35 @@ export const DEFAULT_STATE: EditorState = {
   imageInnerGlowColor: '#ffffff',
   canvasInsetShadow: 0,
   vignetteShape: 'elliptical',
+  // Batch 9
+  titleShadowBlur: 0,
+  titleShadowColor: '#000000',
+  titleShadowX: 0,
+  titleShadowY: 2,
+  subtitleOpacity: 100,
+  bodyTextColor: '#ffffff',
+  bodyTextSize: 13,
+  imageSepia: 0,
+  imageCoolTone: false,
+  imageWarmTone: false,
+  stripeBg: false,
+  stripeBgColor1: '#1a1a2e',
+  stripeBgColor2: '#16213e',
+  stripeBgAngle: 45,
+  frameDoubleBorder: false,
+  frameDoubleBorderColor: '#8b5cf6',
+  frameDoubleBorderGap: 4,
+  cardStack: false,
+  cardStackColor: '#1a1a2e',
+  cardStackOffset: 8,
+  overlayDots: false,
+  overlayDotsColor: '#ffffff',
+  overlayDotsSize: 4,
+  overlayDotsOpacity: 10,
+  titleCaps: false,
+  gradientText2: false,
+  gradientText2Color1: '#ec4899',
+  gradientText2Color2: '#f59e0b',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [

@@ -644,6 +644,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     imageInnerGlow, imageInnerGlowColor,
     canvasInsetShadow,
     vignetteShape,
+    // Batch 9
+    titleShadowBlur, titleShadowColor, titleShadowX, titleShadowY,
+    subtitleOpacity,
+    bodyTextColor, bodyTextSize,
+    imageSepia, imageCoolTone, imageWarmTone,
+    stripeBg, stripeBgColor1, stripeBgColor2, stripeBgAngle,
+    frameDoubleBorder, frameDoubleBorderColor, frameDoubleBorderGap,
+    cardStack, cardStackColor, cardStackOffset,
+    overlayDots, overlayDotsColor, overlayDotsSize, overlayDotsOpacity,
+    titleCaps,
+    gradientText2, gradientText2Color1, gradientText2Color2,
   } = state;
 
   if (!image) return null;
@@ -809,6 +820,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if ((imageGlow ?? 0) > 0) {
     imageFilterParts.push(`drop-shadow(0 0 ${imageGlow}px ${imageGlowColor ?? 'rgba(255,255,255,0.8)'})`);
   }
+  // Batch 9 image tone filters
+  if ((imageSepia ?? 0) > 0) imageFilterParts.push(`sepia(${imageSepia}%)`);
+  if (imageCoolTone ?? false) imageFilterParts.push('hue-rotate(180deg) saturate(75%) brightness(102%)');
+  if (imageWarmTone ?? false) imageFilterParts.push('sepia(30%) saturate(130%) brightness(104%)');
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -1019,10 +1034,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ? `${textShadowX ?? 2}px ${textShadowY ?? 2}px ${textShadowBlur ?? 8}px ${textShadowColor ?? 'rgba(0,0,0,0.6)'}`
       : undefined;
 
+    // Batch 9 — title drop shadow (separate from neon/glitch/custom shadows)
+    const titleBlurShadow = isTitle && (titleShadowBlur ?? 0) > 0
+      ? `${titleShadowX ?? 0}px ${titleShadowY ?? 2}px ${titleShadowBlur}px ${titleShadowColor ?? '#000000'}`
+      : undefined;
+
     const base: React.CSSProperties = {
       fontSize: size, fontFamily: titleFont, fontWeight: weight,
       lineHeight: lhVal, letterSpacing: lsValFinal, wordSpacing: wsVal,
-      textTransform: isTitle && (titleAllCaps ?? false) ? 'uppercase' : undefined,
+      textTransform: isTitle && ((titleAllCaps ?? false) || (titleCaps ?? false)) ? 'uppercase' : undefined,
       fontStyle: isTitle && (titleItalic ?? false) ? 'italic' : undefined,
       opacity: isTitle ? (titleOpacity ?? 100) / 100 : 1,
     };
@@ -1051,7 +1071,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       color,
       WebkitTextStroke: strokeVal,
       textDecoration: isTitle && (titleUnderline ?? false) ? 'underline' : undefined,
-      textShadow: glitchShadow ?? customDropShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
+      textShadow: glitchShadow ?? customDropShadow ?? titleBlurShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
     };
   };
 
@@ -1104,8 +1124,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
                 borderRadius: 2,
               }} />
             )}
-            {subtitleText && <div style={{ ...getTextStyle(subtitleSize, subtitleColor, 400), textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined }}>{subtitleText}</div>}
-            {bodyText && <div style={{ fontSize: bodySize, color: bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
+            {/* Subtitle — Batch 9 adds opacity + gradient2 option */}
+            {subtitleText && (() => {
+              const subStyle: React.CSSProperties = {
+                ...getTextStyle(subtitleSize, subtitleColor, 400),
+                textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined,
+                opacity: (subtitleOpacity ?? 100) / 100,
+              };
+              if (gradientText2 ?? false) {
+                subStyle.background = `linear-gradient(135deg, ${gradientText2Color1 ?? '#ec4899'}, ${gradientText2Color2 ?? '#f59e0b'})`;
+                subStyle.WebkitBackgroundClip = 'text';
+                subStyle.WebkitTextFillColor = 'transparent';
+                subStyle.backgroundClip = 'text';
+              }
+              return <div style={subStyle}>{subtitleText}</div>;
+            })()}
+            {bodyText && <div style={{ fontSize: bodyTextSize ?? bodySize, color: bodyTextColor ?? bodyColor, fontFamily: titleFont, fontWeight: 400, marginTop: subtitleText ? 6 : titleText ? 4 : 0, lineHeight: lhVal, wordSpacing: wsVal }}>{bodyText}</div>}
           </div>
         </div>
       </div>
@@ -1142,6 +1176,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         </svg>
       )}
 
+      {/* Card stack behind canvas (Batch 9) */}
+      {(cardStack ?? false) && (() => {
+        const off = cardStackOffset ?? 8;
+        const col = cardStackColor ?? '#1a1a2e';
+        return (
+          <div style={{ position: 'absolute', width: canvasStyle.width, height: canvasStyle.height, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', inset: 0, background: col, borderRadius: canvasBR, transform: `translate(${off}px, ${off}px)`, opacity: 0.55 }} />
+            <div style={{ position: 'absolute', inset: 0, background: col, borderRadius: canvasBR, transform: `translate(${off * 0.5}px, ${off * 0.5}px)`, opacity: 0.35 }} />
+          </div>
+        );
+      })()}
+
       <div ref={canvasRef} className="relative inline-flex flex-col items-center justify-center" style={canvasStyle}>
 
         {/* BG opacity overlay */}
@@ -1169,6 +1215,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Pattern color tint (Batch 8) */}
         {patternColorTint && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: patternColorTint, opacity: 0.35, mixBlendMode: 'color' }} />
+        )}
+
+        {/* Stripe background (Batch 9) */}
+        {(stripeBg ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `repeating-linear-gradient(${stripeBgAngle ?? 45}deg, ${stripeBgColor1 ?? '#1a1a2e'} 0px, ${stripeBgColor1 ?? '#1a1a2e'} 20px, ${stripeBgColor2 ?? '#16213e'} 20px, ${stripeBgColor2 ?? '#16213e'} 40px)`,
+          }} />
+        )}
+
+        {/* Polka dot overlay (Batch 9) */}
+        {(overlayDots ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+            backgroundImage: `radial-gradient(circle, ${overlayDotsColor ?? '#ffffff'} ${overlayDotsSize ?? 4}px, transparent ${overlayDotsSize ?? 4}px)`,
+            backgroundSize: `${(overlayDotsSize ?? 4) * 8}px ${(overlayDotsSize ?? 4) * 8}px`,
+            opacity: (overlayDotsOpacity ?? 10) / 100,
+          }} />
         )}
 
         {/* Noise overlay */}
@@ -1762,6 +1824,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               {chipText}
             </div>
           </div>
+        )}
+
+        {/* Frame double border (Batch 9) */}
+        {(frameDoubleBorder ?? false) && (
+          <div style={{
+            position: 'absolute', inset: frameDoubleBorderGap ?? 4,
+            borderRadius: `calc(${typeof canvasBR === 'string' ? canvasBR : `${canvasBR}px`} - ${frameDoubleBorderGap ?? 4}px)`,
+            border: `2px solid ${frameDoubleBorderColor ?? '#8b5cf6'}`,
+            pointerEvents: 'none', zIndex: 34,
+            opacity: 0.7,
+          }} />
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
