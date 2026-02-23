@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 21
+    titleStrikethrough, bgConcentricRings, bgConcentricRingsColor, bgConcentricRingsOpacity,
+    overlayLightRays, overlayLightRaysOpacity,
+    imageOilPaint, bgNebula, bgNebulaColor, bgNebulaOpacity,
+    imagePosterize, titleFlipText,
+    bgDotMatrix, bgDotMatrixColor, bgDotMatrixOpacity,
+    textGlowBox, textGlowBoxColor,
+    canvasRadialFade, canvasRadialFadeColor,
+    overlayRetroGrid, overlayRetroGridOpacity,
+    imageNoirEffect,
     // Batch 20
     bgGridLines, bgGridLinesColor, bgGridLinesOpacity,
     imageInkDrop,
@@ -958,6 +968,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 21 — oil paint simulation: rich saturation + contrast
+  if (imageOilPaint ?? false) imageFilterParts.push('saturate(200%) contrast(130%) brightness(92%)');
+  // Batch 21 — posterize approximation: extreme contrast + desaturate
+  if (imagePosterize ?? false) imageFilterParts.push('contrast(200%) saturate(50%) brightness(95%)');
+  // Batch 21 — noir: heavy B&W high contrast
+  if (imageNoirEffect ?? false) imageFilterParts.push('grayscale(100%) contrast(180%) brightness(88%)');
   // Batch 20 — ink drop: high-contrast desaturated with sepia ink tones
   if (imageInkDrop ?? false) imageFilterParts.push('contrast(140%) saturate(40%) sepia(60%) brightness(95%)');
   // Batch 20 — chrome metallic: desaturate + max contrast + cool tone
@@ -1363,6 +1379,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         paddingTop: 6, paddingBottom: 6,
         borderRadius: 4,
       } : {}),
+      // Batch 21 — glow box around text block
+      ...((textGlowBox ?? false) ? {
+        boxShadow: `0 0 20px ${textGlowBoxColor ?? '#8b5cf6'}60, 0 0 50px ${textGlowBoxColor ?? '#8b5cf6'}30`,
+      } : {}),
     };
 
     return (
@@ -1394,6 +1414,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               }
               // Batch 20 — wide kerning preset
               if (textKerningWide ?? false) ts.letterSpacing = '0.25em';
+              // Batch 21 — strikethrough decoration
+              if (titleStrikethrough ?? false) ts.textDecoration = 'line-through';
+              // Batch 21 — flip title horizontally
+              if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
               if (titleDropCap ?? false) {
                 const [first, ...rest] = titleText;
@@ -2656,6 +2680,79 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 21 — concentric rings background pattern */}
+        {(bgConcentricRings ?? false) && (() => {
+          const rc = encodeURIComponent(bgConcentricRingsColor ?? '#8b5cf6');
+          const rings = [15, 25, 37, 51, 67, 85].map(r =>
+            `<circle cx="50%" cy="50%" r="${r}%" fill="none" stroke="${rc}" stroke-width="0.8" opacity="0.7"/>`
+          ).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E${encodeURIComponent(rings)}%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
+              opacity: (bgConcentricRingsOpacity ?? 12) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 21 — dot matrix background */}
+        {(bgDotMatrix ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `radial-gradient(circle, ${bgDotMatrixColor ?? '#8b5cf6'} 1px, transparent 1px)`,
+            backgroundSize: '8px 8px',
+            opacity: (bgDotMatrixOpacity ?? 10) / 100,
+          }} />
+        )}
+
+        {/* Batch 21 — soft nebula cloud overlay */}
+        {(bgNebula ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 70% 60% at 25% 35%, ${bgNebulaColor ?? '#7c3aed'}50 0%, transparent 60%)`,
+              `radial-gradient(ellipse 55% 65% at 75% 65%, ${bgNebulaColor ?? '#7c3aed'}35 0%, transparent 55%)`,
+              `radial-gradient(ellipse 80% 45% at 50% 50%, ${bgNebulaColor ?? '#7c3aed'}20 0%, transparent 65%)`,
+            ].join(', '),
+            opacity: (bgNebulaOpacity ?? 40) / 100,
+          }} />
+        )}
+
+        {/* Batch 21 — radial edge fade vignette */}
+        {(canvasRadialFade ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[5]" style={{
+            background: `radial-gradient(ellipse 65% 65% at 50% 50%, transparent 30%, ${canvasRadialFadeColor ?? '#000000'}cc 100%)`,
+          }} />
+        )}
+
+        {/* Batch 21 — conic-gradient light rays */}
+        {(overlayLightRays ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'repeating-conic-gradient(from 0deg at 50% -10%, transparent 0deg 8deg, rgba(255,255,255,0.12) 8deg 9deg, transparent 9deg 17deg)',
+            maskImage: 'radial-gradient(ellipse 90% 100% at 50% 0%, black 20%, transparent 85%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 90% 100% at 50% 0%, black 20%, transparent 85%)',
+            opacity: (overlayLightRaysOpacity ?? 20) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 21 — 80s retrowave perspective floor grid */}
+        {(overlayRetroGrid ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[8] overflow-hidden">
+            <div style={{
+              position: 'absolute', left: '-30%', right: '-30%', bottom: 0, height: '120%',
+              backgroundImage: [
+                `repeating-linear-gradient(90deg, rgba(255,0,180,0.6) 0 1px, transparent 1px 80px)`,
+                `repeating-linear-gradient(0deg, rgba(255,0,180,0.5) 0 1px, transparent 1px 50px)`,
+              ].join(', '),
+              transform: 'perspective(350px) rotateX(55deg)',
+              transformOrigin: '50% 100%',
+              opacity: (overlayRetroGridOpacity ?? 30) / 100,
+              maskImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 55%)',
+              WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 55%)',
+            }} />
+          </div>
+        )}
+
         {/* Batch 20 — colored background grid lines */}
         {(bgGridLines ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{

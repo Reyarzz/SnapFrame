@@ -685,6 +685,29 @@ export interface EditorState {
   bgHexGrid: boolean;
   bgHexGridColor: string;
   bgHexGridOpacity: number;
+  // Batch 21
+  titleStrikethrough: boolean;      // strikethrough decoration on title
+  bgConcentricRings: boolean;       // concentric circle rings on background
+  bgConcentricRingsColor: string;
+  bgConcentricRingsOpacity: number;
+  overlayLightRays: boolean;        // conic-gradient light beam rays
+  overlayLightRaysOpacity: number;
+  imageOilPaint: boolean;           // simulated oil paint filter on image
+  bgNebula: boolean;                // multi-radial soft nebula background
+  bgNebulaColor: string;
+  bgNebulaOpacity: number;
+  imagePosterize: boolean;          // high-contrast posterize approximation
+  titleFlipText: boolean;           // horizontally mirror/flip the title
+  bgDotMatrix: boolean;             // dense dot matrix background pattern
+  bgDotMatrixColor: string;
+  bgDotMatrixOpacity: number;
+  textGlowBox: boolean;             // glowing box behind text block
+  textGlowBoxColor: string;
+  canvasRadialFade: boolean;        // radial vignette fade to color at edges
+  canvasRadialFadeColor: string;
+  overlayRetroGrid: boolean;        // 80s synthwave perspective floor grid
+  overlayRetroGridOpacity: number;
+  imageNoirEffect: boolean;         // high-contrast grayscale noir effect
 }
 
 export interface StyleTemplate {
@@ -1508,6 +1531,29 @@ export const DEFAULT_STATE: EditorState = {
   bgHexGrid: false,
   bgHexGridColor: '#a78bfa',
   bgHexGridOpacity: 12,
+  // Batch 21
+  titleStrikethrough: false,
+  bgConcentricRings: false,
+  bgConcentricRingsColor: '#8b5cf6',
+  bgConcentricRingsOpacity: 12,
+  overlayLightRays: false,
+  overlayLightRaysOpacity: 20,
+  imageOilPaint: false,
+  bgNebula: false,
+  bgNebulaColor: '#7c3aed',
+  bgNebulaOpacity: 40,
+  imagePosterize: false,
+  titleFlipText: false,
+  bgDotMatrix: false,
+  bgDotMatrixColor: '#8b5cf6',
+  bgDotMatrixOpacity: 10,
+  textGlowBox: false,
+  textGlowBoxColor: '#8b5cf6',
+  canvasRadialFade: false,
+  canvasRadialFadeColor: '#000000',
+  overlayRetroGrid: false,
+  overlayRetroGridOpacity: 30,
+  imageNoirEffect: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2497,6 +2543,57 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 21 templates
+  {
+    id: 'retro-grid-80s',
+    name: 'Retrowave',
+    emoji: '🌆',
+    overrides: {
+      background: 'linear-gradient(180deg, #0a0a1a 0%, #1a0a2e 50%, #2a0a1e 100%)', backgroundId: 'midnight',
+      padding: 56, borderRadius: 16, shadow: 60,
+      overlayRetroGrid: true, overlayRetroGridOpacity: 35,
+      titleNeonSign: true, titleNeonSignColor: '#ff0080',
+      canvasBorderGlow: true, canvasBorderGlowColor: '#ff0080',
+      bgGlowOrb: true, bgGlowOrbColor: '#8b5cf6', bgGlowOrbX: 50, bgGlowOrbY: 70,
+    },
+  },
+  {
+    id: 'nebula-dream',
+    name: 'Nebula',
+    emoji: '🌌',
+    overrides: {
+      background: 'linear-gradient(135deg, #050510 0%, #0a0520 100%)', backgroundId: 'midnight',
+      padding: 60, borderRadius: 20, shadow: 70,
+      bgNebula: true, bgNebulaColor: '#4c1d95', bgNebulaOpacity: 60,
+      overlayLightRays: true, overlayLightRaysOpacity: 15,
+      overlayHolographic: true, overlayHolographicOpacity: 20,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'oil-canvas',
+    name: 'Oil Paint',
+    emoji: '🎨',
+    overrides: {
+      background: 'linear-gradient(135deg, #2c1810 0%, #4a2c1a 100%)', backgroundId: 'mocha',
+      padding: 52, borderRadius: 4, shadow: 60,
+      imageOilPaint: true,
+      frameMatte: true, frameMatteColor: '#1a0f08', frameMatteWidth: 20,
+      titleFont: 'Georgia',
+    },
+  },
+  {
+    id: 'noir-city',
+    name: 'Noir',
+    emoji: '🎬',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 0, shadow: 80,
+      imageNoirEffect: true,
+      canvasRadialFade: true, canvasRadialFadeColor: '#000000',
+      titleColor: '#ffffff', titleSize: 28, titleFont: 'Georgia',
     },
   },
   // Batch 20 templates
