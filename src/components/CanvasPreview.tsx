@@ -733,6 +733,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 22
+    bgSunburst, bgSunburstColor, bgSunburstOpacity,
+    imageVaporwave, overlaySnow, overlaySnowOpacity,
+    titleOutlineGlow, titleOutlineGlowColor,
+    frameDiamondCut,
+    bgStarfield, bgStarfieldOpacity,
+    textUppercase, imageColorSplit,
+    canvasGlassReflect, canvasGlassReflectOpacity,
+    overlayHeatmap, overlayHeatmapOpacity,
+    bgLinenTexture, bgLinenTextureOpacity,
+    imageDreamGlow,
     // Batch 21
     titleStrikethrough, bgConcentricRings, bgConcentricRingsColor, bgConcentricRingsOpacity,
     overlayLightRays, overlayLightRaysOpacity,
@@ -867,6 +878,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ? `${canvasStyle.boxShadow}, ${glowStr}`
       : glowStr;
   }
+  // Batch 22 — diamond cut angled corners clip
+  if (frameDiamondCut ?? false) {
+    canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
+    canvasStyle.borderRadius = undefined;
+  }
 
   /* ── Shadow / glow compositing ── */
   const buildShadow = (includeInner = false) => {
@@ -968,6 +984,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 22 — vaporwave: pink+teal hue shift
+  if (imageVaporwave ?? false) imageFilterParts.push('hue-rotate(300deg) saturate(180%) contrast(110%) brightness(105%)');
+  // Batch 22 — dream glow: soft overexposed dreamy bloom
+  if (imageDreamGlow ?? false) imageFilterParts.push('brightness(130%) contrast(80%) saturate(110%)');
+  // Batch 22 — RGB color split: vivid channel contrast approximation
+  if (imageColorSplit ?? false) imageFilterParts.push('saturate(160%) contrast(115%) hue-rotate(5deg)');
   // Batch 21 — oil paint simulation: rich saturation + contrast
   if (imageOilPaint ?? false) imageFilterParts.push('saturate(200%) contrast(130%) brightness(92%)');
   // Batch 21 — posterize approximation: extreme contrast + desaturate
@@ -1414,6 +1436,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               }
               // Batch 20 — wide kerning preset
               if (textKerningWide ?? false) ts.letterSpacing = '0.25em';
+              // Batch 22 — glowing outline only (no fill)
+              if (titleOutlineGlow ?? false) {
+                const ogc = titleOutlineGlowColor ?? '#00ffff';
+                ts.color = 'transparent';
+                ts.WebkitTextStroke = `1.5px ${ogc}`;
+                ts.textShadow = `0 0 8px ${ogc}, 0 0 20px ${ogc}80`;
+              }
+              // Batch 22 — force uppercase
+              if (textUppercase ?? false) ts.textTransform = 'uppercase';
               // Batch 21 — strikethrough decoration
               if (titleStrikethrough ?? false) ts.textDecoration = 'line-through';
               // Batch 21 — flip title horizontally
@@ -2680,6 +2711,65 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 22 — radial sunburst rays on background */}
+        {(bgSunburst ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: `repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 5deg, ${bgSunburstColor ?? '#f59e0b'}40 5deg 10deg)`,
+            opacity: (bgSunburstOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 22 — tiny dot starfield */}
+        {(bgStarfield ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+            backgroundPosition: '0 0, 14px 14px',
+            opacity: (bgStarfieldOpacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 22 — linen cloth texture */}
+        {(bgLinenTexture ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              'repeating-linear-gradient(45deg, rgba(255,255,255,0.15) 0 1px, transparent 1px 6px)',
+              'repeating-linear-gradient(-45deg, rgba(255,255,255,0.1) 0 1px, transparent 1px 6px)',
+            ].join(', '),
+            opacity: (bgLinenTextureOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 22 — glass reflection diagonal sheen */}
+        {(canvasGlassReflect ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 45%, rgba(255,255,255,0.06) 100%)',
+            opacity: (canvasGlassReflectOpacity ?? 25) / 100,
+          }} />
+        )}
+
+        {/* Batch 22 — heatmap warm glow overlay */}
+        {(overlayHeatmap ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,100,0,0.6) 0%, rgba(255,50,0,0.35) 45%, transparent 75%)',
+            opacity: (overlayHeatmapOpacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 22 — snow/static particle overlay */}
+        {(overlaySnow ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+            backgroundImage: [
+              'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)',
+              'radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)',
+            ].join(', '),
+            backgroundSize: '20px 25px, 35px 40px',
+            backgroundPosition: '0 0, 10px 12px',
+            opacity: (overlaySnowOpacity ?? 20) / 100,
+          }} />
+        )}
+
         {/* Batch 21 — concentric rings background pattern */}
         {(bgConcentricRings ?? false) && (() => {
           const rc = encodeURIComponent(bgConcentricRingsColor ?? '#8b5cf6');

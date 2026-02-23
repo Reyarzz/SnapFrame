@@ -708,6 +708,27 @@ export interface EditorState {
   overlayRetroGrid: boolean;        // 80s synthwave perspective floor grid
   overlayRetroGridOpacity: number;
   imageNoirEffect: boolean;         // high-contrast grayscale noir effect
+  // Batch 22
+  bgSunburst: boolean;              // radial sunburst rays from center
+  bgSunburstColor: string;
+  bgSunburstOpacity: number;
+  imageVaporwave: boolean;          // pink+teal vaporwave color treatment
+  overlaySnow: boolean;             // white particle snow/static overlay
+  overlaySnowOpacity: number;
+  titleOutlineGlow: boolean;        // glowing stroke outline on title (no fill)
+  titleOutlineGlowColor: string;
+  frameDiamondCut: boolean;         // angled corner clips on canvas
+  bgStarfield: boolean;             // tiny white dot starfield on background
+  bgStarfieldOpacity: number;
+  textUppercase: boolean;           // force all title/subtitle to uppercase
+  imageColorSplit: boolean;         // RGB channel-split aberration on image
+  canvasGlassReflect: boolean;      // glass reflection highlight sheen
+  canvasGlassReflectOpacity: number;
+  overlayHeatmap: boolean;          // warm orange/red heatmap glow
+  overlayHeatmapOpacity: number;
+  bgLinenTexture: boolean;          // subtle linen cloth texture on background
+  bgLinenTextureOpacity: number;
+  imageDreamGlow: boolean;          // soft dreamy overexposed bloom on image
 }
 
 export interface StyleTemplate {
@@ -1554,6 +1575,27 @@ export const DEFAULT_STATE: EditorState = {
   overlayRetroGrid: false,
   overlayRetroGridOpacity: 30,
   imageNoirEffect: false,
+  // Batch 22
+  bgSunburst: false,
+  bgSunburstColor: '#f59e0b',
+  bgSunburstOpacity: 20,
+  imageVaporwave: false,
+  overlaySnow: false,
+  overlaySnowOpacity: 20,
+  titleOutlineGlow: false,
+  titleOutlineGlowColor: '#00ffff',
+  frameDiamondCut: false,
+  bgStarfield: false,
+  bgStarfieldOpacity: 30,
+  textUppercase: false,
+  imageColorSplit: false,
+  canvasGlassReflect: false,
+  canvasGlassReflectOpacity: 25,
+  overlayHeatmap: false,
+  overlayHeatmapOpacity: 30,
+  bgLinenTexture: false,
+  bgLinenTextureOpacity: 12,
+  imageDreamGlow: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2543,6 +2585,57 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 22 templates
+  {
+    id: 'vaporwave-dream',
+    name: 'Vaporwave',
+    emoji: '🌸',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a2e 0%, #2e0a1a 100%)', backgroundId: 'midnight',
+      padding: 56, borderRadius: 20, shadow: 60,
+      imageVaporwave: true,
+      bgSunburst: true, bgSunburstColor: '#ff80ff', bgSunburstOpacity: 15,
+      overlayHolographic: true, overlayHolographicOpacity: 25,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'starfield-cosmos',
+    name: 'Starfield',
+    emoji: '✨',
+    overrides: {
+      background: '#00000f', backgroundId: 'solid-black',
+      padding: 60, borderRadius: 24, shadow: 70,
+      bgStarfield: true, bgStarfieldOpacity: 40,
+      bgNebula: true, bgNebulaColor: '#1e3a8a', bgNebulaOpacity: 50,
+      canvasGlassReflect: true, canvasGlassReflectOpacity: 15,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'dream-glow',
+    name: 'Dream',
+    emoji: '💫',
+    overrides: {
+      background: 'linear-gradient(135deg, #fce4ec 0%, #e1f5fe 100%)', backgroundId: 'candy',
+      padding: 52, borderRadius: 24, shadow: 50,
+      imageDreamGlow: true,
+      overlayLightRays: true, overlayLightRaysOpacity: 12,
+      canvasGlassReflect: true, canvasGlassReflectOpacity: 20,
+    },
+  },
+  {
+    id: 'heatmap-thermal',
+    name: 'Thermal',
+    emoji: '🌡',
+    overrides: {
+      background: '#0a0000', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 8, shadow: 80,
+      overlayHeatmap: true, overlayHeatmapOpacity: 45,
+      imageColorSplit: true,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#ff4400',
     },
   },
   // Batch 21 templates

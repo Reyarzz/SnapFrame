@@ -2556,6 +2556,81 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 22 FX controls */}
+      <Card>
+        <SectionLabel>Sunburst</SectionLabel>
+        <Toggle label="Enable" value={state.bgSunburst ?? false} onChange={v => onChange({ bgSunburst: v })}
+          desc="Radial sunburst ray pattern on background" />
+        {(state.bgSunburst ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSunburstColor ?? '#f59e0b'}
+                onChange={e => onChange({ bgSunburstColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSunburstOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgSunburstOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Starfield</SectionLabel>
+        <Toggle label="Enable" value={state.bgStarfield ?? false} onChange={v => onChange({ bgStarfield: v })}
+          desc="Tiny white dot starfield on background" />
+        {(state.bgStarfield ?? false) && (
+          <Slider label="Opacity" value={state.bgStarfieldOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ bgStarfieldOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Linen Texture</SectionLabel>
+        <Toggle label="Enable" value={state.bgLinenTexture ?? false} onChange={v => onChange({ bgLinenTexture: v })}
+          desc="Subtle woven cloth texture on background" />
+        {(state.bgLinenTexture ?? false) && (
+          <Slider label="Opacity" value={state.bgLinenTextureOpacity ?? 12} min={3} max={50} unit="%"
+            onChange={v => onChange({ bgLinenTextureOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Glass Reflect</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGlassReflect ?? false} onChange={v => onChange({ canvasGlassReflect: v })}
+          desc="Diagonal glass reflection sheen on canvas" />
+        {(state.canvasGlassReflect ?? false) && (
+          <Slider label="Opacity" value={state.canvasGlassReflectOpacity ?? 25} min={5} max={80} unit="%"
+            onChange={v => onChange({ canvasGlassReflectOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Heatmap</SectionLabel>
+        <Toggle label="Enable" value={state.overlayHeatmap ?? false} onChange={v => onChange({ overlayHeatmap: v })}
+          desc="Warm orange/red heatmap glow overlay" />
+        {(state.overlayHeatmap ?? false) && (
+          <Slider label="Opacity" value={state.overlayHeatmapOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayHeatmapOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Snow</SectionLabel>
+        <Toggle label="Enable" value={state.overlaySnow ?? false} onChange={v => onChange({ overlaySnow: v })}
+          desc="White particle snow overlay on canvas" />
+        {(state.overlaySnow ?? false) && (
+          <Slider label="Opacity" value={state.overlaySnowOpacity ?? 20} min={3} max={60} unit="%"
+            onChange={v => onChange({ overlaySnowOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Diamond Cut</SectionLabel>
+        <Toggle label="Enable" value={state.frameDiamondCut ?? false} onChange={v => onChange({ frameDiamondCut: v })}
+          desc="Angled diamond-cut corners on canvas" />
+      </Card>
+
       {/* Batch 21 FX controls */}
       <Card>
         <SectionLabel>Concentric Rings</SectionLabel>
@@ -3154,6 +3229,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
         )}
+      </Card>
+
+      {/* Batch 22 adjust controls */}
+      <Card>
+        <SectionLabel>Vaporwave</SectionLabel>
+        <Toggle label="Enable" value={state.imageVaporwave ?? false} onChange={v => onChange({ imageVaporwave: v })}
+          desc="Pink+teal vaporwave color treatment" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Dream Glow</SectionLabel>
+        <Toggle label="Enable" value={state.imageDreamGlow ?? false} onChange={v => onChange({ imageDreamGlow: v })}
+          desc="Soft dreamy overexposed bloom" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Color Split</SectionLabel>
+        <Toggle label="Enable" value={state.imageColorSplit ?? false} onChange={v => onChange({ imageColorSplit: v })}
+          desc="Vivid RGB channel-split aberration look" />
       </Card>
 
       {/* Batch 21 adjust controls */}
@@ -3919,6 +4013,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 22 text controls */}
+          <Card>
+            <SectionLabel>Outline Glow</SectionLabel>
+            <Toggle label="Enable" value={state.titleOutlineGlow ?? false} onChange={v => onChange({ titleOutlineGlow: v })}
+              desc="Glowing stroke outline, no fill on title" />
+            {(state.titleOutlineGlow ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleOutlineGlowColor ?? '#00ffff'}
+                  onChange={e => onChange({ titleOutlineGlowColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Force Uppercase</SectionLabel>
+            <Toggle label="Enable" value={state.textUppercase ?? false} onChange={v => onChange({ textUppercase: v })}
+              desc="Transform all title text to uppercase" />
           </Card>
 
           {/* Batch 21 text controls */}
