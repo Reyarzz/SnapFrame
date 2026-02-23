@@ -507,6 +507,31 @@ export interface EditorState {
   bgGradientStops: number;      // number of gradient stops (2-4)
   bgGradientColor3: string;     // 3rd gradient stop
   bgGradientColor4: string;     // 4th gradient stop
+  // Batch 13
+  titleOutlineOnly: boolean;    // show only stroke outline, no fill on title
+  titleOutlineWidth: number;    // 1-8px
+  titleOutlineColor: string;
+  imageTiltX: number;           // -20 to 20 horizontal tilt on image (CSS perspective)
+  imageTiltY: number;           // -20 to 20 vertical tilt
+  noiseGrain: boolean;          // fine grain noise across whole canvas
+  noiseGrainOpacity: number;    // 0-100
+  photoTilt: boolean;           // slight tilt on photo card (like Polaroid)
+  photoTiltAngle: number;       // -15 to 15
+  subtitleBold: boolean;        // bold subtitle
+  subtitleItalic: boolean;
+  subtitleUnderline: boolean;
+  iconBar: boolean;             // row of social-style icons at bottom
+  iconBarStyle: string;         // 'social'|'stars'|'arrows'|'dots'
+  iconBarColor: string;
+  overlayLinear: boolean;       // linear gradient overlay (top-to-bottom)
+  overlayLinearColor1: string;
+  overlayLinearColor2: string;
+  overlayLinearOpacity: number;
+  quoteStyle: boolean;          // render title as large quote with " marks
+  quoteMarkColor: string;
+  colorDuotoneMap: boolean;     // full duotone color mapping (separate from split)
+  colorDuotoneMapColor1: string;
+  colorDuotoneMapColor2: string;
 }
 
 export interface StyleTemplate {
@@ -1152,6 +1177,31 @@ export const DEFAULT_STATE: EditorState = {
   bgGradientStops: 2,
   bgGradientColor3: '#f59e0b',
   bgGradientColor4: '#10b981',
+  // Batch 13
+  titleOutlineOnly: false,
+  titleOutlineWidth: 2,
+  titleOutlineColor: '#ffffff',
+  imageTiltX: 0,
+  imageTiltY: 0,
+  noiseGrain: false,
+  noiseGrainOpacity: 20,
+  photoTilt: false,
+  photoTiltAngle: -3,
+  subtitleBold: false,
+  subtitleItalic: false,
+  subtitleUnderline: false,
+  iconBar: false,
+  iconBarStyle: 'stars',
+  iconBarColor: '#f59e0b',
+  overlayLinear: false,
+  overlayLinearColor1: '#000000',
+  overlayLinearColor2: '#00000000',
+  overlayLinearOpacity: 60,
+  quoteStyle: false,
+  quoteMarkColor: '#8b5cf6',
+  colorDuotoneMap: false,
+  colorDuotoneMapColor1: '#8b5cf6',
+  colorDuotoneMapColor2: '#ec4899',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1913,6 +1963,52 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #0f0c29 0%, #24243e 100%)', backgroundId: 'cosmic-dark',
       padding: 48, borderRadius: 20, shadow: 50,
       imageOverlayText: 'PREVIEW', imageOverlayTextOpacity: 15, imageOverlayTextSize: 32,
+    },
+  },
+  // Batch 13 templates
+  {
+    id: 'outline-title',
+    name: 'Outline',
+    emoji: '🔲',
+    overrides: {
+      background: '#000000', backgroundId: 'pure-black',
+      padding: 52, borderRadius: 20, shadow: 60,
+      titleOutlineOnly: true, titleOutlineWidth: 3, titleOutlineColor: '#ffffff',
+      titleSize: 64, titleColor: '#ffffff',
+    },
+  },
+  {
+    id: 'quote-card',
+    name: 'Quote',
+    emoji: '💬',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%)', backgroundId: 'deep-purple',
+      padding: 56, borderRadius: 24, shadow: 50,
+      quoteStyle: true, quoteMarkColor: '#8b5cf6',
+      titleGradient: true, titleSize: 28,
+    },
+  },
+  {
+    id: 'polaroid',
+    name: 'Polaroid',
+    emoji: '📸',
+    overrides: {
+      background: '#f8f8f0', backgroundId: 'cream',
+      padding: 24, borderRadius: 4, shadow: 80,
+      photoTilt: true, photoTiltAngle: -2,
+      canvasPaddingBottom: 64, useCustomPadding: true,
+      canvasPaddingTop: 16, canvasPaddingLeft: 16, canvasPaddingRight: 16,
+    },
+  },
+  {
+    id: 'noise-film',
+    name: 'Film Grain',
+    emoji: '🎞',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', backgroundId: 'pure-black',
+      padding: 48, borderRadius: 16,
+      noiseGrain: true, noiseGrainOpacity: 35,
+      imageGrayscale: 30, shadowPreset: 'hard',
     },
   },
 ];

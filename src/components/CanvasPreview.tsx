@@ -683,6 +683,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayHalftone, overlayHalftoneColor, overlayHalftoneDensity,
     imageOverlayText, imageOverlayTextColor, imageOverlayTextSize, imageOverlayTextOpacity,
     bgGradientColor3, bgGradientColor4, bgGradientStops,
+    // Batch 13
+    titleOutlineOnly, titleOutlineWidth, titleOutlineColor,
+    imageTiltX, imageTiltY,
+    noiseGrain, noiseGrainOpacity,
+    photoTilt, photoTiltAngle,
+    subtitleBold, subtitleItalic, subtitleUnderline,
+    iconBar, iconBarStyle, iconBarColor,
+    overlayLinear, overlayLinearColor1, overlayLinearColor2, overlayLinearOpacity,
+    quoteStyle, quoteMarkColor,
+    colorDuotoneMap, colorDuotoneMapColor1, colorDuotoneMapColor2,
   } = state;
 
   if (!image) return null;
@@ -745,13 +755,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     : (mirrorMode ?? 'none') === 'both'        ? 'scale(-1,-1)'
     : '';
 
-  if (canvasRotation !== 0) {
-    canvasStyle.transform = mirrorTransformStr
-      ? `rotate(${canvasRotation}deg) ${mirrorTransformStr}`
-      : `rotate(${canvasRotation}deg)`;
-  } else if (mirrorTransformStr) {
-    canvasStyle.transform = mirrorTransformStr;
-  }
+  // Batch 13 — photo tilt (applied on top of rotation)
+  const tiltStr = (photoTilt ?? false) && (photoTiltAngle ?? 0) !== 0
+    ? `rotate(${photoTiltAngle ?? -3}deg)`
+    : '';
+  const rotStr = canvasRotation !== 0 ? `rotate(${canvasRotation}deg)` : '';
+  const combinedTransform = [rotStr, mirrorTransformStr, tiltStr].filter(Boolean).join(' ');
+  if (combinedTransform) canvasStyle.transform = combinedTransform;
 
   if (aspectPreset && aspectPreset.id !== 'auto') {
     canvasStyle.width = '100%';
@@ -923,12 +933,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const imageBorderStyle: React.CSSProperties = (imageBorder ?? false)
       ? { outline: `${imageBorderWidth ?? 2}px solid ${imageBorderColor ?? '#8b5cf6'}`, outlineOffset: '2px' }
       : {};
+    const tiltTransform = ((imageTiltX ?? 0) !== 0 || (imageTiltY ?? 0) !== 0)
+      ? `perspective(600px) rotateY(${imageTiltX ?? 0}deg) rotateX(${-(imageTiltY ?? 0)}deg)`
+      : '';
     const fitStyle: React.CSSProperties = {
       borderRadius: effectiveBR,
       filter: imageFilter,
       opacity: imgOpacity,
       clipPath: clipPath || undefined,
-      transform: imgRotation !== 0 ? `rotate(${imgRotation}deg)` : undefined,
+      transform: [tiltTransform, imgRotation !== 0 ? `rotate(${imgRotation}deg)` : ''].filter(Boolean).join(' ') || undefined,
       ...imgOutlineStyle,
       ...imageBorderStyle,
     };
@@ -1105,6 +1118,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       } : {}),
     };
 
+    // Batch 13 — outline-only title (transparent fill, stroke only)
+    if (isTitle && (titleOutlineOnly ?? false)) {
+      return {
+        ...base,
+        color: 'transparent',
+        WebkitTextFillColor: 'transparent',
+        WebkitTextStroke: `${titleOutlineWidth ?? 2}px ${titleOutlineColor ?? '#ffffff'}`,
+      };
+    }
+
     if (isTitle && (titleGradient ?? false)) {
       return {
         ...base,
@@ -1187,7 +1210,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
         <div style={boxPadStyle}>
           <div style={{ ...wrapperStyle, ...rotateStyle }}>
+            {/* Quote style — large decorative marks (Batch 13) */}
+            {(quoteStyle ?? false) && titleText && (
+              <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', marginBottom: 4 }}>"</div>
+            )}
             {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
+            {(quoteStyle ?? false) && titleText && (
+              <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', textAlign: 'right', marginTop: 4 }}>"</div>
+            )}
             {/* Line accent divider (Batch 8) */}
             {(lineAccent ?? false) && titleText && subtitleText && (
               <div style={{
@@ -1201,9 +1231,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             {/* Subtitle — Batch 9 adds opacity + gradient2 option */}
             {subtitleText && (() => {
               const subStyle: React.CSSProperties = {
-                ...getTextStyle(subtitleSize, subtitleColor, 400),
+                ...getTextStyle(subtitleSize, subtitleColor, (subtitleBold ?? false) ? 700 : 400),
                 textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined,
                 opacity: (subtitleOpacity ?? 100) / 100,
+                fontStyle: (subtitleItalic ?? false) ? 'italic' : undefined,
+                textDecoration: (subtitleUnderline ?? false) ? 'underline' : undefined,
                 // Batch 10 — separate subtitle font
                 fontFamily: (subtitleFont ?? 'Inter') !== 'Inter' ? subtitleFont : undefined,
               };
@@ -1937,6 +1969,52 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             {floatingLabelText}
           </div>
         )}
+
+        {/* Linear gradient overlay — top-to-bottom fade (Batch 13) */}
+        {(overlayLinear ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[3]" style={{
+            background: `linear-gradient(to bottom, ${overlayLinearColor1 ?? '#000000'}, ${overlayLinearColor2 ?? '#00000000'})`,
+            opacity: (overlayLinearOpacity ?? 60) / 100,
+          }} />
+        )}
+
+        {/* Color duotone map (Batch 13) — grayscale + color tint layers */}
+        {(colorDuotoneMap ?? false) && (
+          <>
+            <div className="absolute inset-0 pointer-events-none z-[22]" style={{ background: colorDuotoneMapColor1 ?? '#8b5cf6', mixBlendMode: 'multiply', opacity: 0.6 }} />
+            <div className="absolute inset-0 pointer-events-none z-[23]" style={{ background: colorDuotoneMapColor2 ?? '#ec4899', mixBlendMode: 'screen', opacity: 0.4 }} />
+          </>
+        )}
+
+        {/* Fine noise grain (Batch 13) */}
+        {(noiseGrain ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[30]" style={{
+            opacity: (noiseGrainOpacity ?? 20) / 100,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`,
+            backgroundSize: '128px 128px',
+          }} />
+        )}
+
+        {/* Icon bar (Batch 13) */}
+        {(iconBar ?? false) && (() => {
+          const iconMap: Record<string, string> = {
+            stars:  '★ ★ ★ ★ ★',
+            social: '🐦 📸 💼 ▶',
+            arrows: '→ → → → →',
+            dots:   '● ● ● ● ●',
+          };
+          return (
+            <div style={{
+              position: 'absolute', bottom: 12, left: 0, right: 0, zIndex: 33,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: 8, fontSize: 14, color: iconBarColor ?? '#f59e0b',
+              pointerEvents: 'none', letterSpacing: '0.15em',
+              fontFamily: 'Inter, system-ui',
+            }}>
+              {iconMap[iconBarStyle ?? 'stars'] ?? iconMap.stars}
+            </div>
+          );
+        })()}
 
         {/* Multi-stop gradient overlay (Batch 12) */}
         {(bgGradientStops ?? 2) >= 3 && (

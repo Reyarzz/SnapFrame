@@ -626,6 +626,17 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 13 layout controls */}
+      <Card>
+        <SectionLabel>Photo Tilt</SectionLabel>
+        <Toggle label="Enable" value={state.photoTilt ?? false} onChange={v => onChange({ photoTilt: v })}
+          desc="Slight Polaroid-style canvas tilt" />
+        {(state.photoTilt ?? false) && (
+          <Slider label="Angle" value={state.photoTiltAngle ?? -3} min={-15} max={15} unit="°"
+            onChange={v => onChange({ photoTiltAngle: v })} />
+        )}
+      </Card>
+
       <Card>
         <SectionLabel>Text Box Border</SectionLabel>
         <Toggle label="Enable" value={state.textBoxBorder ?? false}
@@ -2097,6 +2108,81 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 13 FX controls */}
+      <Card>
+        <SectionLabel>Film Grain (Fine)</SectionLabel>
+        <Toggle label="Enable" value={state.noiseGrain ?? false} onChange={v => onChange({ noiseGrain: v })}
+          desc="Fine noise grain across whole canvas" />
+        {(state.noiseGrain ?? false) && (
+          <Slider label="Opacity" value={state.noiseGrainOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ noiseGrainOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Linear Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayLinear ?? false} onChange={v => onChange({ overlayLinear: v })}
+          desc="Top-to-bottom gradient fade overlay" />
+        {(state.overlayLinear ?? false) && (
+          <>
+            <Slider label="Opacity" value={state.overlayLinearOpacity ?? 60} min={10} max={100} unit="%"
+              onChange={v => onChange({ overlayLinearOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Top</span>
+              <input type="color" value={state.overlayLinearColor1 ?? '#000000'}
+                onChange={e => onChange({ overlayLinearColor1: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <span className="text-[10px] text-white/35 ml-2">Bottom</span>
+              <input type="color" value={state.overlayLinearColor2?.replace(/00$/, '') ?? '#000000'}
+                onChange={e => onChange({ overlayLinearColor2: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Duotone Color Map</SectionLabel>
+        <Toggle label="Enable" value={state.colorDuotoneMap ?? false} onChange={v => onChange({ colorDuotoneMap: v })}
+          desc="Two-color duotone blend over image" />
+        {(state.colorDuotoneMap ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Shadow</span>
+            <input type="color" value={state.colorDuotoneMapColor1 ?? '#8b5cf6'}
+              onChange={e => onChange({ colorDuotoneMapColor1: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <span className="text-[10px] text-white/35 ml-2">Highlight</span>
+            <input type="color" value={state.colorDuotoneMapColor2 ?? '#ec4899'}
+              onChange={e => onChange({ colorDuotoneMapColor2: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Icon Bar</SectionLabel>
+        <Toggle label="Enable" value={state.iconBar ?? false} onChange={v => onChange({ iconBar: v })}
+          desc="Decorative icon row at canvas bottom" />
+        {(state.iconBar ?? false) && (
+          <>
+            <div className="grid grid-cols-4 gap-1.5">
+              {(['stars','social','arrows','dots'] as const).map(s => (
+                <QuickChip key={s} active={(state.iconBarStyle ?? 'stars') === s}
+                  onClick={() => onChange({ iconBarStyle: s })}>
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </QuickChip>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.iconBarColor ?? '#f59e0b'}
+                onChange={e => onChange({ iconBarColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -2326,6 +2412,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             Warm Tone
           </QuickChip>
         </div>
+      </Card>
+
+      {/* Batch 13 adjust controls */}
+      <Card>
+        <SectionLabel>Image 3D Tilt</SectionLabel>
+        <Slider label="Tilt X (Left/Right)" value={state.imageTiltX ?? 0} min={-20} max={20} unit="°"
+          onChange={v => onChange({ imageTiltX: v })} />
+        <Slider label="Tilt Y (Up/Down)" value={state.imageTiltY ?? 0} min={-20} max={20} unit="°"
+          onChange={v => onChange({ imageTiltY: v })} />
+        {((state.imageTiltX ?? 0) !== 0 || (state.imageTiltY ?? 0) !== 0) && (
+          <button onClick={() => onChange({ imageTiltX: 0, imageTiltY: 0 })}
+            className="text-[9px] text-white/25 hover:text-white/50">Reset</button>
+        )}
       </Card>
 
       {/* Batch 11 adjust controls */}
@@ -2860,6 +2959,58 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <Slider label="Spacing" value={state.titleLetterSpacing ?? 0} min={-10} max={50} unit=""
               onChange={v => onChange({ titleLetterSpacing: v })} />
             <p className="text-[8.5px] text-white/20">Overrides global spacing for title only</p>
+          </Card>
+
+          {/* Batch 13 text controls */}
+          <Card>
+            <SectionLabel>Title Outline Only</SectionLabel>
+            <Toggle label="Outline Mode" value={state.titleOutlineOnly ?? false}
+              onChange={v => onChange({ titleOutlineOnly: v })} desc="Transparent fill, stroke outline only" />
+            {(state.titleOutlineOnly ?? false) && (
+              <>
+                <Slider label="Stroke Width" value={state.titleOutlineWidth ?? 2} min={1} max={8} unit="px"
+                  onChange={v => onChange({ titleOutlineWidth: v })} />
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-white/35">Color</span>
+                  <input type="color" value={state.titleOutlineColor ?? '#ffffff'}
+                    onChange={e => onChange({ titleOutlineColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                  <div className="flex gap-1.5 ml-auto">
+                    {['#ffffff','#000000','#8b5cf6','#ec4899','#f59e0b','#10b981'].map(c => (
+                      <button key={c} onClick={() => onChange({ titleOutlineColor: c })}
+                        className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                        style={{ background: c }} />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Quote Style</SectionLabel>
+            <Toggle label="Large Quote Marks" value={state.quoteStyle ?? false}
+              onChange={v => onChange({ quoteStyle: v })} desc='Decorative " marks around title' />
+            {(state.quoteStyle ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Mark Color</span>
+                <input type="color" value={state.quoteMarkColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ quoteMarkColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Subtitle Extras</SectionLabel>
+            <div className="grid grid-cols-3 gap-1.5">
+              <QuickChip active={state.subtitleBold ?? false}
+                onClick={() => onChange({ subtitleBold: !(state.subtitleBold ?? false) })}>Bold</QuickChip>
+              <QuickChip active={state.subtitleItalic ?? false}
+                onClick={() => onChange({ subtitleItalic: !(state.subtitleItalic ?? false) })}>Italic</QuickChip>
+              <QuickChip active={state.subtitleUnderline ?? false}
+                onClick={() => onChange({ subtitleUnderline: !(state.subtitleUnderline ?? false) })}>Underline</QuickChip>
+            </div>
           </Card>
 
           {/* Batch 12 text controls */}
