@@ -626,6 +626,26 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 14 layout controls */}
+      <Card>
+        <SectionLabel>Polaroid Label</SectionLabel>
+        <input
+          type="text"
+          placeholder="Caption text (Polaroid frame only)..."
+          value={state.framePolaroidLabel ?? ''}
+          onChange={e => onChange({ framePolaroidLabel: e.target.value })}
+          className="w-full bg-white/[0.06] text-white/70 text-[11px] rounded-xl px-3 py-2 outline-none border border-white/[0.08] focus:border-brand-500/50 placeholder-white/20"
+        />
+        {(state.framePolaroidLabel ?? '').length > 0 && (
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] text-white/35">Label Color</span>
+            <input type="color" value={state.framePolaroidLabelColor ?? '#333333'}
+              onChange={e => onChange({ framePolaroidLabelColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 13 layout controls */}
       <Card>
         <SectionLabel>Photo Tilt</SectionLabel>
@@ -2183,6 +2203,61 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 14 FX controls */}
+      <Card>
+        <SectionLabel>VHS Effect</SectionLabel>
+        <Toggle label="Enable" value={state.overlayVHS ?? false} onChange={v => onChange({ overlayVHS: v })}
+          desc="Retro CRT scanlines + color bleed" />
+        {(state.overlayVHS ?? false) && (
+          <Slider label="Intensity" value={state.overlayVHSIntensity ?? 40} min={10} max={100} unit="%"
+            onChange={v => onChange({ overlayVHSIntensity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Backdrop Blur Card</SectionLabel>
+        <Toggle label="Enable" value={state.backdropBlurCard ?? false} onChange={v => onChange({ backdropBlurCard: v })}
+          desc="Frosted glass panel behind text area" />
+        {(state.backdropBlurCard ?? false) && (
+          <>
+            <Slider label="Blur" value={state.backdropBlurCardBlur ?? 12} min={2} max={40} unit="px"
+              onChange={v => onChange({ backdropBlurCardBlur: v })} />
+            <Slider label="Opacity" value={state.backdropBlurCardOpacity ?? 80} min={10} max={100} unit="%"
+              onChange={v => onChange({ backdropBlurCardOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Card Bg</span>
+              <input type="color" value={(state.backdropBlurCardBg ?? '#000000').slice(0, 7)}
+                onChange={e => onChange({ backdropBlurCardBg: e.target.value + '60' })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Shadow</SectionLabel>
+        <Toggle label="Enable" value={state.imageShadow ?? false} onChange={v => onChange({ imageShadow: v })}
+          desc="Drop shadow beneath image element" />
+        {(state.imageShadow ?? false) && (
+          <>
+            <Slider label="Blur" value={state.imageShadowBlur ?? 20} min={4} max={60} unit="px"
+              onChange={v => onChange({ imageShadowBlur: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Shadow Color</span>
+              <input type="color" value={state.imageShadowColor ?? '#000000'}
+                onChange={e => onChange({ imageShadowColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Animated BG Shimmer</SectionLabel>
+        <Toggle label="Enable Shimmer" value={state.bgAnimatedGradient ?? false}
+          onChange={v => onChange({ bgAnimatedGradient: v })} desc="Light shimmer overlay on background" />
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -2412,6 +2487,45 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             Warm Tone
           </QuickChip>
         </div>
+      </Card>
+
+      {/* Batch 14 adjust controls */}
+      <Card>
+        <SectionLabel>Image Hue Shift</SectionLabel>
+        <Slider label="Hue Shift" value={state.imageHueShift ?? 0} min={-180} max={180} unit="°"
+          onChange={v => onChange({ imageHueShift: v })} />
+        <p className="text-[8.5px] text-white/20">Rotate all image colors around the hue wheel</p>
+        {(state.imageHueShift ?? 0) !== 0 && (
+          <button onClick={() => onChange({ imageHueShift: 0 })}
+            className="text-[9px] text-white/25 hover:text-white/50">Reset</button>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Perspective</SectionLabel>
+        <div className="grid grid-cols-5 gap-1">
+          {(['flat','left','right','up','down'] as const).map(p => (
+            <QuickChip key={p} active={(state.imagePerspective ?? 'flat') === p}
+              onClick={() => onChange({ imagePerspective: p })}>
+              {p === 'flat' ? 'Flat' : p.charAt(0).toUpperCase() + p.slice(1)}
+            </QuickChip>
+          ))}
+        </div>
+        <p className="text-[8.5px] text-white/20">3D perspective angle for the image</p>
+      </Card>
+
+      <Card>
+        <SectionLabel>Tilt Shift (Image)</SectionLabel>
+        <Toggle label="Enable" value={state.tiltShiftImage ?? false} onChange={v => onChange({ tiltShiftImage: v })}
+          desc="Fade top & bottom edges for depth-of-field look" />
+        {(state.tiltShiftImage ?? false) && (
+          <>
+            <Slider label="Focus Center" value={state.tiltShiftImageCenter ?? 50} min={10} max={90} unit="%"
+              onChange={v => onChange({ tiltShiftImageCenter: v })} />
+            <Slider label="Blur Strength" value={state.tiltShiftImageBlur ?? 8} min={2} max={20} unit="px"
+              onChange={v => onChange({ tiltShiftImageBlur: v })} />
+          </>
+        )}
       </Card>
 
       {/* Batch 13 adjust controls */}
@@ -3011,6 +3125,35 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               <QuickChip active={state.subtitleUnderline ?? false}
                 onClick={() => onChange({ subtitleUnderline: !(state.subtitleUnderline ?? false) })}>Underline</QuickChip>
             </div>
+          </Card>
+
+          {/* Batch 14 text controls */}
+          <Card>
+            <SectionLabel>Text Reveal Bar</SectionLabel>
+            <Toggle label="Enable" value={state.textReveal ?? false} onChange={v => onChange({ textReveal: v })}
+              desc="Glowing bar accent under title" />
+            {(state.textReveal ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Bar Color</span>
+                <input type="color" value={state.textRevealColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ textRevealColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                <div className="flex gap-1.5 ml-auto">
+                  {['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#ef4444'].map(c => (
+                    <button key={c} onClick={() => onChange({ textRevealColor: c })}
+                      className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                      style={{ background: c }} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Title Skew</SectionLabel>
+            <Slider label="Skew Angle" value={state.titleSkew ?? 0} min={-20} max={20} unit="°"
+              onChange={v => onChange({ titleSkew: v })} />
+            <p className="text-[8.5px] text-white/20">Horizontal italic-like slant on title</p>
           </Card>
 
           {/* Batch 12 text controls */}

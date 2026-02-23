@@ -188,7 +188,7 @@ const MacBookFrame: React.FC<{ children: React.ReactNode; br: number }> = ({ chi
   </div>
 );
 
-const PolaroidFrame: React.FC<{ children: React.ReactNode; br: number; caption?: string }> = ({ children, br, caption }) => (
+const PolaroidFrame: React.FC<{ children: React.ReactNode; br: number; caption?: string; labelColor?: string }> = ({ children, br, caption, labelColor }) => (
   <div style={{
     background: '#fff', padding: '14px 14px 44px',
     borderRadius: Math.max(br, 2) + 2,
@@ -196,7 +196,7 @@ const PolaroidFrame: React.FC<{ children: React.ReactNode; br: number; caption?:
   }}>
     <div style={{ overflow: 'hidden', borderRadius: Math.max(br, 2) }}>{children}</div>
     {caption && (
-      <div style={{ textAlign: 'center', marginTop: 8, fontFamily: 'cursive', fontSize: 13, color: '#555', paddingBottom: 4 }}>
+      <div style={{ textAlign: 'center', marginTop: 8, fontFamily: 'cursive', fontSize: 13, color: labelColor ?? '#555', paddingBottom: 4 }}>
         {caption}
       </div>
     )}
@@ -693,6 +693,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayLinear, overlayLinearColor1, overlayLinearColor2, overlayLinearOpacity,
     quoteStyle, quoteMarkColor,
     colorDuotoneMap, colorDuotoneMapColor1, colorDuotoneMapColor2,
+    // Batch 14
+    textReveal, textRevealColor,
+    backdropBlurCard, backdropBlurCardBg, backdropBlurCardBlur, backdropBlurCardOpacity,
+    imageShadow, imageShadowColor, imageShadowBlur,
+    framePolaroidLabel, framePolaroidLabelColor,
+    bgAnimatedGradient,
+    imageHueShift,
+    titleSkew,
+    overlayVHS, overlayVHSIntensity,
+    tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
+    imagePerspective,
   } = state;
 
   if (!image) return null;
@@ -872,6 +883,9 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   // Batch 11 image filters
   if ((imageGrayscale ?? 0) > 0) imageFilterParts.push(`grayscale(${imageGrayscale}%)`);
   if ((imageSaturationBoost ?? 0) !== 0) imageFilterParts.push(`saturate(${100 + (imageSaturationBoost ?? 0)}%)`);
+  // Batch 14 — hue shift + drop shadow
+  if ((imageHueShift ?? 0) !== 0) imageFilterParts.push(`hue-rotate(${imageHueShift}deg)`);
+  if (imageShadow ?? false) imageFilterParts.push(`drop-shadow(0 8px ${imageShadowBlur ?? 20}px ${imageShadowColor ?? '#000000'})`);
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -936,12 +950,27 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const tiltTransform = ((imageTiltX ?? 0) !== 0 || (imageTiltY ?? 0) !== 0)
       ? `perspective(600px) rotateY(${imageTiltX ?? 0}deg) rotateX(${-(imageTiltY ?? 0)}deg)`
       : '';
+    // Batch 14 — imagePerspective preset
+    const perspMap: Record<string, string> = {
+      left:  'perspective(900px) rotateY(12deg)',
+      right: 'perspective(900px) rotateY(-12deg)',
+      up:    'perspective(900px) rotateX(-12deg)',
+      down:  'perspective(900px) rotateX(12deg)',
+    };
+    const perspTransform = (imagePerspective ?? 'flat') !== 'flat' ? (perspMap[imagePerspective ?? ''] ?? '') : '';
+    // Batch 14 — tilt-shift mask on image (fade top/bottom edges)
+    const tsiCenter = tiltShiftImageCenter ?? 50;
+    const tsiMask = (tiltShiftImage ?? false)
+      ? `linear-gradient(to bottom, transparent 0%, black ${Math.max(0, tsiCenter - 28)}%, black ${Math.min(100, tsiCenter + 28)}%, transparent 100%)`
+      : undefined;
     const fitStyle: React.CSSProperties = {
       borderRadius: effectiveBR,
       filter: imageFilter,
       opacity: imgOpacity,
       clipPath: clipPath || undefined,
-      transform: [tiltTransform, imgRotation !== 0 ? `rotate(${imgRotation}deg)` : ''].filter(Boolean).join(' ') || undefined,
+      transform: [tiltTransform, perspTransform, imgRotation !== 0 ? `rotate(${imgRotation}deg)` : ''].filter(Boolean).join(' ') || undefined,
+      maskImage: tsiMask,
+      WebkitMaskImage: tsiMask,
       ...imgOutlineStyle,
       ...imageBorderStyle,
     };
@@ -988,7 +1017,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       case 'arc':       return <ArcFrame        br={borderRadius}>{innerContent}</ArcFrame>;
       case 'samsung':   return <SamsungFrame    br={borderRadius}>{innerContent}</SamsungFrame>;
       case 'macbook':   return <MacBookFrame    br={borderRadius}>{innerContent}</MacBookFrame>;
-      case 'polaroid':  return <PolaroidFrame   br={borderRadius}>{innerContent}</PolaroidFrame>;
+      case 'polaroid':  return <PolaroidFrame   br={borderRadius} caption={framePolaroidLabel || undefined} labelColor={framePolaroidLabelColor}>{innerContent}</PolaroidFrame>;
       case 'newspaper': return <NewspaperFrame  br={borderRadius}>{innerContent}</NewspaperFrame>;
       case 'smarttv':   return <SmartTVFrame    br={borderRadius}>{innerContent}</SmartTVFrame>;
       case 'kindle':    return <KindleFrame     br={borderRadius}>{innerContent}</KindleFrame>;
@@ -1214,9 +1243,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', marginBottom: 4 }}>"</div>
             )}
-            {titleText && <div style={getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true)}>{titleText}</div>}
+            {titleText && <div style={{ ...getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true), ...((titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {}) }}>{titleText}</div>}
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', textAlign: 'right', marginTop: 4 }}>"</div>
+            )}
+            {/* Text reveal bar (Batch 14) */}
+            {(textReveal ?? false) && titleText && (
+              <div style={{
+                height: 3, borderRadius: 2,
+                background: textRevealColor ?? '#8b5cf6',
+                marginTop: 6, width: '40%',
+                boxShadow: `0 0 12px ${textRevealColor ?? '#8b5cf6'}`,
+              }} />
             )}
             {/* Line accent divider (Batch 8) */}
             {(lineAccent ?? false) && titleText && subtitleText && (
@@ -1314,6 +1352,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Background tint (Batch 3) */}
         {(bgTint ?? 0) > 0 && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: bgTintColor ?? '#8b5cf6', opacity: (bgTint ?? 0) / 100, mixBlendMode: 'color' }} />
+        )}
+
+        {/* Animated gradient shimmer (Batch 14) — static 3-stop shimmer */}
+        {(bgAnimatedGradient ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.07) 70%, transparent 100%)',
+            mixBlendMode: 'overlay',
+          }} />
         )}
 
         {/* Pattern overlay */}
@@ -2180,6 +2226,40 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             border: `2px solid ${frameDoubleBorderColor ?? '#8b5cf6'}`,
             pointerEvents: 'none', zIndex: 34,
             opacity: 0.7,
+          }} />
+        )}
+
+        {/* VHS overlay (Batch 14) — scanline + color bleed effect */}
+        {(overlayVHS ?? false) && (() => {
+          const vhsOp = ((overlayVHSIntensity ?? 40) / 100);
+          return (
+            <>
+              {/* Horizontal scanlines */}
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 38, pointerEvents: 'none',
+                backgroundImage: `repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,${(vhsOp * 0.45).toFixed(2)}) 2px, rgba(0,0,0,${(vhsOp * 0.45).toFixed(2)}) 4px)`,
+                mixBlendMode: 'multiply',
+              }} />
+              {/* Color bleed */}
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 39, pointerEvents: 'none',
+                background: `linear-gradient(90deg, rgba(255,0,0,${(vhsOp * 0.08).toFixed(2)}) 0%, transparent 30%, rgba(0,255,255,${(vhsOp * 0.06).toFixed(2)}) 70%, transparent 100%)`,
+                mixBlendMode: 'screen',
+              }} />
+            </>
+          );
+        })()}
+
+        {/* Backdrop blur card over text (Batch 14) */}
+        {(backdropBlurCard ?? false) && (
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 37,
+            height: '40%',
+            background: backdropBlurCardBg ?? '#00000060',
+            backdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
+            WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
+            opacity: (backdropBlurCardOpacity ?? 80) / 100,
+            pointerEvents: 'none',
           }} />
         )}
 

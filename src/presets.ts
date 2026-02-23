@@ -532,6 +532,28 @@ export interface EditorState {
   colorDuotoneMap: boolean;     // full duotone color mapping (separate from split)
   colorDuotoneMapColor1: string;
   colorDuotoneMapColor2: string;
+  // Batch 14
+  textReveal: boolean;          // reveal-style masked text (clip-path stripe)
+  textRevealColor: string;
+  backdropBlurCard: boolean;    // frosted glass card behind text
+  backdropBlurCardBg: string;
+  backdropBlurCardBlur: number;
+  backdropBlurCardOpacity: number;
+  imageShadow: boolean;         // drop shadow below image (perspective floor shadow)
+  imageShadowColor: string;
+  imageShadowBlur: number;
+  framePolaroidLabel: string;   // text label below image in polaroid style
+  framePolaroidLabelColor: string;
+  bgAnimatedGradient: boolean;  // animated gradient (CSS @keyframes — static snapshot)
+  bgAnimatedGradientSpeed: number;
+  imageHueShift: number;        // -180 to 180 hue-rotate on image
+  titleSkew: number;            // -20 to 20 skewX on title
+  overlayVHS: boolean;          // VHS scanline + color shift combo
+  overlayVHSIntensity: number;
+  tiltShiftImage: boolean;      // tilt-shift blur on image (top + bottom blur)
+  tiltShiftImageBlur: number;
+  tiltShiftImageCenter: number; // 0-100% center of sharp band
+  imagePerspective: string;     // 'flat'|'left'|'right'|'top'|'bottom' (CSS perspective)
 }
 
 export interface StyleTemplate {
@@ -1202,6 +1224,28 @@ export const DEFAULT_STATE: EditorState = {
   colorDuotoneMap: false,
   colorDuotoneMapColor1: '#8b5cf6',
   colorDuotoneMapColor2: '#ec4899',
+  // Batch 14
+  textReveal: false,
+  textRevealColor: '#8b5cf6',
+  backdropBlurCard: false,
+  backdropBlurCardBg: '#00000060',
+  backdropBlurCardBlur: 12,
+  backdropBlurCardOpacity: 80,
+  imageShadow: false,
+  imageShadowColor: '#000000',
+  imageShadowBlur: 20,
+  framePolaroidLabel: '',
+  framePolaroidLabelColor: '#333333',
+  bgAnimatedGradient: false,
+  bgAnimatedGradientSpeed: 50,
+  imageHueShift: 0,
+  titleSkew: 0,
+  overlayVHS: false,
+  overlayVHSIntensity: 40,
+  tiltShiftImage: false,
+  tiltShiftImageBlur: 8,
+  tiltShiftImageCenter: 50,
+  imagePerspective: 'flat',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2009,6 +2053,53 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16,
       noiseGrain: true, noiseGrainOpacity: 35,
       imageGrayscale: 30, shadowPreset: 'hard',
+    },
+  },
+  // Batch 14 templates
+  {
+    id: 'vhs-retro',
+    name: 'VHS',
+    emoji: '📼',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 8, shadow: 60,
+      overlayVHS: true, overlayVHSIntensity: 55,
+      imageGrayscale: 15, imageSaturationBoost: -20,
+      scanlines: 25, scanlinesSpacing: 3,
+    },
+  },
+  {
+    id: 'blur-glass-card',
+    name: 'Glass Card',
+    emoji: '🔮',
+    overrides: {
+      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)', backgroundId: 'purple-pink',
+      padding: 52, borderRadius: 24, shadow: 60,
+      backdropBlurCard: true, backdropBlurCardBg: '#ffffff18', backdropBlurCardBlur: 16, backdropBlurCardOpacity: 85,
+      titleGradient: false, titleColor: '#ffffff',
+    },
+  },
+  {
+    id: 'cinematic-tilt',
+    name: 'Cinematic',
+    emoji: '🎬',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%)', backgroundId: 'pure-black',
+      padding: 44, borderRadius: 16, shadow: 70,
+      tiltShiftImage: true, tiltShiftImageBlur: 10, tiltShiftImageCenter: 50,
+      imageHueShift: 10, imageSaturationBoost: 15,
+    },
+  },
+  {
+    id: 'neon-reveal',
+    name: 'Neon Reveal',
+    emoji: '✨',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0014 0%, #1a002e 100%)', backgroundId: 'deep-purple',
+      padding: 52, borderRadius: 20, shadow: 70,
+      textReveal: true, textRevealColor: '#8b5cf6',
+      titleGradient: true, titleSize: 52,
+      glowIntensity: 20, glowColor: '#8b5cf6',
     },
   },
 ];
