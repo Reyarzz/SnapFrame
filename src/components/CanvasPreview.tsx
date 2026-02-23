@@ -655,6 +655,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayDots, overlayDotsColor, overlayDotsSize, overlayDotsOpacity,
     titleCaps,
     gradientText2, gradientText2Color1, gradientText2Color2,
+    // Batch 10
+    titleLetterSpacing,
+    subtitleFont,
+    overlayGrid, overlayGridColor, overlayGridSize, overlayGridOpacity,
+    imageBorder, imageBorderColor, imageBorderWidth,
+    pulseRing, pulseRingColor, pulseRingSize,
+    cornerRibbon, cornerRibbonText, cornerRibbonColor, cornerRibbonBg, cornerRibbonCorner,
+    textHighlight, textHighlightColor,
+    imageRounded, imageRoundedAmount,
+    countdownBadge, countdownValue, countdownColor, countdownBg,
   } = state;
 
   if (!image) return null;
@@ -880,7 +890,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
   /* ── Inner image element ── */
   const renderImageEl = (rawBorderRadius = 0) => {
-    const effectiveBR = rawBorderRadius || imgBR;
+    const roundedBR = (imageRounded ?? false) ? `${imageRoundedAmount ?? 50}%` : undefined;
+    const effectiveBR = roundedBR ?? rawBorderRadius ?? imgBR;
+    const imageBorderStyle: React.CSSProperties = (imageBorder ?? false)
+      ? { outline: `${imageBorderWidth ?? 2}px solid ${imageBorderColor ?? '#8b5cf6'}`, outlineOffset: '2px' }
+      : {};
     const fitStyle: React.CSSProperties = {
       borderRadius: effectiveBR,
       filter: imageFilter,
@@ -888,6 +902,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       clipPath: clipPath || undefined,
       transform: imgRotation !== 0 ? `rotate(${imgRotation}deg)` : undefined,
       ...imgOutlineStyle,
+      ...imageBorderStyle,
     };
 
     if (!hasZoomPan) {
@@ -1041,10 +1056,21 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
 
     const base: React.CSSProperties = {
       fontSize: size, fontFamily: titleFont, fontWeight: weight,
-      lineHeight: lhVal, letterSpacing: lsValFinal, wordSpacing: wsVal,
+      lineHeight: lhVal,
+      letterSpacing: isTitle && (titleLetterSpacing ?? 0) !== 0
+        ? `${(titleLetterSpacing ?? 0) / 100}em`
+        : lsValFinal,
+      wordSpacing: wsVal,
       textTransform: isTitle && ((titleAllCaps ?? false) || (titleCaps ?? false)) ? 'uppercase' : undefined,
       fontStyle: isTitle && (titleItalic ?? false) ? 'italic' : undefined,
       opacity: isTitle ? (titleOpacity ?? 100) / 100 : 1,
+      // Batch 10 — text highlight behind title
+      ...(isTitle && (textHighlight ?? false) ? {
+        background: textHighlightColor ?? '#f59e0b',
+        WebkitBackgroundClip: undefined,
+        padding: '2px 6px',
+        borderRadius: 4,
+      } : {}),
     };
 
     if (isTitle && (titleGradient ?? false)) {
@@ -1130,6 +1156,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
                 ...getTextStyle(subtitleSize, subtitleColor, 400),
                 textTransform: (subtitleAllCaps ?? false) ? 'uppercase' : undefined,
                 opacity: (subtitleOpacity ?? 100) / 100,
+                // Batch 10 — separate subtitle font
+                fontFamily: (subtitleFont ?? 'Inter') !== 'Inter' ? subtitleFont : undefined,
               };
               if (gradientText2 ?? false) {
                 subStyle.background = `linear-gradient(135deg, ${gradientText2Color1 ?? '#ec4899'}, ${gradientText2Color2 ?? '#f59e0b'})`;
@@ -1823,6 +1851,81 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               <span style={{ fontSize: 8 }}>▶</span>
               {chipText}
             </div>
+          </div>
+        )}
+
+        {/* Grid overlay (Batch 10) */}
+        {(overlayGrid ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[29]" style={{
+            backgroundImage: [
+              `linear-gradient(to right, ${overlayGridColor ?? '#ffffff'} 1px, transparent 1px)`,
+              `linear-gradient(to bottom, ${overlayGridColor ?? '#ffffff'} 1px, transparent 1px)`,
+            ].join(', '),
+            backgroundSize: `${overlayGridSize ?? 40}px ${overlayGridSize ?? 40}px`,
+            opacity: (overlayGridOpacity ?? 10) / 100,
+          }} />
+        )}
+
+        {/* Pulse ring around image (Batch 10) */}
+        {(pulseRing ?? false) && (() => {
+          const pr = pulseRingSize ?? 8;
+          const pc = pulseRingColor ?? '#8b5cf6';
+          return (
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 25,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{
+                position: 'absolute',
+                width: `calc(100% - ${pr * 2}px)`, height: `calc(100% - ${pr * 2}px)`,
+                borderRadius: (imageRounded ?? false) ? '50%' : imgBR,
+                boxShadow: `0 0 0 ${pr}px ${pc}40, 0 0 0 ${pr * 2}px ${pc}20`,
+              }} />
+            </div>
+          );
+        })()}
+
+        {/* Corner ribbon (Batch 10) */}
+        {(cornerRibbon ?? false) && (() => {
+          const corner = cornerRibbonCorner ?? 'tr';
+          const posMap: Record<string, React.CSSProperties> = {
+            tr: { top: 18, right: -28, transform: 'rotate(45deg)' },
+            tl: { top: 18, left: -28, transform: 'rotate(-45deg)' },
+            br: { bottom: 18, right: -28, transform: 'rotate(-45deg)' },
+            bl: { bottom: 18, left: -28, transform: 'rotate(45deg)' },
+          };
+          return (
+            <div style={{
+              position: 'absolute', zIndex: 35, pointerEvents: 'none', overflow: 'hidden', inset: 0,
+            }}>
+              <div style={{
+                position: 'absolute', width: 80,
+                background: cornerRibbonBg ?? '#ec4899',
+                color: cornerRibbonColor ?? '#ffffff',
+                fontSize: 9, fontWeight: 800, textAlign: 'center',
+                padding: '3px 0', letterSpacing: '0.1em',
+                textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+                ...posMap[corner],
+              }}>
+                {cornerRibbonText ?? 'NEW'}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Countdown badge (Batch 10) */}
+        {(countdownBadge ?? false) && (
+          <div style={{
+            position: 'absolute', top: 12, left: 12, zIndex: 35,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 48, height: 48, borderRadius: '50%',
+            background: countdownBg ?? '#8b5cf6',
+            color: countdownColor ?? '#ffffff',
+            fontSize: 20, fontWeight: 900, fontFamily: 'Inter, system-ui',
+            boxShadow: `0 4px 16px ${countdownBg ?? '#8b5cf6'}60`,
+            pointerEvents: 'none',
+          }}>
+            {countdownValue ?? 7}
           </div>
         )}
 

@@ -430,6 +430,34 @@ export interface EditorState {
   gradientText2: boolean;      // second gradient line on subtitle
   gradientText2Color1: string;
   gradientText2Color2: string;
+  // Batch 10
+  titleLetterSpacing: number;   // extra letter spacing just for title (em units * 100)
+  subtitleFont: string;         // separate font for subtitle
+  textShadowSpread: number;     // 0-30 spread on text block shadow
+  overlayGrid: boolean;         // grid line overlay
+  overlayGridColor: string;
+  overlayGridSize: number;
+  overlayGridOpacity: number;
+  imageBorder: boolean;         // thin border around image inset
+  imageBorderColor: string;
+  imageBorderWidth: number;
+  pulseRing: boolean;           // animated-look pulsing ring around image
+  pulseRingColor: string;
+  pulseRingSize: number;
+  cornerRibbon: boolean;        // diagonal ribbon in corner (like "SALE" banner)
+  cornerRibbonText: string;
+  cornerRibbonColor: string;
+  cornerRibbonBg: string;
+  cornerRibbonCorner: string;   // 'tl'|'tr'|'bl'|'br'
+  textHighlight: boolean;       // highlighted text background mark behind title chars
+  textHighlightColor: string;
+  bgBlurStrength: number;       // explicit bg blur (replaces bgBlur for more control)
+  imageRounded: boolean;        // force image to circle/round shape
+  imageRoundedAmount: number;   // 0-50% border-radius on image
+  countdownBadge: boolean;      // numbered countdown badge overlay
+  countdownValue: number;
+  countdownColor: string;
+  countdownBg: string;
 }
 
 export interface StyleTemplate {
@@ -998,6 +1026,34 @@ export const DEFAULT_STATE: EditorState = {
   gradientText2: false,
   gradientText2Color1: '#ec4899',
   gradientText2Color2: '#f59e0b',
+  // Batch 10
+  titleLetterSpacing: 0,
+  subtitleFont: 'Inter',
+  textShadowSpread: 0,
+  overlayGrid: false,
+  overlayGridColor: '#ffffff',
+  overlayGridSize: 40,
+  overlayGridOpacity: 10,
+  imageBorder: false,
+  imageBorderColor: '#8b5cf6',
+  imageBorderWidth: 2,
+  pulseRing: false,
+  pulseRingColor: '#8b5cf6',
+  pulseRingSize: 8,
+  cornerRibbon: false,
+  cornerRibbonText: 'NEW',
+  cornerRibbonColor: '#ffffff',
+  cornerRibbonBg: '#ec4899',
+  cornerRibbonCorner: 'tr',
+  textHighlight: false,
+  textHighlightColor: '#f59e0b',
+  bgBlurStrength: 0,
+  imageRounded: false,
+  imageRoundedAmount: 50,
+  countdownBadge: false,
+  countdownValue: 7,
+  countdownColor: '#ffffff',
+  countdownBg: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1631,6 +1687,50 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       background: 'linear-gradient(135deg, #e0e0e0 0%, #f8f8f8 100%)', backgroundId: 'light-gray',
       padding: 56, borderRadius: 24,
       canvasInsetShadow: 60, shadowPreset: 'float',
+    },
+  },
+  // Batch 10 templates
+  {
+    id: 'ribbon-sale',
+    name: 'Ribbon',
+    emoji: '🎀',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', backgroundId: 'navy-dark',
+      padding: 48, borderRadius: 20, shadow: 50,
+      cornerRibbon: true, cornerRibbonText: 'NEW', cornerRibbonBg: '#ec4899', cornerRibbonCorner: 'tr',
+    },
+  },
+  {
+    id: 'grid-tech',
+    name: 'Grid Tech',
+    emoji: '⬛',
+    overrides: {
+      background: 'linear-gradient(135deg, #000000 0%, #0a0a1a 100%)', backgroundId: 'pure-black',
+      padding: 48, borderRadius: 16,
+      overlayGrid: true, overlayGridColor: '#8b5cf6', overlayGridSize: 30, overlayGridOpacity: 20,
+      titleGradient: true, frameGlow: 30, frameGlowColor: '#8b5cf6',
+    },
+  },
+  {
+    id: 'round-portrait',
+    name: 'Portrait',
+    emoji: '👤',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%)', backgroundId: 'deep-purple',
+      padding: 52, borderRadius: 24, shadow: 60,
+      imageRounded: true, imageRoundedAmount: 50,
+      pulseRing: true, pulseRingColor: '#8b5cf6', pulseRingSize: 10,
+    },
+  },
+  {
+    id: 'countdown-launch',
+    name: 'Countdown',
+    emoji: '⏳',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', backgroundId: 'cosmic',
+      padding: 48, borderRadius: 20, shadow: 50,
+      countdownBadge: true, countdownValue: 7, countdownBg: '#ec4899',
+      tagLine: 'LAUNCHING IN', tagLineBg: '#8b5cf620',
     },
   },
 ];

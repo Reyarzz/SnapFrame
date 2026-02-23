@@ -1695,6 +1695,140 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 10 FX */}
+      <Card>
+        <SectionLabel>Grid Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayGrid ?? false} onChange={v => onChange({ overlayGrid: v })}
+          desc="Repeating grid line overlay" />
+        {(state.overlayGrid ?? false) && (
+          <>
+            <Slider label="Grid Size" value={state.overlayGridSize ?? 40} min={10} max={100} unit="px"
+              onChange={v => onChange({ overlayGridSize: v })} />
+            <Slider label="Opacity" value={state.overlayGridOpacity ?? 10} min={2} max={60} unit="%"
+              onChange={v => onChange({ overlayGridOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.overlayGridColor ?? '#ffffff'}
+                onChange={e => onChange({ overlayGridColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Border</SectionLabel>
+        <Toggle label="Enable" value={state.imageBorder ?? false} onChange={v => onChange({ imageBorder: v })}
+          desc="Accent outline around the image" />
+        {(state.imageBorder ?? false) && (
+          <>
+            <Slider label="Width" value={state.imageBorderWidth ?? 2} min={1} max={8} unit="px"
+              onChange={v => onChange({ imageBorderWidth: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.imageBorderColor ?? '#8b5cf6'}
+                onChange={e => onChange({ imageBorderColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#ffffff','#000000'].map(c => (
+                  <button key={c} onClick={() => onChange({ imageBorderColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Shape</SectionLabel>
+        <Toggle label="Rounded / Circle" value={state.imageRounded ?? false} onChange={v => onChange({ imageRounded: v })}
+          desc="Apply border-radius to image" />
+        {(state.imageRounded ?? false) && (
+          <Slider label="Roundness" value={state.imageRoundedAmount ?? 50} min={5} max={50} unit="%"
+            onChange={v => onChange({ imageRoundedAmount: v })} />
+        )}
+        <Toggle label="Pulse Ring" value={state.pulseRing ?? false} onChange={v => onChange({ pulseRing: v })}
+          desc="Glowing ring around image" />
+        {(state.pulseRing ?? false) && (
+          <>
+            <Slider label="Ring Size" value={state.pulseRingSize ?? 8} min={2} max={24} unit="px"
+              onChange={v => onChange({ pulseRingSize: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.pulseRingColor ?? '#8b5cf6'}
+                onChange={e => onChange({ pulseRingColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#ffffff'].map(c => (
+                  <button key={c} onClick={() => onChange({ pulseRingColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Corner Ribbon</SectionLabel>
+        <Toggle label="Enable" value={state.cornerRibbon ?? false} onChange={v => onChange({ cornerRibbon: v })}
+          desc="Diagonal banner in canvas corner" />
+        {(state.cornerRibbon ?? false) && (
+          <>
+            <input type="text" placeholder="Ribbon text…" value={state.cornerRibbonText ?? 'NEW'}
+              onChange={e => onChange({ cornerRibbonText: e.target.value })}
+              className="w-full px-3 py-2 rounded-xl bg-white/[0.06] text-white text-sm placeholder:text-white/20 ring-1 ring-white/[0.09] focus:outline-none" />
+            <div className="grid grid-cols-4 gap-1.5">
+              {(['tr','tl','br','bl'] as const).map(c => (
+                <QuickChip key={c} active={(state.cornerRibbonCorner ?? 'tr') === c}
+                  onClick={() => onChange({ cornerRibbonCorner: c })}>{c.toUpperCase()}</QuickChip>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">BG</span>
+              <input type="color" value={state.cornerRibbonBg ?? '#ec4899'}
+                onChange={e => onChange({ cornerRibbonBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#ec4899','#8b5cf6','#f59e0b','#10b981','#3b82f6','#ef4444'].map(c => (
+                  <button key={c} onClick={() => onChange({ cornerRibbonBg: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Countdown Badge</SectionLabel>
+        <Toggle label="Enable" value={state.countdownBadge ?? false} onChange={v => onChange({ countdownBadge: v })}
+          desc="Number badge overlay (days/count)" />
+        {(state.countdownBadge ?? false) && (
+          <>
+            <Slider label="Value" value={state.countdownValue ?? 7} min={1} max={99} unit=""
+              onChange={v => onChange({ countdownValue: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">BG</span>
+              <input type="color" value={state.countdownBg ?? '#8b5cf6'}
+                onChange={e => onChange({ countdownBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#ef4444'].map(c => (
+                  <button key={c} onClick={() => onChange({ countdownBg: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -2443,6 +2577,49 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </Card>
 
+          {/* Batch 10 text controls */}
+          <Card highlight>
+            <SectionLabel>Title Letter Spacing</SectionLabel>
+            <Slider label="Spacing" value={state.titleLetterSpacing ?? 0} min={-10} max={50} unit=""
+              onChange={v => onChange({ titleLetterSpacing: v })} />
+            <p className="text-[8.5px] text-white/20">Overrides global spacing for title only</p>
+          </Card>
+
+          <Card>
+            <SectionLabel>Subtitle Font</SectionLabel>
+            <div className="grid grid-cols-2 gap-1.5">
+              {['Inter','Playfair Display','Space Grotesk','Roboto Mono',"'Oswald'","'Dancing Script'"].map(f => {
+                const label = f.replace(/['"]/g,'').split(' ').slice(0,2).join(' ');
+                return (
+                  <QuickChip key={f} active={(state.subtitleFont ?? 'Inter') === f}
+                    onClick={() => onChange({ subtitleFont: f })}>{label}
+                  </QuickChip>
+                );
+              })}
+            </div>
+          </Card>
+
+          <Card>
+            <SectionLabel>Text Highlight</SectionLabel>
+            <Toggle label="Enable" value={state.textHighlight ?? false}
+              onChange={v => onChange({ textHighlight: v })} desc="Colored highlight band behind title" />
+            {(state.textHighlight ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">Color</span>
+                <input type="color" value={state.textHighlightColor ?? '#f59e0b'}
+                  onChange={e => onChange({ textHighlightColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+                <div className="flex gap-1.5 ml-auto">
+                  {['#f59e0b','#ec4899','#10b981','#3b82f6','#8b5cf6','#ef4444'].map(c => (
+                    <button key={c} onClick={() => onChange({ textHighlightColor: c })}
+                      className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                      style={{ background: c }} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Card>
+
           <Card>
             <SectionLabel>Text Colors</SectionLabel>
             {[
@@ -2786,19 +2963,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         </div>
       </div>
 
-      {/* Tab bar */}
-      <div className="shrink-0 flex bg-black/25 border-b border-white/[0.05] overflow-x-auto no-scrollbar">
-        {TABS.map(({ id, label, Icon }) => (
-          <button key={id} onClick={() => setActiveTab(id)}
-            className={`flex-1 min-w-[3rem] flex flex-col items-center gap-[3px] py-2.5 text-[7px] font-bold uppercase tracking-wider transition-all border-b-2 ${
-              activeTab === id
-                ? 'text-brand-400 border-brand-500 bg-brand-500/[0.05]'
-                : 'text-white/28 border-transparent hover:text-white/50 hover:bg-white/[0.02]'
-            }`}>
-            <Icon className="w-[13px] h-[13px]" />
-            <span>{label}</span>
-          </button>
-        ))}
+      {/* Tab bar — GUI restyle Batch 10 */}
+      <div className="shrink-0 flex bg-[#090912] border-b border-white/[0.06] overflow-x-auto no-scrollbar gap-0.5 px-1 pt-1">
+        {TABS.map(({ id, label, Icon }) => {
+          const isActive = activeTab === id;
+          return (
+            <button key={id} onClick={() => setActiveTab(id)}
+              className={`relative flex-1 min-w-[3rem] flex flex-col items-center gap-[3px] pb-2.5 pt-2 text-[7px] font-bold uppercase tracking-wider transition-all rounded-t-lg ${
+                isActive
+                  ? 'text-white bg-gradient-to-b from-brand-500/15 to-transparent'
+                  : 'text-white/28 hover:text-white/55 hover:bg-white/[0.03]'
+              }`}>
+              {isActive && (
+                <div className="absolute top-0 left-2 right-2 h-[2px] rounded-b-full bg-gradient-to-r from-brand-400 to-pink-400 shadow-sm shadow-brand-500/50" />
+              )}
+              <Icon className={`w-[13px] h-[13px] transition-all ${isActive ? 'text-brand-300' : ''}`} />
+              <span className={isActive ? 'text-brand-200' : ''}>{label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Scrollable content */}
