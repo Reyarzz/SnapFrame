@@ -675,6 +675,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     useCustomPadding, canvasPaddingTop, canvasPaddingBottom, canvasPaddingLeft, canvasPaddingRight,
     textShadowPreset,
     badgePulse,
+    // Batch 12
+    titleFont2, titleFont2Enabled,
+    imageVignette, imageVignetteColor, imageVignetteSize,
+    scrollingText, scrollingTextContent, scrollingTextColor, scrollingTextBg, scrollingTextSize,
+    dividerLine, dividerLineColor, dividerLineHeight, dividerLineStyle,
+    overlayHalftone, overlayHalftoneColor, overlayHalftoneDensity,
+    imageOverlayText, imageOverlayTextColor, imageOverlayTextSize, imageOverlayTextOpacity,
+    bgGradientColor3, bgGradientColor4, bgGradientStops,
   } = state;
 
   if (!image) return null;
@@ -1075,7 +1083,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       : undefined;
 
     const base: React.CSSProperties = {
-      fontSize: size, fontFamily: titleFont, fontWeight: weight,
+      fontSize: size,
+      fontFamily: isTitle && (titleFont2Enabled ?? false) && (titleFont2 ?? 'Inter') !== 'Inter'
+        ? `${titleFont2}, ${titleFont}, sans-serif`
+        : titleFont,
+      fontWeight: weight,
       lineHeight: lhVal,
       letterSpacing: isTitle && (titleLetterSpacing ?? 0) !== 0
         ? `${(titleLetterSpacing ?? 0) / 100}em`
@@ -1926,6 +1938,53 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           </div>
         )}
 
+        {/* Multi-stop gradient overlay (Batch 12) */}
+        {(bgGradientStops ?? 2) >= 3 && (
+          <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+            background: (bgGradientStops ?? 2) >= 4
+              ? `linear-gradient(135deg, transparent 0%, ${bgGradientColor3 ?? '#f59e0b'}40 50%, ${bgGradientColor4 ?? '#10b981'}40 75%, transparent 100%)`
+              : `linear-gradient(135deg, transparent 0%, ${bgGradientColor3 ?? '#f59e0b'}50 100%)`,
+            mixBlendMode: 'overlay',
+          }} />
+        )}
+
+        {/* Image vignette overlay (Batch 12) */}
+        {(imageVignette ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[24]" style={{
+            background: `radial-gradient(ellipse at center, transparent ${100 - (imageVignetteSize ?? 40)}%, ${imageVignetteColor ?? '#000000'} 100%)`,
+          }} />
+        )}
+
+        {/* Halftone overlay (Batch 12) */}
+        {(overlayHalftone ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[28]" style={{
+            backgroundImage: `radial-gradient(circle, ${overlayHalftoneColor ?? '#000000'} ${overlayHalftoneDensity ?? 4}px, transparent ${overlayHalftoneDensity ?? 4}px)`,
+            backgroundSize: `${(overlayHalftoneDensity ?? 4) * 5}px ${(overlayHalftoneDensity ?? 4) * 5}px`,
+            opacity: 0.25,
+          }} />
+        )}
+
+        {/* Image overlay text (Batch 12) — large diagonal text printed over image */}
+        {(imageOverlayText ?? '').length > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-[25] flex items-center justify-center overflow-hidden">
+            <div style={{
+              color: imageOverlayTextColor ?? '#ffffff',
+              fontSize: imageOverlayTextSize ?? 24,
+              fontWeight: 900,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              opacity: (imageOverlayTextOpacity ?? 30) / 100,
+              transform: 'rotate(-30deg)',
+              whiteSpace: 'nowrap',
+              fontFamily: 'Inter, system-ui',
+              userSelect: 'none',
+              textShadow: 'none',
+            }}>
+              {Array(6).fill(imageOverlayText).join('  •  ')}
+            </div>
+          </div>
+        )}
+
         {/* Grid overlay (Batch 10) */}
         {(overlayGrid ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[29]" style={{
@@ -1998,6 +2057,40 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             pointerEvents: 'none',
           }}>
             {countdownValue ?? 7}
+          </div>
+        )}
+
+        {/* Divider line between image and text (Batch 12) */}
+        {(dividerLine ?? false) && (
+          <div style={{
+            position: 'absolute', left: 0, right: 0, zIndex: 20,
+            top: '50%', transform: 'translateY(-50%)',
+            height: dividerLineHeight ?? 1,
+            background: dividerLineColor ?? '#ffffff',
+            borderStyle: (dividerLineStyle ?? 'solid') as React.CSSProperties['borderStyle'],
+            pointerEvents: 'none',
+            opacity: 0.6,
+          }} />
+        )}
+
+        {/* Scrolling text ticker bar (Batch 12) */}
+        {(scrollingText ?? false) && (scrollingTextContent ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 36,
+            background: scrollingTextBg ?? '#8b5cf6',
+            color: scrollingTextColor ?? '#ffffff',
+            fontSize: scrollingTextSize ?? 11,
+            fontWeight: 700,
+            letterSpacing: '0.06em',
+            padding: '5px 0',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            fontFamily: 'Inter, system-ui',
+          }}>
+            <span style={{ display: 'inline-block', paddingLeft: '100%', animation: undefined }}>
+              {Array(4).fill(scrollingTextContent).join('  ')}
+            </span>
           </div>
         )}
 

@@ -1478,6 +1478,37 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <p className="text-[8.5px] text-white/20">Adds backdrop blur to the color overlay</p>
       </Card>
 
+      {/* Batch 12 — extra gradient stops */}
+      <Card highlight>
+        <SectionLabel>Extra Gradient Stops</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { v: 2, l: '2 Stops' },
+            { v: 3, l: '3 Stops' },
+            { v: 4, l: '4 Stops' },
+          ].map(({ v, l }) => (
+            <QuickChip key={v} active={(state.bgGradientStops ?? 2) === v}
+              onClick={() => onChange({ bgGradientStops: v })}>{l}</QuickChip>
+          ))}
+        </div>
+        {(state.bgGradientStops ?? 2) >= 3 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] text-white/35">Stop 3</span>
+            <input type="color" value={state.bgGradientColor3 ?? '#f59e0b'}
+              onChange={e => onChange({ bgGradientColor3: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            {(state.bgGradientStops ?? 2) >= 4 && (
+              <>
+                <span className="text-[10px] text-white/35 ml-2">Stop 4</span>
+                <input type="color" value={state.bgGradientColor4 ?? '#10b981'}
+                  onChange={e => onChange({ bgGradientColor4: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </>
+            )}
+          </div>
+        )}
+      </Card>
+
       <Card>
         <SectionLabel>Text Sticker</SectionLabel>
         <input type="text" placeholder="e.g. ✨ NEW, 🔥 HOT TAKE…" value={state.stickerText ?? ''}
@@ -1952,6 +1983,118 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <SectionLabel>Badge Pulse Ring</SectionLabel>
         <Toggle label="Enable" value={state.badgePulse ?? false} onChange={v => onChange({ badgePulse: v })}
           desc="Glowing ring around badge label" />
+      </Card>
+
+      {/* Batch 12 FX controls */}
+      <Card>
+        <SectionLabel>Image Vignette</SectionLabel>
+        <Toggle label="Enable" value={state.imageVignette ?? false} onChange={v => onChange({ imageVignette: v })}
+          desc="Radial vignette on image specifically" />
+        {(state.imageVignette ?? false) && (
+          <>
+            <Slider label="Size" value={state.imageVignetteSize ?? 40} min={5} max={90} unit="%"
+              onChange={v => onChange({ imageVignetteSize: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.imageVignetteColor ?? '#000000'}
+                onChange={e => onChange({ imageVignetteColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Halftone Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayHalftone ?? false} onChange={v => onChange({ overlayHalftone: v })}
+          desc="Classic halftone dot pattern" />
+        {(state.overlayHalftone ?? false) && (
+          <>
+            <Slider label="Density" value={state.overlayHalftoneDensity ?? 4} min={2} max={12} unit="px"
+              onChange={v => onChange({ overlayHalftoneDensity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.overlayHalftoneColor ?? '#000000'}
+                onChange={e => onChange({ overlayHalftoneColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Divider Line</SectionLabel>
+        <Toggle label="Enable" value={state.dividerLine ?? false} onChange={v => onChange({ dividerLine: v })}
+          desc="Horizontal line across canvas midpoint" />
+        {(state.dividerLine ?? false) && (
+          <>
+            <Slider label="Thickness" value={state.dividerLineHeight ?? 1} min={1} max={8} unit="px"
+              onChange={v => onChange({ dividerLineHeight: v })} />
+            <div className="grid grid-cols-4 gap-1.5">
+              {(['solid','dashed','dotted','double'] as const).map(s => (
+                <QuickChip key={s} active={(state.dividerLineStyle ?? 'solid') === s}
+                  onClick={() => onChange({ dividerLineStyle: s })}>
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </QuickChip>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.dividerLineColor ?? '#ffffff'}
+                onChange={e => onChange({ dividerLineColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Scrolling Ticker</SectionLabel>
+        <Toggle label="Enable" value={state.scrollingText ?? false} onChange={v => onChange({ scrollingText: v })}
+          desc="Scrolling text bar at bottom" />
+        {(state.scrollingText ?? false) && (
+          <>
+            <input type="text" placeholder="Ticker text…" value={state.scrollingTextContent ?? ''}
+              onChange={e => onChange({ scrollingTextContent: e.target.value })}
+              className="w-full px-3 py-2 rounded-xl bg-white/[0.06] text-white text-sm placeholder:text-white/20 ring-1 ring-white/[0.09] focus:outline-none" />
+            <Slider label="Text Size" value={state.scrollingTextSize ?? 11} min={8} max={20} unit="px"
+              onChange={v => onChange({ scrollingTextSize: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">BG</span>
+              <input type="color" value={state.scrollingTextBg ?? '#8b5cf6'}
+                onChange={e => onChange({ scrollingTextBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#000000'].map(c => (
+                  <button key={c} onClick={() => onChange({ scrollingTextBg: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Overlay Text</SectionLabel>
+        <input type="text" placeholder="Watermark text over image…" value={state.imageOverlayText ?? ''}
+          onChange={e => onChange({ imageOverlayText: e.target.value })}
+          className="w-full px-3 py-2 rounded-xl bg-white/[0.06] text-white text-sm placeholder:text-white/20 ring-1 ring-white/[0.09] focus:outline-none" />
+        {(state.imageOverlayText ?? '').length > 0 && (
+          <>
+            <Slider label="Size" value={state.imageOverlayTextSize ?? 24} min={12} max={60} unit="px"
+              onChange={v => onChange({ imageOverlayTextSize: v })} />
+            <Slider label="Opacity" value={state.imageOverlayTextOpacity ?? 30} min={5} max={80} unit="%"
+              onChange={v => onChange({ imageOverlayTextOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.imageOverlayTextColor ?? '#ffffff'}
+                onChange={e => onChange({ imageOverlayTextColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
       </Card>
 
       <ResetBtn
@@ -2717,6 +2860,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             <Slider label="Spacing" value={state.titleLetterSpacing ?? 0} min={-10} max={50} unit=""
               onChange={v => onChange({ titleLetterSpacing: v })} />
             <p className="text-[8.5px] text-white/20">Overrides global spacing for title only</p>
+          </Card>
+
+          {/* Batch 12 text controls */}
+          <Card>
+            <SectionLabel>Title Secondary Font</SectionLabel>
+            <Toggle label="Enable Mix Font" value={state.titleFont2Enabled ?? false}
+              onChange={v => onChange({ titleFont2Enabled: v })} desc="Blend a second font into the title stack" />
+            {(state.titleFont2Enabled ?? false) && (
+              <div className="grid grid-cols-2 gap-1.5">
+                {['Playfair Display','Space Grotesk','Roboto Mono',"'Oswald'","'Dancing Script'","'Cinzel'"].map(f => {
+                  const label = f.replace(/['"]/g,'').split(' ').slice(0,2).join(' ');
+                  return (
+                    <QuickChip key={f} active={(state.titleFont2 ?? 'Inter') === f}
+                      onClick={() => onChange({ titleFont2: f })}>{label}
+                    </QuickChip>
+                  );
+                })}
+              </div>
+            )}
           </Card>
 
           <Card>

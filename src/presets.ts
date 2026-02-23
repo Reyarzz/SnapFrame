@@ -482,6 +482,31 @@ export interface EditorState {
   useCustomPadding: boolean;    // toggle per-side padding
   textShadowPreset: string;     // 'none'|'soft'|'hard'|'glow'|'retro'
   badgePulse: boolean;          // pulsing ring on badge
+  // Batch 12
+  titleFont2: string;           // second font applied to alternating words
+  titleFont2Enabled: boolean;
+  imageVignette: boolean;       // vignette applied only to image (not whole canvas)
+  imageVignetteColor: string;
+  imageVignetteSize: number;    // 0-100
+  scrollingText: boolean;       // marquee-style text at bottom
+  scrollingTextContent: string;
+  scrollingTextColor: string;
+  scrollingTextBg: string;
+  scrollingTextSize: number;
+  dividerLine: boolean;         // horizontal divider between image and text
+  dividerLineColor: string;
+  dividerLineHeight: number;
+  dividerLineStyle: string;     // 'solid'|'dashed'|'dotted'|'double'
+  overlayHalftone: boolean;     // halftone dot overlay (different from scanlines)
+  overlayHalftoneColor: string;
+  overlayHalftoneDensity: number;
+  imageOverlayText: string;     // text printed directly over the image
+  imageOverlayTextColor: string;
+  imageOverlayTextSize: number;
+  imageOverlayTextOpacity: number;
+  bgGradientStops: number;      // number of gradient stops (2-4)
+  bgGradientColor3: string;     // 3rd gradient stop
+  bgGradientColor4: string;     // 4th gradient stop
 }
 
 export interface StyleTemplate {
@@ -1102,6 +1127,31 @@ export const DEFAULT_STATE: EditorState = {
   useCustomPadding: false,
   textShadowPreset: 'none',
   badgePulse: false,
+  // Batch 12
+  titleFont2: 'Inter',
+  titleFont2Enabled: false,
+  imageVignette: false,
+  imageVignetteColor: '#000000',
+  imageVignetteSize: 40,
+  scrollingText: false,
+  scrollingTextContent: 'SnapFrame • Made with SnapFrame • ',
+  scrollingTextColor: '#ffffff',
+  scrollingTextBg: '#8b5cf6',
+  scrollingTextSize: 11,
+  dividerLine: false,
+  dividerLineColor: '#ffffff',
+  dividerLineHeight: 1,
+  dividerLineStyle: 'solid',
+  overlayHalftone: false,
+  overlayHalftoneColor: '#000000',
+  overlayHalftoneDensity: 4,
+  imageOverlayText: '',
+  imageOverlayTextColor: '#ffffff',
+  imageOverlayTextSize: 24,
+  imageOverlayTextOpacity: 30,
+  bgGradientStops: 2,
+  bgGradientColor3: '#f59e0b',
+  bgGradientColor4: '#10b981',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1820,6 +1870,49 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       imageGrayscale: 100, accentLine: true, accentLineColor: '#ec4899', accentLinePosition: 'left', accentLineThickness: 6,
       background: '#0a0a0a', backgroundId: 'pure-black',
       padding: 48, borderRadius: 16, shadow: 50,
+    },
+  },
+  // Batch 12 templates
+  {
+    id: 'halftone-pop',
+    name: 'Halftone',
+    emoji: '🔵',
+    overrides: {
+      background: 'linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%)', backgroundId: 'warm-light',
+      padding: 48, borderRadius: 20,
+      overlayHalftone: true, overlayHalftoneColor: '#1a1a2e', overlayHalftoneDensity: 3,
+      imageGrayscale: 20,
+    },
+  },
+  {
+    id: 'ticker-tape',
+    name: 'Ticker',
+    emoji: '📰',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a1a 0%, #111128 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 16, shadow: 50,
+      scrollingText: true, scrollingTextContent: '🔥 TRENDING NOW • NEW RELEASE • ', scrollingTextBg: '#ec4899',
+    },
+  },
+  {
+    id: 'divider-clean',
+    name: 'Divided',
+    emoji: '━',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', backgroundId: 'navy-dark',
+      padding: 52, borderRadius: 20,
+      dividerLine: true, dividerLineColor: '#8b5cf6', dividerLineHeight: 2,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'watermark-art',
+    name: 'Watermark',
+    emoji: '💧',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #24243e 100%)', backgroundId: 'cosmic-dark',
+      padding: 48, borderRadius: 20, shadow: 50,
+      imageOverlayText: 'PREVIEW', imageOverlayTextOpacity: 15, imageOverlayTextSize: 32,
     },
   },
 ];
