@@ -754,6 +754,30 @@ export interface EditorState {
   bgColorWash: boolean;             // solid translucent color wash over BG
   bgColorWashColor: string;
   bgColorWashOpacity: number;
+  // Batch 24
+  overlayPixelGrid: boolean;        // pixel art grid overlay
+  overlayPixelGridOpacity: number;
+  imageFlatColor: boolean;          // flat graphic color pop (hard contrast)
+  titleBounce: boolean;             // bouncy baseline wave on title text
+  bgCrossHatch: boolean;            // crosshatch pen-stroke background
+  bgCrossHatchColor: string;
+  bgCrossHatchOpacity: number;
+  imagePastelTone: boolean;         // soft pastel desaturated tones
+  frameNeonTube: boolean;           // neon tube border glow (inset)
+  frameNeonTubeColor: string;
+  overlayPaperFold: boolean;        // paper fold/crease diagonal line
+  overlayPaperFoldOpacity: number;
+  bgRipple: boolean;                // water ripple concentric pattern
+  bgRippleColor: string;
+  bgRippleOpacity: number;
+  titleGradientAngle: number;       // custom angle for title gradient
+  textLetterboxBars: boolean;       // black cinematic letterbox bars
+  imageInfrared: boolean;           // infrared false-color effect
+  canvasTiltedFrame: boolean;       // slight tilt/skew on entire canvas
+  canvasTiltedFrameAngle: number;
+  bgSpiralConic: boolean;           // tight conic-gradient spiral look
+  bgSpiralConicColor: string;
+  bgSpiralConicOpacity: number;
 }
 
 export interface StyleTemplate {
@@ -1646,6 +1670,30 @@ export const DEFAULT_STATE: EditorState = {
   bgColorWash: false,
   bgColorWashColor: '#8b5cf6',
   bgColorWashOpacity: 20,
+  // Batch 24
+  overlayPixelGrid: false,
+  overlayPixelGridOpacity: 15,
+  imageFlatColor: false,
+  titleBounce: false,
+  bgCrossHatch: false,
+  bgCrossHatchColor: '#8b5cf6',
+  bgCrossHatchOpacity: 12,
+  imagePastelTone: false,
+  frameNeonTube: false,
+  frameNeonTubeColor: '#00ffff',
+  overlayPaperFold: false,
+  overlayPaperFoldOpacity: 20,
+  bgRipple: false,
+  bgRippleColor: '#8b5cf6',
+  bgRippleOpacity: 15,
+  titleGradientAngle: 135,
+  textLetterboxBars: false,
+  imageInfrared: false,
+  canvasTiltedFrame: false,
+  canvasTiltedFrameAngle: 3,
+  bgSpiralConic: false,
+  bgSpiralConicColor: '#8b5cf6',
+  bgSpiralConicOpacity: 15,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2635,6 +2683,55 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 24 templates
+  {
+    id: 'pixel-art',
+    name: 'Pixel Art',
+    emoji: '👾',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0d1a 0%, #1a1a3e 100%)', backgroundId: 'midnight',
+      padding: 48, borderRadius: 0, shadow: 60,
+      overlayPixelGrid: true, overlayPixelGridOpacity: 20,
+      imageFlatColor: true,
+      titleFont: 'monospace', titleColor: '#00ff41',
+    },
+  },
+  {
+    id: 'cinematic-bars',
+    name: 'Cinema',
+    emoji: '🎥',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 0, borderRadius: 0, shadow: 70,
+      textLetterboxBars: true,
+      imageNoirEffect: true,
+      titleColor: '#ffffff', titleFont: 'Georgia', titleSize: 26,
+    },
+  },
+  {
+    id: 'neon-tube-frame',
+    name: 'Neon Tube',
+    emoji: '💡',
+    overrides: {
+      background: '#050510', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 60,
+      frameNeonTube: true, frameNeonTubeColor: '#ff00ff',
+      bgSpiralConic: true, bgSpiralConicColor: '#7c3aed', bgSpiralConicOpacity: 18,
+      titleNeonSign: true, titleNeonSignColor: '#ff00ff',
+    },
+  },
+  {
+    id: 'infrared-scan',
+    name: 'Infrared',
+    emoji: '🌡',
+    overrides: {
+      background: 'linear-gradient(135deg, #050000 0%, #1a0500 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 8, shadow: 70,
+      imageInfrared: true,
+      overlayHeatmap: true, overlayHeatmapOpacity: 30,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#ff4400',
     },
   },
   // Batch 23 templates

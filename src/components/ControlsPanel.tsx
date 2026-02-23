@@ -2556,6 +2556,111 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 24 FX controls */}
+      <Card>
+        <SectionLabel>Crosshatch</SectionLabel>
+        <Toggle label="Enable" value={state.bgCrossHatch ?? false} onChange={v => onChange({ bgCrossHatch: v })}
+          desc="Diagonal pen-stroke crosshatch background" />
+        {(state.bgCrossHatch ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgCrossHatchColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgCrossHatchColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgCrossHatchOpacity ?? 12} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgCrossHatchOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Water Ripple</SectionLabel>
+        <Toggle label="Enable" value={state.bgRipple ?? false} onChange={v => onChange({ bgRipple: v })}
+          desc="Concentric water ripple rings" />
+        {(state.bgRipple ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgRippleColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgRippleColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgRippleOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgRippleOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Conic Spiral</SectionLabel>
+        <Toggle label="Enable" value={state.bgSpiralConic ?? false} onChange={v => onChange({ bgSpiralConic: v })}
+          desc="Tight conic-gradient spiral pattern" />
+        {(state.bgSpiralConic ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSpiralConicColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgSpiralConicColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSpiralConicOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgSpiralConicOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Paper Fold</SectionLabel>
+        <Toggle label="Enable" value={state.overlayPaperFold ?? false} onChange={v => onChange({ overlayPaperFold: v })}
+          desc="Diagonal paper fold crease line" />
+        {(state.overlayPaperFold ?? false) && (
+          <Slider label="Opacity" value={state.overlayPaperFoldOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayPaperFoldOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Pixel Grid</SectionLabel>
+        <Toggle label="Enable" value={state.overlayPixelGrid ?? false} onChange={v => onChange({ overlayPixelGrid: v })}
+          desc="Pixel art scale grid overlay" />
+        {(state.overlayPixelGrid ?? false) && (
+          <Slider label="Opacity" value={state.overlayPixelGridOpacity ?? 15} min={3} max={60} unit="%"
+            onChange={v => onChange({ overlayPixelGridOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Letterbox Bars</SectionLabel>
+        <Toggle label="Enable" value={state.textLetterboxBars ?? false} onChange={v => onChange({ textLetterboxBars: v })}
+          desc="Cinematic black bars top and bottom" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Neon Tube Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameNeonTube ?? false} onChange={v => onChange({ frameNeonTube: v })}
+          desc="Glowing neon tube inset border" />
+        {(state.frameNeonTube ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameNeonTubeColor ?? '#00ffff'}
+              onChange={e => onChange({ frameNeonTubeColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tilted Frame</SectionLabel>
+        <Toggle label="Enable" value={state.canvasTiltedFrame ?? false} onChange={v => onChange({ canvasTiltedFrame: v })}
+          desc="Slight rotation tilt on entire canvas" />
+        {(state.canvasTiltedFrame ?? false) && (
+          <Slider label="Angle" value={state.canvasTiltedFrameAngle ?? 3} min={-10} max={10} unit="°"
+            onChange={v => onChange({ canvasTiltedFrameAngle: v })} />
+        )}
+      </Card>
+
       {/* Batch 23 FX controls */}
       <Card>
         <SectionLabel>Color Wash</SectionLabel>
@@ -3336,6 +3441,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
         )}
+      </Card>
+
+      {/* Batch 24 adjust controls */}
+      <Card>
+        <SectionLabel>Flat Color Pop</SectionLabel>
+        <Toggle label="Enable" value={state.imageFlatColor ?? false} onChange={v => onChange({ imageFlatColor: v })}
+          desc="Hard graphic contrast color pop" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Pastel Tone</SectionLabel>
+        <Toggle label="Enable" value={state.imagePastelTone ?? false} onChange={v => onChange({ imagePastelTone: v })}
+          desc="Soft washed-out pastel color treatment" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Infrared</SectionLabel>
+        <Toggle label="Enable" value={state.imageInfrared ?? false} onChange={v => onChange({ imageInfrared: v })}
+          desc="False-color infrared hue shift" />
       </Card>
 
       {/* Batch 23 adjust controls */}
@@ -4133,6 +4257,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 24 text controls */}
+          <Card>
+            <SectionLabel>Bounce Title</SectionLabel>
+            <Toggle label="Enable" value={state.titleBounce ?? false} onChange={v => onChange({ titleBounce: v })}
+              desc="Sine-wave character bounce on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Gradient Angle</SectionLabel>
+            <Slider label="Angle" value={state.titleGradientAngle ?? 135} min={0} max={360} unit="°"
+              onChange={v => onChange({ titleGradientAngle: v })} />
           </Card>
 
           {/* Batch 23 text controls */}

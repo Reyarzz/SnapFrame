@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 24
+    overlayPixelGrid, overlayPixelGridOpacity,
+    imageFlatColor, titleBounce,
+    bgCrossHatch, bgCrossHatchColor, bgCrossHatchOpacity,
+    imagePastelTone, frameNeonTube, frameNeonTubeColor,
+    overlayPaperFold, overlayPaperFoldOpacity,
+    bgRipple, bgRippleColor, bgRippleOpacity,
+    titleGradientAngle, textLetterboxBars, imageInfrared,
+    canvasTiltedFrame, canvasTiltedFrameAngle,
+    bgSpiralConic, bgSpiralConicColor, bgSpiralConicOpacity,
     // Batch 23
     bgTrianglePattern, bgTriangleColor, bgTriangleOpacity,
     overlayColorBurn, overlayColorBurnColor, overlayColorBurnOpacity,
@@ -893,6 +903,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 24 — neon tube inset glow border
+  if (frameNeonTube ?? false) {
+    const ntc = frameNeonTubeColor ?? '#00ffff';
+    const neonShadow = `inset 0 0 0 3px ${ntc}, inset 0 0 12px ${ntc}80, 0 0 20px ${ntc}60`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${neonShadow}` : neonShadow;
+  }
+  // Batch 24 — tilted canvas frame slight rotation
+  if (canvasTiltedFrame ?? false) {
+    const angle = canvasTiltedFrameAngle ?? 3;
+    const existing = canvasStyle.transform ?? '';
+    canvasStyle.transform = existing ? `${existing} rotate(${angle}deg)` : `rotate(${angle}deg)`;
+  }
   // Batch 23 — gold leaf inset border
   if (frameGoldLeaf ?? false) {
     const gw = frameGoldLeafWidth ?? 6;
@@ -1005,6 +1027,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 24 — flat color pop: hard graphic contrast
+  if (imageFlatColor ?? false) imageFilterParts.push('contrast(200%) saturate(130%) brightness(100%)');
+  // Batch 24 — pastel tone: soft washed-out gentle colors
+  if (imagePastelTone ?? false) imageFilterParts.push('brightness(112%) saturate(60%) contrast(88%)');
+  // Batch 24 — infrared false-color: hue shift + extreme saturation
+  if (imageInfrared ?? false) imageFilterParts.push('hue-rotate(130deg) saturate(220%) contrast(115%) brightness(95%)');
   // Batch 23 — aqua: cool teal/underwater tone
   if (imageAquaEffect ?? false) imageFilterParts.push('hue-rotate(175deg) saturate(130%) brightness(108%) contrast(105%)');
   // Batch 23 — watercolor: soft washed-out painterly
@@ -1333,7 +1361,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     if (isTitle && (titleGradient ?? false)) {
       return {
         ...base,
-        background: `linear-gradient(${textGradientAngle ?? 135}deg, ${color}, ${titleGradientColor2})`,
+        background: `linear-gradient(${isTitle ? (titleGradientAngle ?? textGradientAngle ?? 135) : (textGradientAngle ?? 135)}deg, ${color}, ${titleGradientColor2})`,
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         WebkitTextStroke: (textStroke ?? 0) > 0 ? `${textStroke}px ${textStrokeColor}` : undefined,
         textDecoration: (titleUnderline ?? false) ? 'underline' : undefined,
@@ -1490,6 +1518,19 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               // Batch 21 — flip title horizontally
               if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              // Batch 24 — bouncy wave baseline per character
+              if (titleBounce ?? false) {
+                const justify = textAlignVal === 'center' ? 'center' : textAlignVal === 'right' ? 'flex-end' : 'flex-start';
+                return (
+                  <div style={{ ...ts, ...skewStyle, display: 'flex', flexWrap: 'wrap', justifyContent: justify, background: undefined, WebkitBackgroundClip: undefined, WebkitTextFillColor: undefined }}>
+                    {titleText.split('').map((ch, i) => (
+                      <span key={i} style={{ display: 'inline-block', transform: `translateY(${(Math.sin(i * 0.85) * 5).toFixed(1)}px)` }}>
+                        {ch === ' ' ? '\u00a0' : ch}
+                      </span>
+                    ))}
+                  </div>
+                );
+              }
               if (titleDropCap ?? false) {
                 const [first, ...rest] = titleText;
                 return (
@@ -2751,6 +2792,70 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 24 — crosshatch pen-stroke background */}
+        {(bgCrossHatch ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `repeating-linear-gradient(45deg, ${bgCrossHatchColor ?? '#8b5cf6'} 0 1px, transparent 1px 10px)`,
+              `repeating-linear-gradient(-45deg, ${bgCrossHatchColor ?? '#8b5cf6'} 0 1px, transparent 1px 10px)`,
+            ].join(', '),
+            opacity: (bgCrossHatchOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 24 — water ripple concentric rings */}
+        {(bgRipple ?? false) && (() => {
+          const rc = encodeURIComponent(bgRippleColor ?? '#8b5cf6');
+          const rings = Array.from({ length: 12 }, (_, i) => {
+            const r = (i + 1) * 7;
+            return `<circle cx="50%" cy="50%" r="${r}%" fill="none" stroke="${rc}" stroke-width="0.6" opacity="0.6"/>`;
+          }).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E${encodeURIComponent(rings)}%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
+              opacity: (bgRippleOpacity ?? 15) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 24 — tight conic spiral-like pattern */}
+        {(bgSpiralConic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: `repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 1.5deg, ${bgSpiralConicColor ?? '#8b5cf6'}50 1.5deg 3deg)`,
+            opacity: (bgSpiralConicOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 24 — paper fold diagonal crease */}
+        {(overlayPaperFold ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+            background: 'linear-gradient(to bottom-right, transparent calc(50% - 1px), rgba(255,255,255,0.35) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% + 1px), transparent calc(50% + 1px))',
+            opacity: (overlayPaperFoldOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 24 — pixel art grid overlay */}
+        {(overlayPixelGrid ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+            backgroundImage: [
+              'linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px)',
+              'linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)',
+            ].join(', '),
+            backgroundSize: '6px 6px',
+            opacity: (overlayPixelGridOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 24 — cinematic letterbox bars */}
+        {(textLetterboxBars ?? false) && (
+          <>
+            <div className="absolute inset-x-0 top-0 pointer-events-none z-[40]" style={{ height: '11%', background: '#000000' }} />
+            <div className="absolute inset-x-0 bottom-0 pointer-events-none z-[40]" style={{ height: '11%', background: '#000000' }} />
+          </>
+        )}
+
         {/* Batch 23 — translucent color wash over background */}
         {(bgColorWash ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{
