@@ -2445,6 +2445,113 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 17 FX controls */}
+      <Card>
+        <SectionLabel>Canvas Stamp</SectionLabel>
+        <Toggle label="Enable" value={state.canvasStamp ?? false} onChange={v => onChange({ canvasStamp: v })}
+          desc="Diagonal approval/sale stamp overlay" />
+        {(state.canvasStamp ?? false) && (
+          <>
+            <input type="text" placeholder="Stamp text (e.g. APPROVED, SOLD)..."
+              value={state.canvasStampText ?? ''} onChange={e => onChange({ canvasStampText: e.target.value })}
+              className="w-full bg-white/[0.06] text-white/70 text-[11px] rounded-xl px-3 py-2 outline-none border border-white/[0.08] focus:border-brand-500/50 placeholder-white/20" />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.canvasStampColor ?? '#ef4444'}
+                onChange={e => onChange({ canvasStampColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#ef4444','#10b981','#8b5cf6','#f59e0b','#3b82f6','#ffffff'].map(c => (
+                  <button key={c} onClick={() => onChange({ canvasStampColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Diagonal Ribbon</SectionLabel>
+        <Toggle label="Enable" value={state.canvasRibbon ?? false} onChange={v => onChange({ canvasRibbon: v })}
+          desc="Diagonal text ribbon across canvas" />
+        {(state.canvasRibbon ?? false) && (
+          <>
+            <input type="text" placeholder="Ribbon text..."
+              value={state.canvasRibbonText ?? ''} onChange={e => onChange({ canvasRibbonText: e.target.value })}
+              className="w-full bg-white/[0.06] text-white/70 text-[11px] rounded-xl px-3 py-2 outline-none border border-white/[0.08] focus:border-brand-500/50 placeholder-white/20" />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Bg</span>
+              <input type="color" value={state.canvasRibbonBg ?? '#ec4899'}
+                onChange={e => onChange({ canvasRibbonBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <span className="text-[10px] text-white/35">Text</span>
+              <input type="color" value={state.canvasRibbonColor ?? '#ffffff'}
+                onChange={e => onChange({ canvasRibbonColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Retro Lines Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayRetroLines ?? false} onChange={v => onChange({ overlayRetroLines: v })}
+          desc="Horizontal colored stripes for retro TV look" />
+        {(state.overlayRetroLines ?? false) && (
+          <>
+            <Slider label="Opacity" value={state.overlayRetroLinesOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ overlayRetroLinesOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.overlayRetroLinesColor ?? '#ff6b6b'}
+                onChange={e => onChange({ overlayRetroLinesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Background Bubbles</SectionLabel>
+        <Toggle label="Enable" value={state.bgBubbles ?? false} onChange={v => onChange({ bgBubbles: v })}
+          desc="Soft circular orbs scattered in background" />
+        {(state.bgBubbles ?? false) && (
+          <>
+            <Slider label="Opacity" value={state.bgBubblesOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgBubblesOpacity: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Bubble Color</span>
+              <input type="color" value={state.bgBubblesColor ?? '#ffffff'}
+                onChange={e => onChange({ bgBubblesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Neon Text Border</SectionLabel>
+        <Toggle label="Enable" value={state.textNeonBorder ?? false} onChange={v => onChange({ textNeonBorder: v })}
+          desc="Neon glow border around text block" />
+        {(state.textNeonBorder ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Glow Color</span>
+            <input type="color" value={state.textNeonBorderColor ?? '#8b5cf6'}
+              onChange={e => onChange({ textNeonBorderColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#8b5cf6','#ec4899','#00ffcc','#ff6600','#00aaff','#ffff00'].map(c => (
+                <button key={c} onClick={() => onChange({ textNeonBorderColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
       <Card>
         <SectionLabel>Image Edge Glow</SectionLabel>
         <Toggle label="Enable" value={state.imageEdgeGlow ?? false} onChange={v => onChange({ imageEdgeGlow: v })}
@@ -2699,6 +2806,46 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             Warm Tone
           </QuickChip>
         </div>
+      </Card>
+
+      {/* Batch 17 adjust controls */}
+      <Card>
+        <SectionLabel>Solarize Effect</SectionLabel>
+        <Toggle label="Enable" value={state.imageSolarize ?? false} onChange={v => onChange({ imageSolarize: v })}
+          desc="Partially invert bright tones for surreal look" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Texture</SectionLabel>
+        <div className="grid grid-cols-4 gap-1.5">
+          {(['none','paper','canvas','linen'] as const).map(t => (
+            <QuickChip key={t} active={(state.imageTexture ?? 'none') === t}
+              onClick={() => onChange({ imageTexture: t })}>
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </QuickChip>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Color Leak</SectionLabel>
+        <Toggle label="Enable Top Leak" value={state.imageColorLeakTop ?? false}
+          onChange={v => onChange({ imageColorLeakTop: v })} desc="Warm light leak from top-left corner" />
+        {(state.imageColorLeakTop ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/35">Leak Color</span>
+            <input type="color" value={state.imageColorLeakColor ?? '#ff8c00'}
+              onChange={e => onChange({ imageColorLeakColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            <div className="flex gap-1.5 ml-auto">
+              {['#ff8c00','#ff4500','#ff69b4','#ffd700','#00bfff','#7fff00'].map(c => (
+                <button key={c} onClick={() => onChange({ imageColorLeakColor: c })}
+                  className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                  style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Batch 15 adjust controls */}
@@ -3350,6 +3497,21 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               <QuickChip active={state.subtitleUnderline ?? false}
                 onClick={() => onChange({ subtitleUnderline: !(state.subtitleUnderline ?? false) })}>Underline</QuickChip>
             </div>
+          </Card>
+
+          {/* Batch 17 text controls */}
+          <Card>
+            <SectionLabel>Subtitle Gradient</SectionLabel>
+            <Toggle label="Enable" value={state.subtitleGradient ?? false} onChange={v => onChange({ subtitleGradient: v })}
+              desc="Gradient fill on subtitle text" />
+            {(state.subtitleGradient ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-white/35">From subtitle color →</span>
+                <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
+                  onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
           </Card>
 
           {/* Batch 16 text controls */}

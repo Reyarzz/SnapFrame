@@ -693,6 +693,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayLinear, overlayLinearColor1, overlayLinearColor2, overlayLinearOpacity,
     quoteStyle, quoteMarkColor,
     colorDuotoneMap, colorDuotoneMapColor1, colorDuotoneMapColor2,
+    // Batch 17
+    canvasStamp, canvasStampText, canvasStampColor, canvasStampBg,
+    textNeonBorder, textNeonBorderColor,
+    bgBubbles, bgBubblesColor, bgBubblesOpacity,
+    imageTexture,
+    overlayRetroLines, overlayRetroLinesColor, overlayRetroLinesOpacity,
+    subtitleGradient, subtitleGradientColor2,
+    imageSolarize,
+    imageColorLeakTop, imageColorLeakColor,
+    canvasRibbon, canvasRibbonText, canvasRibbonBg, canvasRibbonColor,
     // Batch 16
     overlayHaze, overlayHazeColor, overlayHazeOpacity,
     overlayBokeh, overlayBokehColor, overlayBokehOpacity,
@@ -907,6 +917,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageShadow ?? false) imageFilterParts.push(`drop-shadow(0 8px ${imageShadowBlur ?? 20}px ${imageShadowColor ?? '#000000'})`);
   // Batch 16 — edge glow halo
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
+  // Batch 17 — solarize approximation
+  if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -1000,13 +1012,24 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ...imageBorderStyle,
     };
 
+    // Batch 17 — texture SVG patterns on image
+    const textureOverlay: string | undefined = {
+      paper:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='t'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23t)' opacity='0.12'/%3E%3C/svg%3E")`,
+      canvas: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 0h12v1H0zM0 6h12v1H0zM0 0v12h1V0zM6 0v12h1V0z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E")`,
+      linen:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h8v2H0zM0 4h8v2H0z' fill='rgba(0,0,0,0.05)'/%3E%3C/svg%3E")`,
+    }[(imageTexture ?? 'none')] as string | undefined;
+
     if (!hasZoomPan) {
       return (
-        <img src={image} alt="Screenshot" className="block w-full h-auto"
-          style={fitStyle}
-          onLoad={e => { const t = e.currentTarget; setImgNatural({ w: t.naturalWidth, h: t.naturalHeight }); }}
-          draggable={false}
-        />
+        <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+          <img src={image} alt="Screenshot" className="block w-full h-auto"
+            style={fitStyle}
+            onLoad={e => { const t = e.currentTarget; setImgNatural({ w: t.naturalWidth, h: t.naturalHeight }); }}
+            draggable={false}
+          />
+          {textureOverlay && <div style={{ position: 'absolute', inset: 0, backgroundImage: textureOverlay, backgroundRepeat: 'repeat', pointerEvents: 'none', borderRadius: effectiveBR }} />}
+          {(imageColorLeakTop ?? false) && <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 50% at 0% 0%, ${imageColorLeakColor ?? '#ff8c00'}60 0%, transparent 65%)`, pointerEvents: 'none', mixBlendMode: 'screen', borderRadius: effectiveBR }} />}
+        </div>
       );
     }
     const ratio = imgNatural ? imgNatural.w / imgNatural.h : 16 / 9;
@@ -1259,6 +1282,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         borderRadius: textBoxBorderRadius ?? 8,
         padding: Math.max(textBoxPadding ?? 0, 8),
       } : {}),
+      // Batch 17 — neon border glow on text box
+      ...((textNeonBorder ?? false) ? {
+        boxShadow: `0 0 12px ${textNeonBorderColor ?? '#8b5cf6'}, 0 0 24px ${textNeonBorderColor ?? '#8b5cf6'}40`,
+        border: `1px solid ${textNeonBorderColor ?? '#8b5cf6'}70`,
+        borderRadius: 8,
+        padding: Math.max(textBoxPadding ?? 0, 8),
+      } : {}),
     };
 
     return (
@@ -1329,6 +1359,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               };
               if (gradientText2 ?? false) {
                 subStyle.background = `linear-gradient(135deg, ${gradientText2Color1 ?? '#ec4899'}, ${gradientText2Color2 ?? '#f59e0b'})`;
+                subStyle.WebkitBackgroundClip = 'text';
+                subStyle.WebkitTextFillColor = 'transparent';
+                subStyle.backgroundClip = 'text';
+              }
+              // Batch 17 — subtitle gradient (separate from gradientText2)
+              if (subtitleGradient ?? false) {
+                subStyle.background = `linear-gradient(135deg, ${subtitleColor}, ${subtitleGradientColor2 ?? '#ec4899'})`;
                 subStyle.WebkitBackgroundClip = 'text';
                 subStyle.WebkitTextFillColor = 'transparent';
                 subStyle.backgroundClip = 'text';
@@ -1428,6 +1465,76 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{
             background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.07) 70%, transparent 100%)',
             mixBlendMode: 'overlay',
+          }} />
+        )}
+
+        {/* Bubbles background (Batch 17) */}
+        {(bgBubbles ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+            backgroundImage: [
+              `radial-gradient(circle 60px at 10% 30%, ${bgBubblesColor ?? '#ffffff'}25 0%, transparent 65%)`,
+              `radial-gradient(circle 40px at 30% 70%, ${bgBubblesColor ?? '#ffffff'}18 0%, transparent 65%)`,
+              `radial-gradient(circle 80px at 60% 15%, ${bgBubblesColor ?? '#ffffff'}12 0%, transparent 65%)`,
+              `radial-gradient(circle 35px at 80% 60%, ${bgBubblesColor ?? '#ffffff'}20 0%, transparent 65%)`,
+              `radial-gradient(circle 55px at 50% 85%, ${bgBubblesColor ?? '#ffffff'}15 0%, transparent 65%)`,
+              `radial-gradient(circle 30px at 90% 25%, ${bgBubblesColor ?? '#ffffff'}22 0%, transparent 65%)`,
+            ].join(', '),
+            opacity: (bgBubblesOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Retro horizontal lines (Batch 17) */}
+        {(overlayRetroLines ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `repeating-linear-gradient(0deg, transparent 0px, transparent 6px, ${overlayRetroLinesColor ?? '#ff6b6b'}60 6px, ${overlayRetroLinesColor ?? '#ff6b6b'}60 7px)`,
+            opacity: (overlayRetroLinesOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Canvas stamp (Batch 17) */}
+        {(canvasStamp ?? false) && (canvasStampText ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%', zIndex: 42, pointerEvents: 'none',
+            transform: 'translate(-50%,-50%) rotate(-25deg)',
+            border: `4px solid ${canvasStampColor ?? '#ef4444'}`,
+            borderRadius: 8,
+            color: canvasStampColor ?? '#ef4444',
+            background: (canvasStampBg ?? 'transparent') !== 'transparent' ? canvasStampBg : 'transparent',
+            fontSize: 32, fontWeight: 900, letterSpacing: '0.12em',
+            textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+            padding: '6px 20px',
+            opacity: 0.6,
+            whiteSpace: 'nowrap',
+          }}>
+            {canvasStampText ?? 'APPROVED'}
+          </div>
+        )}
+
+        {/* Canvas ribbon diagonal (Batch 17) */}
+        {(canvasRibbon ?? false) && (canvasRibbonText ?? '').length > 0 && (() => {
+          return (
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 43, pointerEvents: 'none', overflow: 'hidden' }}>
+              <div style={{
+                position: 'absolute', top: '50%', left: '-60%', width: '220%',
+                background: canvasRibbonBg ?? '#ec4899',
+                color: canvasRibbonColor ?? '#ffffff',
+                fontSize: 11, fontWeight: 800, letterSpacing: '0.15em',
+                textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+                padding: '7px 0', textAlign: 'center',
+                transform: 'rotate(-15deg)',
+                opacity: 0.85,
+              }}>
+                {Array(6).fill(canvasRibbonText ?? 'NEW').join('  ·  ')}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Color leak top-left (Batch 17) */}
+        {(imageColorLeakTop ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[10]" style={{
+            background: `radial-gradient(ellipse 55% 40% at 0% 0%, ${imageColorLeakColor ?? '#ff8c00'}50 0%, transparent 65%)`,
+            mixBlendMode: 'screen',
           }} />
         )}
 

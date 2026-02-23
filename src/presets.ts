@@ -601,6 +601,29 @@ export interface EditorState {
   logoText: string;             // text-only logo (no image needed)
   logoTextSize: number;
   logoTextColor: string;
+  // Batch 17
+  canvasStamp: boolean;         // diagonal APPROVED/SALE style stamp on canvas
+  canvasStampText: string;
+  canvasStampColor: string;
+  canvasStampBg: string;
+  textNeonBorder: boolean;      // neon glowing border around text block
+  textNeonBorderColor: string;
+  bgBubbles: boolean;           // floating bubble circles in background
+  bgBubblesColor: string;
+  bgBubblesOpacity: number;
+  imageTexture: string;         // texture overlay on image: 'none'|'paper'|'canvas'|'linen'
+  overlayRetroLines: boolean;   // retro horizontal colored lines overlay
+  overlayRetroLinesColor: string;
+  overlayRetroLinesOpacity: number;
+  subtitleGradient: boolean;    // gradient fill on subtitle (separate from title gradient)
+  subtitleGradientColor2: string;
+  imageSolarize: boolean;       // solarize: partially invert bright tones
+  imageColorLeakTop: boolean;   // warm color leak from top corner
+  imageColorLeakColor: string;
+  canvasRibbon: boolean;        // diagonal ribbon stripe across canvas (like corner ribbon but full-width)
+  canvasRibbonText: string;
+  canvasRibbonBg: string;
+  canvasRibbonColor: string;
 }
 
 export interface StyleTemplate {
@@ -1340,6 +1363,29 @@ export const DEFAULT_STATE: EditorState = {
   logoText: '',
   logoTextSize: 13,
   logoTextColor: '#ffffff',
+  // Batch 17
+  canvasStamp: false,
+  canvasStampText: 'APPROVED',
+  canvasStampColor: '#ef4444',
+  canvasStampBg: 'transparent',
+  textNeonBorder: false,
+  textNeonBorderColor: '#8b5cf6',
+  bgBubbles: false,
+  bgBubblesColor: '#ffffff',
+  bgBubblesOpacity: 15,
+  imageTexture: 'none',
+  overlayRetroLines: false,
+  overlayRetroLinesColor: '#ff6b6b',
+  overlayRetroLinesOpacity: 20,
+  subtitleGradient: false,
+  subtitleGradientColor2: '#ec4899',
+  imageSolarize: false,
+  imageColorLeakTop: false,
+  imageColorLeakColor: '#ff8c00',
+  canvasRibbon: false,
+  canvasRibbonText: 'NEW',
+  canvasRibbonBg: '#ec4899',
+  canvasRibbonColor: '#ffffff',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2285,6 +2331,50 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 50,
       textUpperBand: true, textUpperBandBg: '#ec4899', textUpperBandText: '🔥 NEW RELEASE',
       accentLine: true, accentLineColor: '#ec4899', accentLinePosition: 'bottom',
+    },
+  },
+  // Batch 17 templates
+  {
+    id: 'stamp-approved',
+    name: 'Stamp',
+    emoji: '📮',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%)', backgroundId: 'deep-dark',
+      padding: 52, borderRadius: 16, shadow: 50,
+      canvasStamp: true, canvasStampText: 'APPROVED', canvasStampColor: '#10b981',
+    },
+  },
+  {
+    id: 'retro-lines',
+    name: 'Retro Lines',
+    emoji: '📺',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 16, shadow: 60,
+      overlayRetroLines: true, overlayRetroLinesColor: '#ff6b6b', overlayRetroLinesOpacity: 30,
+      imageGrayscale: 20, scanlines: 15,
+    },
+  },
+  {
+    id: 'bubble-dream',
+    name: 'Bubbles',
+    emoji: '🫧',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', backgroundId: 'indigo-dark',
+      padding: 52, borderRadius: 24, shadow: 50,
+      bgBubbles: true, bgBubblesColor: '#8b5cf6', bgBubblesOpacity: 25,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'diagonal-ribbon',
+    name: 'Ribbon',
+    emoji: '🎀',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a1a 0%, #16213e 100%)', backgroundId: 'navy-dark',
+      padding: 48, borderRadius: 16, shadow: 60,
+      canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
+      titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
     },
   },
 ];
