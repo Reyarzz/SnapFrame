@@ -665,6 +665,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     textHighlight, textHighlightColor,
     imageRounded, imageRoundedAmount,
     countdownBadge, countdownValue, countdownColor, countdownBg,
+    // Batch 11
+    textBoxBorder, textBoxBorderColor, textBoxBorderWidth, textBoxBorderRadius,
+    imageGrayscale,
+    imageSaturationBoost,
+    gradientOverlayBlend,
+    splitPane, splitPaneRatio, splitPaneBg,
+    floatingLabel, floatingLabelText, floatingLabelBg, floatingLabelColor,
+    useCustomPadding, canvasPaddingTop, canvasPaddingBottom, canvasPaddingLeft, canvasPaddingRight,
+    textShadowPreset,
+    badgePulse,
   } = state;
 
   if (!image) return null;
@@ -681,14 +691,21 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     : borderRadius;
 
   /* ── Per-side padding ── */
-  const paddingStyle: React.CSSProperties = uniformPadding !== false
-    ? { padding }
-    : {
-        paddingTop: paddingTop ?? padding,
-        paddingRight: paddingRight ?? padding,
-        paddingBottom: paddingBottom ?? padding,
-        paddingLeft: paddingLeft ?? padding,
-      };
+  const paddingStyle: React.CSSProperties = (useCustomPadding ?? false)
+    ? {
+        paddingTop: canvasPaddingTop ?? padding,
+        paddingRight: canvasPaddingRight ?? padding,
+        paddingBottom: canvasPaddingBottom ?? padding,
+        paddingLeft: canvasPaddingLeft ?? padding,
+      }
+    : uniformPadding !== false
+      ? { padding }
+      : {
+          paddingTop: paddingTop ?? padding,
+          paddingRight: paddingRight ?? padding,
+          paddingBottom: paddingBottom ?? padding,
+          paddingLeft: paddingLeft ?? padding,
+        };
 
   const canvasStyle: React.CSSProperties = {
     background: bgRadial
@@ -834,6 +851,9 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if ((imageSepia ?? 0) > 0) imageFilterParts.push(`sepia(${imageSepia}%)`);
   if (imageCoolTone ?? false) imageFilterParts.push('hue-rotate(180deg) saturate(75%) brightness(102%)');
   if (imageWarmTone ?? false) imageFilterParts.push('sepia(30%) saturate(130%) brightness(104%)');
+  // Batch 11 image filters
+  if ((imageGrayscale ?? 0) > 0) imageFilterParts.push(`grayscale(${imageGrayscale}%)`);
+  if ((imageSaturationBoost ?? 0) !== 0) imageFilterParts.push(`saturate(${100 + (imageSaturationBoost ?? 0)}%)`);
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -1097,7 +1117,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       color,
       WebkitTextStroke: strokeVal,
       textDecoration: isTitle && (titleUnderline ?? false) ? 'underline' : undefined,
-      textShadow: glitchShadow ?? customDropShadow ?? titleBlurShadow ?? neonShadow ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
+      textShadow: glitchShadow ?? customDropShadow ?? titleBlurShadow ?? neonShadow
+        ?? (isTitle && (textShadowPreset ?? 'none') !== 'none' ? {
+            soft:  '0 2px 8px rgba(0,0,0,0.5)',
+            hard:  '2px 2px 0px rgba(0,0,0,0.9)',
+            glow:  `0 0 20px ${glowColor ?? '#8b5cf6'}, 0 0 40px ${glowColor ?? '#8b5cf6'}60`,
+            retro: '3px 3px 0 #000, -1px -1px 0 #000',
+          }[textShadowPreset ?? ''] : undefined)
+        ?? (isTitle && (titleShadow ?? false) ? '0 2px 24px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4)' : undefined),
     };
   };
 
@@ -1120,9 +1147,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
       ? { transform: `rotate(${textRotation}deg)`, display: 'inline-block' }
       : {};
     // textBoxPadding: extra padding around the whole text block (Batch 7)
-    const boxPadStyle: React.CSSProperties = (textBoxPadding ?? 0) > 0
-      ? { padding: textBoxPadding, ...(titleBackground ? { background: titleBackgroundColor ?? 'rgba(0,0,0,0.5)', width: '100%' } : {}) }
-      : (titleBackground ? { background: titleBackgroundColor ?? 'rgba(0,0,0,0.5)', width: '100%', padding: titleBackgroundPadding ?? 12 } : {});
+    const boxPadStyle: React.CSSProperties = {
+      ...((textBoxPadding ?? 0) > 0
+        ? { padding: textBoxPadding }
+        : (titleBackground ? { padding: titleBackgroundPadding ?? 12 } : {})),
+      ...(titleBackground ? { background: titleBackgroundColor ?? 'rgba(0,0,0,0.5)', width: '100%' } : {}),
+      // Batch 11 — border around text box
+      ...((textBoxBorder ?? false) ? {
+        border: `${textBoxBorderWidth ?? 1}px solid ${textBoxBorderColor ?? '#8b5cf6'}`,
+        borderRadius: textBoxBorderRadius ?? 8,
+        padding: Math.max(textBoxPadding ?? 0, 8),
+      } : {}),
+    };
 
     return (
       <div className="relative z-[2]" style={padStyle}>
@@ -1462,7 +1498,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         {/* Badge overlay */}
         {badge && badge.length > 0 && (
           <div style={{ position: 'absolute', zIndex: 27, ...getBadgePositionStyle(badgePosition ?? 'tr') }}>
-            <div style={{ padding: '4px 10px', borderRadius: badgeRadius ?? 6, background: badgeColor ?? '#8b5cf6', color: '#fff', fontSize: badgeSize ?? 10, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Inter, system-ui, sans-serif', boxShadow: `0 2px 8px ${badgeColor ?? '#8b5cf6'}80`, whiteSpace: 'nowrap' }}>
+            <div style={{
+              padding: '4px 10px', borderRadius: badgeRadius ?? 6,
+              background: badgeColor ?? '#8b5cf6', color: '#fff',
+              fontSize: badgeSize ?? 10, fontWeight: 800, letterSpacing: '0.08em',
+              textTransform: 'uppercase', fontFamily: 'Inter, system-ui, sans-serif',
+              whiteSpace: 'nowrap',
+              // Batch 11 — pulse ring on badge
+              boxShadow: (badgePulse ?? false)
+                ? `0 2px 8px ${badgeColor ?? '#8b5cf6'}80, 0 0 0 4px ${badgeColor ?? '#8b5cf6'}30, 0 0 0 8px ${badgeColor ?? '#8b5cf6'}15`
+                : `0 2px 8px ${badgeColor ?? '#8b5cf6'}80`,
+            }}>
               {badge}
             </div>
           </div>
@@ -1751,7 +1797,7 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           <div className="absolute inset-0 pointer-events-none z-[29]" style={{
             background: `linear-gradient(${canvasGradientOverlayAngle ?? 135}deg, ${canvasGradientOverlayColor1 ?? '#ff006680'}, ${canvasGradientOverlayColor2 ?? '#8338ec80'})`,
             opacity: (canvasGradientOverlayOpacity ?? 30) / 100,
-            mixBlendMode: 'screen',
+            mixBlendMode: ((gradientOverlayBlend ?? 'screen') as React.CSSProperties['mixBlendMode']),
           }} />
         )}
 
@@ -1851,6 +1897,32 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               <span style={{ fontSize: 8 }}>▶</span>
               {chipText}
             </div>
+          </div>
+        )}
+
+        {/* Split pane background (Batch 11) — right side colored panel */}
+        {(splitPane ?? false) && (
+          <div style={{
+            position: 'absolute', top: 0, right: 0, bottom: 0,
+            width: `${100 - (splitPaneRatio ?? 50)}%`,
+            background: splitPaneBg ?? '#1a1a2e',
+            pointerEvents: 'none', zIndex: 1,
+          }} />
+        )}
+
+        {/* Floating label bar (Batch 11) */}
+        {(floatingLabel ?? false) && (floatingLabelText ?? '').length > 0 && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 35,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '6px 12px',
+            background: floatingLabelBg ?? '#8b5cf6',
+            color: floatingLabelColor ?? '#ffffff',
+            fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
+            textTransform: 'uppercase', fontFamily: 'Inter, system-ui',
+            pointerEvents: 'none',
+          }}>
+            {floatingLabelText}
           </div>
         )}
 

@@ -607,6 +607,52 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 11 layout controls */}
+      <Card>
+        <SectionLabel>Custom Canvas Padding</SectionLabel>
+        <Toggle label="Per-side Padding" value={state.useCustomPadding ?? false}
+          onChange={v => onChange({ useCustomPadding: v })} desc="Set each side independently" />
+        {(state.useCustomPadding ?? false) && (
+          <div className="grid grid-cols-2 gap-2">
+            <Slider label="Top" value={state.canvasPaddingTop ?? 40} min={0} max={120} unit="px"
+              onChange={v => onChange({ canvasPaddingTop: v })} />
+            <Slider label="Bottom" value={state.canvasPaddingBottom ?? 40} min={0} max={120} unit="px"
+              onChange={v => onChange({ canvasPaddingBottom: v })} />
+            <Slider label="Left" value={state.canvasPaddingLeft ?? 40} min={0} max={120} unit="px"
+              onChange={v => onChange({ canvasPaddingLeft: v })} />
+            <Slider label="Right" value={state.canvasPaddingRight ?? 40} min={0} max={120} unit="px"
+              onChange={v => onChange({ canvasPaddingRight: v })} />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Text Box Border</SectionLabel>
+        <Toggle label="Enable" value={state.textBoxBorder ?? false}
+          onChange={v => onChange({ textBoxBorder: v })} desc="Border around the text block" />
+        {(state.textBoxBorder ?? false) && (
+          <>
+            <Slider label="Width" value={state.textBoxBorderWidth ?? 1} min={1} max={6} unit="px"
+              onChange={v => onChange({ textBoxBorderWidth: v })} />
+            <Slider label="Radius" value={state.textBoxBorderRadius ?? 8} min={0} max={32} unit="px"
+              onChange={v => onChange({ textBoxBorderRadius: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Color</span>
+              <input type="color" value={state.textBoxBorderColor ?? '#8b5cf6'}
+                onChange={e => onChange({ textBoxBorderColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#ffffff','#000000'].map(c => (
+                  <button key={c} onClick={() => onChange({ textBoxBorderColor: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
       <Card>
         <SectionLabel>Image Clip Shape</SectionLabel>
         <div className="grid grid-cols-4 gap-1.5">
@@ -1829,6 +1875,85 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 11 FX */}
+      <Card>
+        <SectionLabel>Text Shadow Preset</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { id: 'none',  l: 'None' },
+            { id: 'soft',  l: 'Soft' },
+            { id: 'hard',  l: 'Hard' },
+            { id: 'glow',  l: 'Glow' },
+            { id: 'retro', l: 'Retro' },
+          ].map(t => (
+            <QuickChip key={t.id} active={(state.textShadowPreset ?? 'none') === t.id}
+              onClick={() => onChange({ textShadowPreset: t.id })}>{t.l}</QuickChip>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Floating Label</SectionLabel>
+        <Toggle label="Enable" value={state.floatingLabel ?? false} onChange={v => onChange({ floatingLabel: v })}
+          desc="Top banner label bar" />
+        {(state.floatingLabel ?? false) && (
+          <>
+            <input type="text" placeholder="Label text…" value={state.floatingLabelText ?? ''}
+              onChange={e => onChange({ floatingLabelText: e.target.value })}
+              className="w-full px-3 py-2 rounded-xl bg-white/[0.06] text-white text-sm placeholder:text-white/20 ring-1 ring-white/[0.09] focus:outline-none" />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">BG</span>
+              <input type="color" value={state.floatingLabelBg ?? '#8b5cf6'}
+                onChange={e => onChange({ floatingLabelBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              <div className="flex gap-1.5 ml-auto">
+                {['#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6','#000000'].map(c => (
+                  <button key={c} onClick={() => onChange({ floatingLabelBg: c })}
+                    className="w-5 h-5 rounded-full ring-1 ring-white/15 hover:scale-110 transition-all"
+                    style={{ background: c }} />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Split Pane</SectionLabel>
+        <Toggle label="Enable" value={state.splitPane ?? false} onChange={v => onChange({ splitPane: v })}
+          desc="Two-panel canvas layout" />
+        {(state.splitPane ?? false) && (
+          <>
+            <Slider label="Split %" value={state.splitPaneRatio ?? 50} min={20} max={80} unit="%"
+              onChange={v => onChange({ splitPaneRatio: v })} />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-white/35">Panel BG</span>
+              <input type="color" value={state.splitPaneBg ?? '#1a1a2e'}
+                onChange={e => onChange({ splitPaneBg: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+            </div>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Gradient Overlay Blend</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {['normal','screen','overlay','multiply','soft-light','hard-light'].map(m => (
+            <QuickChip key={m} active={(state.gradientOverlayBlend ?? 'normal') === m}
+              onClick={() => onChange({ gradientOverlayBlend: m })}>
+              {m.charAt(0).toUpperCase() + m.slice(1)}
+            </QuickChip>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Badge Pulse Ring</SectionLabel>
+        <Toggle label="Enable" value={state.badgePulse ?? false} onChange={v => onChange({ badgePulse: v })}
+          desc="Glowing ring around badge label" />
+      </Card>
+
       <ResetBtn
         onClick={() => onChange({
           shadow: 0, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowSpread: 0,
@@ -2058,6 +2183,15 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             Warm Tone
           </QuickChip>
         </div>
+      </Card>
+
+      {/* Batch 11 adjust controls */}
+      <Card>
+        <SectionLabel>Image Grayscale</SectionLabel>
+        <Slider label="Grayscale" value={state.imageGrayscale ?? 0} min={0} max={100} unit="%"
+          onChange={v => onChange({ imageGrayscale: v })} />
+        <Slider label="Saturation Boost" value={state.imageSaturationBoost ?? 0} min={-100} max={100} unit="%"
+          onChange={v => onChange({ imageSaturationBoost: v })} />
       </Card>
 
       <Card>

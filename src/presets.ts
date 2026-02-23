@@ -458,6 +458,30 @@ export interface EditorState {
   countdownValue: number;
   countdownColor: string;
   countdownBg: string;
+  // Batch 11
+  textBoxBorder: boolean;       // border around the text block
+  textBoxBorderColor: string;
+  textBoxBorderWidth: number;
+  textBoxBorderRadius: number;
+  imageGrayscale: number;       // 0-100 grayscale on image
+  imagePixelate: number;        // pixel block size for pixelate FX (separate from global)
+  bgMeshOpacity: number;        // mesh gradient opacity override
+  gradientOverlayBlend: string; // 'normal'|'multiply'|'screen'|'overlay'|'soft-light'
+  splitPane: boolean;           // split pane: image left, text right
+  splitPaneRatio: number;       // 30-70 split percentage
+  splitPaneBg: string;          // background for text side
+  floatingLabel: boolean;       // floating top-center label bar
+  floatingLabelText: string;
+  floatingLabelBg: string;
+  floatingLabelColor: string;
+  imageSaturationBoost: number; // -100 to +100 saturation shift
+  canvasPaddingTop: number;     // individual padding sides
+  canvasPaddingBottom: number;
+  canvasPaddingLeft: number;
+  canvasPaddingRight: number;
+  useCustomPadding: boolean;    // toggle per-side padding
+  textShadowPreset: string;     // 'none'|'soft'|'hard'|'glow'|'retro'
+  badgePulse: boolean;          // pulsing ring on badge
 }
 
 export interface StyleTemplate {
@@ -1054,6 +1078,30 @@ export const DEFAULT_STATE: EditorState = {
   countdownValue: 7,
   countdownColor: '#ffffff',
   countdownBg: '#8b5cf6',
+  // Batch 11
+  textBoxBorder: false,
+  textBoxBorderColor: '#8b5cf6',
+  textBoxBorderWidth: 1,
+  textBoxBorderRadius: 8,
+  imageGrayscale: 0,
+  imagePixelate: 0,
+  bgMeshOpacity: 100,
+  gradientOverlayBlend: 'normal',
+  splitPane: false,
+  splitPaneRatio: 50,
+  splitPaneBg: '#1a1a2e',
+  floatingLabel: false,
+  floatingLabelText: '',
+  floatingLabelBg: '#8b5cf6',
+  floatingLabelColor: '#ffffff',
+  imageSaturationBoost: 0,
+  canvasPaddingTop: 40,
+  canvasPaddingBottom: 40,
+  canvasPaddingLeft: 40,
+  canvasPaddingRight: 40,
+  useCustomPadding: false,
+  textShadowPreset: 'none',
+  badgePulse: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -1731,6 +1779,47 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 20, shadow: 50,
       countdownBadge: true, countdownValue: 7, countdownBg: '#ec4899',
       tagLine: 'LAUNCHING IN', tagLineBg: '#8b5cf620',
+    },
+  },
+  // Batch 11 templates
+  {
+    id: 'split-feature',
+    name: 'Split',
+    emoji: '⬛',
+    overrides: {
+      splitPane: true, splitPaneBg: '#0f0c29', splitPaneRatio: 45,
+      padding: 0, borderRadius: 20, shadow: 60,
+    },
+  },
+  {
+    id: 'float-label',
+    name: 'Float Label',
+    emoji: '🔖',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%)', backgroundId: 'navy-dark',
+      padding: 52, borderRadius: 20, shadow: 50,
+      floatingLabel: true, floatingLabelText: 'FEATURED', floatingLabelBg: '#8b5cf6',
+    },
+  },
+  {
+    id: 'textbox-card',
+    name: 'Text Card',
+    emoji: '📋',
+    overrides: {
+      background: 'linear-gradient(135deg, #13111a 0%, #1e1b2e 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 20,
+      textBoxBorder: true, textBoxBorderColor: '#8b5cf6', textBoxBorderWidth: 1, textBoxBorderRadius: 12,
+      titleBackground: true, titleBackgroundPadding: 16,
+    },
+  },
+  {
+    id: 'bw-pop',
+    name: 'B&W Pop',
+    emoji: '⚫',
+    overrides: {
+      imageGrayscale: 100, accentLine: true, accentLineColor: '#ec4899', accentLinePosition: 'left', accentLineThickness: 6,
+      background: '#0a0a0a', backgroundId: 'pure-black',
+      padding: 48, borderRadius: 16, shadow: 50,
     },
   },
 ];
