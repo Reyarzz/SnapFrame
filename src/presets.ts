@@ -624,6 +624,27 @@ export interface EditorState {
   canvasRibbonText: string;
   canvasRibbonBg: string;
   canvasRibbonColor: string;
+  // Batch 18
+  imageLomo: boolean;           // lomo-style heavy vignette + saturation boost
+  imageXProcess: boolean;       // cross-process color shift
+  overlayGradientMesh: boolean; // multi-point mesh gradient overlay
+  overlayGradientMeshOpacity: number;
+  titleTypewriter: boolean;     // blinking cursor after title
+  titleTypewriterColor: string;
+  imageOverlayPattern: string;  // pattern on image: 'none'|'dots'|'lines'|'cross'
+  imageOverlayPatternOpacity: number;
+  bgWaves: boolean;             // wave lines in background
+  bgWavesColor: string;
+  bgWavesOpacity: number;
+  imageColorMap: string;        // color scheme: 'none'|'cyber'|'matrix'|'fire'|'ice'
+  frameMatte: boolean;          // thick museum matte border
+  frameMatteColor: string;
+  frameMatteWidth: number;
+  textOutlineStroke: boolean;   // heavy outline preset on title
+  textOutlineStrokeColor: string;
+  canvasSpotlight: boolean;     // spotlight radial from center
+  canvasSpotlightColor: string;
+  canvasSpotlightStrength: number;
 }
 
 export interface StyleTemplate {
@@ -1386,6 +1407,27 @@ export const DEFAULT_STATE: EditorState = {
   canvasRibbonText: 'NEW',
   canvasRibbonBg: '#ec4899',
   canvasRibbonColor: '#ffffff',
+  // Batch 18
+  imageLomo: false,
+  imageXProcess: false,
+  overlayGradientMesh: false,
+  overlayGradientMeshOpacity: 40,
+  titleTypewriter: false,
+  titleTypewriterColor: '#a78bfa',
+  imageOverlayPattern: 'none',
+  imageOverlayPatternOpacity: 20,
+  bgWaves: false,
+  bgWavesColor: '#7c3aed',
+  bgWavesOpacity: 20,
+  imageColorMap: 'none',
+  frameMatte: false,
+  frameMatteColor: '#ffffff',
+  frameMatteWidth: 20,
+  textOutlineStroke: false,
+  textOutlineStrokeColor: '#8b5cf6',
+  canvasSpotlight: false,
+  canvasSpotlightColor: '#ffffff',
+  canvasSpotlightStrength: 50,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2375,6 +2417,51 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 18 templates
+  {
+    id: 'lomo-film',
+    name: 'Lomo',
+    emoji: '🎞',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a2e 0%, #0a1a2e 100%)', backgroundId: 'deep-dark',
+      padding: 48, borderRadius: 12, shadow: 60,
+      imageLomo: true, vignette: 50, filmGrain: 30,
+      imageColorMap: 'none', saturation: 130,
+    },
+  },
+  {
+    id: 'xprocess',
+    name: 'X-Process',
+    emoji: '🔬',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a1a0a 0%, #1a0a1a 100%)', backgroundId: 'dark-green',
+      padding: 52, borderRadius: 16, shadow: 70,
+      imageXProcess: true, canvasSpotlight: true, canvasSpotlightStrength: 40,
+    },
+  },
+  {
+    id: 'mesh-gradient',
+    name: 'Mesh',
+    emoji: '🌐',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #24243e 100%)', backgroundId: 'cosmic',
+      padding: 56, borderRadius: 24, shadow: 60,
+      overlayGradientMesh: true, overlayGradientMeshOpacity: 50,
+      titleGradient: true, frameMatte: true, frameMatteColor: '#0f0c29', frameMatteWidth: 16,
+    },
+  },
+  {
+    id: 'spotlight-hero',
+    name: 'Spotlight',
+    emoji: '💡',
+    overrides: {
+      background: '#050508', backgroundId: 'pure-black',
+      padding: 64, borderRadius: 20, shadow: 80,
+      canvasSpotlight: true, canvasSpotlightColor: '#a78bfa', canvasSpotlightStrength: 65,
+      bgWaves: true, bgWavesColor: '#7c3aed', bgWavesOpacity: 15,
+      titleGradient: true,
     },
   },
 ];

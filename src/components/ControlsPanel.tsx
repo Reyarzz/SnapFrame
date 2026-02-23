@@ -2556,6 +2556,53 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 18 FX controls */}
+      <Card>
+        <SectionLabel>Gradient Mesh</SectionLabel>
+        <Toggle label="Enable" value={state.overlayGradientMesh ?? false} onChange={v => onChange({ overlayGradientMesh: v })}
+          desc="Multi-color radial mesh overlay" />
+        {(state.overlayGradientMesh ?? false) && (
+          <Slider label="Opacity" value={state.overlayGradientMeshOpacity ?? 40} min={5} max={100} unit="%"
+            onChange={v => onChange({ overlayGradientMeshOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Canvas Spotlight</SectionLabel>
+        <Toggle label="Enable" value={state.canvasSpotlight ?? false} onChange={v => onChange({ canvasSpotlight: v })}
+          desc="Radial light beam over the canvas" />
+        {(state.canvasSpotlight ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.canvasSpotlightColor ?? '#ffffff'}
+                onChange={e => onChange({ canvasSpotlightColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Strength" value={state.canvasSpotlightStrength ?? 50} min={10} max={100} unit="%"
+              onChange={v => onChange({ canvasSpotlightStrength: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Background Waves</SectionLabel>
+        <Toggle label="Enable" value={state.bgWaves ?? false} onChange={v => onChange({ bgWaves: v })}
+          desc="Wavy line pattern over background" />
+        {(state.bgWaves ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgWavesColor ?? '#7c3aed'}
+                onChange={e => onChange({ bgWavesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgWavesOpacity ?? 20} min={5} max={80} unit="%"
+              onChange={v => onChange({ bgWavesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
       <Card>
         <SectionLabel>Image Edge Glow</SectionLabel>
         <Toggle label="Enable" value={state.imageEdgeGlow ?? false} onChange={v => onChange({ imageEdgeGlow: v })}
@@ -2849,6 +2896,73 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               ))}
             </div>
           </div>
+        )}
+      </Card>
+
+      {/* Batch 18 adjust controls */}
+      <Card>
+        <SectionLabel>Lomo Film</SectionLabel>
+        <Toggle label="Enable" value={state.imageLomo ?? false} onChange={v => onChange({ imageLomo: v })}
+          desc="High-contrast saturated lomo look" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Cross Process</SectionLabel>
+        <Toggle label="Enable" value={state.imageXProcess ?? false} onChange={v => onChange({ imageXProcess: v })}
+          desc="Pushed-process chemical cross-develop" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Color Map</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {(['none','cyber','matrix','fire','ice'] as const).map(cm => (
+            <button key={cm}
+              onClick={() => onChange({ imageColorMap: cm })}
+              className={`py-1.5 rounded-lg text-[10px] font-semibold capitalize transition-all ${
+                (state.imageColorMap ?? 'none') === cm
+                  ? 'bg-brand-600/40 text-brand-300 ring-1 ring-brand-500/50'
+                  : 'bg-white/[0.05] text-white/50 hover:bg-white/10'
+              }`}
+            >{cm === 'none' ? 'None' : cm.charAt(0).toUpperCase() + cm.slice(1)}</button>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Image Overlay Pattern</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {(['none','dots','lines','cross'] as const).map(p => (
+            <button key={p}
+              onClick={() => onChange({ imageOverlayPattern: p })}
+              className={`py-1.5 rounded-lg text-[10px] font-semibold capitalize transition-all ${
+                (state.imageOverlayPattern ?? 'none') === p
+                  ? 'bg-brand-600/40 text-brand-300 ring-1 ring-brand-500/50'
+                  : 'bg-white/[0.05] text-white/50 hover:bg-white/10'
+              }`}
+            >{p.charAt(0).toUpperCase() + p.slice(1)}</button>
+          ))}
+        </div>
+        {(state.imageOverlayPattern ?? 'none') !== 'none' && (
+          <Slider label="Opacity" value={state.imageOverlayPatternOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ imageOverlayPatternOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Frame Matte</SectionLabel>
+        <Toggle label="Enable" value={state.frameMatte ?? false} onChange={v => onChange({ frameMatte: v })}
+          desc="Inset matte border inside the image" />
+        {(state.frameMatte ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.frameMatteColor ?? '#ffffff'}
+                onChange={e => onChange({ frameMatteColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Width" value={state.frameMatteWidth ?? 20} min={4} max={60} unit="px"
+              onChange={v => onChange({ frameMatteWidth: v })} />
+          </>
         )}
       </Card>
 
@@ -3514,6 +3628,35 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 18 text controls */}
+          <Card>
+            <SectionLabel>Typewriter Effect</SectionLabel>
+            <Toggle label="Enable" value={state.titleTypewriter ?? false} onChange={v => onChange({ titleTypewriter: v })}
+              desc="Typewriter cursor underline under title" />
+            {(state.titleTypewriter ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleTypewriterColor ?? '#a78bfa'}
+                  onChange={e => onChange({ titleTypewriterColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Text Outline Stroke</SectionLabel>
+            <Toggle label="Enable" value={state.textOutlineStroke ?? false} onChange={v => onChange({ textOutlineStroke: v })}
+              desc="Stroke outline applied to all text" />
+            {(state.textOutlineStroke ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.textOutlineStrokeColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ textOutlineStrokeColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>

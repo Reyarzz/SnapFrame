@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 18
+    imageLomo, imageXProcess,
+    overlayGradientMesh, overlayGradientMeshOpacity,
+    titleTypewriter, titleTypewriterColor,
+    imageOverlayPattern, imageOverlayPatternOpacity,
+    bgWaves, bgWavesColor, bgWavesOpacity,
+    imageColorMap,
+    frameMatte, frameMatteColor, frameMatteWidth,
+    textOutlineStroke, textOutlineStrokeColor,
+    canvasSpotlight, canvasSpotlightColor, canvasSpotlightStrength,
   } = state;
 
   if (!image) return null;
@@ -919,6 +929,21 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 18 — lomo film: boosted contrast/saturation + strong vignette via filter
+  if (imageLomo ?? false) imageFilterParts.push('saturate(160%) contrast(125%) brightness(95%)');
+  // Batch 18 — cross-process: push-processed look (cyan shadows, yellow highlights)
+  if (imageXProcess ?? false) imageFilterParts.push('hue-rotate(10deg) saturate(180%) contrast(120%) brightness(105%)');
+  // Batch 18 — color map: recolor via hue-rotate + saturation tricks
+  if ((imageColorMap ?? 'none') !== 'none') {
+    const colorMapFilters: Record<string, string> = {
+      cyber:  'hue-rotate(180deg) saturate(200%) contrast(110%) brightness(90%)',
+      matrix: 'grayscale(80%) hue-rotate(100deg) saturate(300%) brightness(85%)',
+      fire:   'hue-rotate(-30deg) saturate(220%) contrast(115%) brightness(100%)',
+      ice:    'hue-rotate(195deg) saturate(150%) brightness(108%) contrast(105%)',
+    };
+    const cmf = colorMapFilters[imageColorMap ?? ''];
+    if (cmf) imageFilterParts.push(cmf);
+  }
   // Image color shift (Batch 8) — boost one color channel via hue + saturate
   if ((imageColorShift ?? 'none') !== 'none' && (imageColorShiftAmount ?? 0) > 0) {
     const amt = imageColorShiftAmount ?? 40;
@@ -1029,6 +1054,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           />
           {textureOverlay && <div style={{ position: 'absolute', inset: 0, backgroundImage: textureOverlay, backgroundRepeat: 'repeat', pointerEvents: 'none', borderRadius: effectiveBR }} />}
           {(imageColorLeakTop ?? false) && <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 50% at 0% 0%, ${imageColorLeakColor ?? '#ff8c00'}60 0%, transparent 65%)`, pointerEvents: 'none', mixBlendMode: 'screen', borderRadius: effectiveBR }} />}
+          {/* Batch 18 — image overlay pattern */}
+          {(imageOverlayPattern ?? 'none') !== 'none' && <div style={{ position: 'absolute', inset: 0, backgroundImage: getPatternSvg(imageOverlayPattern ?? '', (imageOverlayPatternOpacity ?? 20) / 100, 18), backgroundRepeat: 'repeat', pointerEvents: 'none', borderRadius: effectiveBR }} />}
+          {/* Batch 18 — frame matte: inset border inside image */}
+          {(frameMatte ?? false) && <div style={{ position: 'absolute', inset: frameMatteWidth ?? 20, border: `${(frameMatteWidth ?? 20) * 0.4}px solid ${frameMatteColor ?? '#ffffff'}`, pointerEvents: 'none', borderRadius: Math.max(0, (typeof effectiveBR === 'number' ? effectiveBR : 0) - (frameMatteWidth ?? 20)) }} />}
         </div>
       );
     }
@@ -1289,6 +1318,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         borderRadius: 8,
         padding: Math.max(textBoxPadding ?? 0, 8),
       } : {}),
+      // Batch 18 — text outline stroke box
+      ...((textOutlineStroke ?? false) ? {
+        WebkitTextStroke: `1.5px ${textOutlineStrokeColor ?? '#8b5cf6'}`,
+      } : {}),
     };
 
     return (
@@ -1326,6 +1359,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             })()}
             {(quoteStyle ?? false) && titleText && (
               <div style={{ fontSize: titleSize * 2.5, lineHeight: 0.6, color: quoteMarkColor ?? '#8b5cf6', opacity: 0.6, fontFamily: 'Georgia, serif', textAlign: 'right', marginTop: 4 }}>"</div>
+            )}
+            {/* Batch 18 — typewriter cursor underline */}
+            {(titleTypewriter ?? false) && titleText && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                <div style={{ flex: 1, height: 2, background: titleTypewriterColor ?? '#a78bfa', borderRadius: 1 }} />
+                <div style={{ width: 10, height: titleSize * 0.9, background: titleTypewriterColor ?? '#a78bfa', opacity: 0.85, borderRadius: 1 }} />
+              </div>
             )}
             {/* Text reveal bar (Batch 14) */}
             {(textReveal ?? false) && titleText && (
@@ -2557,6 +2597,39 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 18 — background waves SVG */}
+        {(bgWaves ?? false) && (() => {
+          const wc = encodeURIComponent(bgWavesColor ?? '#7c3aed');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cstyle%3E.wave%7Bfill:none;stroke:${wc};stroke-width:1.5;stroke-opacity:0.6%7D%3C/style%3E%3C/defs%3E%3Cpath class='wave' d='M0 40 Q80 20 160 40 Q240 60 320 40 Q400 20 480 40 Q560 60 640 40'/%3E%3Cpath class='wave' d='M0 80 Q80 60 160 80 Q240 100 320 80 Q400 60 480 80 Q560 100 640 80'/%3E%3Cpath class='wave' d='M0 120 Q80 100 160 120 Q240 140 320 120 Q400 100 480 120 Q560 140 640 120'/%3E%3Cpath class='wave' d='M0 160 Q80 140 160 160 Q240 180 320 160 Q400 140 480 160 Q560 180 640 160'/%3E%3Cpath class='wave' d='M0 200 Q80 180 160 200 Q240 220 320 200 Q400 180 480 200 Q560 220 640 200'/%3E%3Cpath class='wave' d='M0 240 Q80 220 160 240 Q240 260 320 240 Q400 220 480 240 Q560 260 640 240'/%3E%3Cpath class='wave' d='M0 280 Q80 260 160 280 Q240 300 320 280 Q400 260 480 280 Q560 300 640 280'/%3E%3Cpath class='wave' d='M0 320 Q80 300 160 320 Q240 340 320 320 Q400 300 480 320 Q560 340 640 320'/%3E%3C/svg%3E")`,
+              opacity: (bgWavesOpacity ?? 20) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 18 — gradient mesh overlay */}
+        {(overlayGradientMesh ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[8]" style={{
+            background: [
+              `radial-gradient(ellipse 60% 50% at 20% 30%, rgba(139,92,246,0.55) 0%, transparent 60%)`,
+              `radial-gradient(ellipse 50% 60% at 80% 70%, rgba(236,72,153,0.45) 0%, transparent 55%)`,
+              `radial-gradient(ellipse 55% 45% at 60% 10%, rgba(6,182,212,0.35) 0%, transparent 50%)`,
+              `radial-gradient(ellipse 40% 50% at 10% 80%, rgba(245,158,11,0.3) 0%, transparent 50%)`,
+            ].join(', '),
+            opacity: (overlayGradientMeshOpacity ?? 40) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 18 — canvas spotlight radial */}
+        {(canvasSpotlight ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: `radial-gradient(ellipse 55% 55% at 50% 45%, ${canvasSpotlightColor ?? '#ffffff'}${Math.round((canvasSpotlightStrength ?? 50) / 100 * 80).toString(16).padStart(2,'0')} 0%, transparent 70%)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
         {watermark && (
           <div style={{
             position: 'absolute', zIndex: 30,
