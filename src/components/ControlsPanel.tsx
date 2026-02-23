@@ -2556,6 +2556,79 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 20 FX controls */}
+      <Card>
+        <SectionLabel>Dust & Scratches</SectionLabel>
+        <Toggle label="Enable" value={state.overlayDust ?? false} onChange={v => onChange({ overlayDust: v })}
+          desc="Vintage film dust and scratch marks" />
+        {(state.overlayDust ?? false) && (
+          <Slider label="Intensity" value={state.overlayDustOpacity ?? 25} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayDustOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Ink Bleed</SectionLabel>
+        <Toggle label="Enable" value={state.overlayInkBleed ?? false} onChange={v => onChange({ overlayInkBleed: v })}
+          desc="Ink bleeding grunge texture overlay" />
+        {(state.overlayInkBleed ?? false) && (
+          <Slider label="Intensity" value={state.overlayInkBleedOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayInkBleedOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Film Strip</SectionLabel>
+        <Toggle label="Enable" value={state.frameFilmStrip ?? false} onChange={v => onChange({ frameFilmStrip: v })}
+          desc="Film strip perforations on left/right edges" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Background Grid</SectionLabel>
+        <Toggle label="Enable" value={state.bgGridLines ?? false} onChange={v => onChange({ bgGridLines: v })}
+          desc="Colored grid lines on background" />
+        {(state.bgGridLines ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgGridLinesColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgGridLinesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgGridLinesOpacity ?? 12} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgGridLinesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Hex Grid</SectionLabel>
+        <Toggle label="Enable" value={state.bgHexGrid ?? false} onChange={v => onChange({ bgHexGrid: v })}
+          desc="Hexagonal tile grid over background" />
+        {(state.bgHexGrid ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgHexGridColor ?? '#a78bfa'}
+                onChange={e => onChange({ bgHexGridColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgHexGridOpacity ?? 12} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgHexGridOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Circuit Board</SectionLabel>
+        <Toggle label="Enable" value={state.bgCircuitBoard ?? false} onChange={v => onChange({ bgCircuitBoard: v })}
+          desc="PCB trace pattern over background" />
+        {(state.bgCircuitBoard ?? false) && (
+          <Slider label="Opacity" value={state.bgCircuitBoardOpacity ?? 12} min={3} max={60} unit="%"
+            onChange={v => onChange({ bgCircuitBoardOpacity: v })} />
+        )}
+      </Card>
+
       {/* Batch 19 FX controls */}
       <Card>
         <SectionLabel>Holographic Overlay</SectionLabel>
@@ -2992,6 +3065,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
         )}
+      </Card>
+
+      {/* Batch 20 adjust controls */}
+      <Card>
+        <SectionLabel>Ink Drop</SectionLabel>
+        <Toggle label="Enable" value={state.imageInkDrop ?? false} onChange={v => onChange({ imageInkDrop: v })}
+          desc="Ink-washed desaturated sepia look" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Chrome Effect</SectionLabel>
+        <Toggle label="Enable" value={state.imageChromeEffect ?? false} onChange={v => onChange({ imageChromeEffect: v })}
+          desc="Metallic chrome color treatment" />
       </Card>
 
       {/* Batch 18 adjust controls */}
@@ -3725,6 +3811,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 20 text controls */}
+          <Card>
+            <SectionLabel>Neon Sign</SectionLabel>
+            <Toggle label="Enable" value={state.titleNeonSign ?? false} onChange={v => onChange({ titleNeonSign: v })}
+              desc="Multi-layer neon glow on title" />
+            {(state.titleNeonSign ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleNeonSignColor ?? '#00ffff'}
+                  onChange={e => onChange({ titleNeonSignColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Wide Kerning</SectionLabel>
+            <Toggle label="Enable" value={state.textKerningWide ?? false} onChange={v => onChange({ textKerningWide: v })}
+              desc="Extreme letter spacing on title" />
           </Card>
 
           {/* Batch 19 text controls */}

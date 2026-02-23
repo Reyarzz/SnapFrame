@@ -666,6 +666,25 @@ export interface EditorState {
   cardGlassOverlayBg: string;
   watermarkTiled: boolean;
   watermarkTiledText: string;
+  // Batch 20
+  bgGridLines: boolean;
+  bgGridLinesColor: string;
+  bgGridLinesOpacity: number;
+  imageInkDrop: boolean;
+  overlayDust: boolean;
+  overlayDustOpacity: number;
+  titleNeonSign: boolean;
+  titleNeonSignColor: string;
+  frameFilmStrip: boolean;
+  bgCircuitBoard: boolean;
+  bgCircuitBoardOpacity: number;
+  imageChromeEffect: boolean;
+  textKerningWide: boolean;
+  overlayInkBleed: boolean;
+  overlayInkBleedOpacity: number;
+  bgHexGrid: boolean;
+  bgHexGridColor: string;
+  bgHexGridOpacity: number;
 }
 
 export interface StyleTemplate {
@@ -1470,6 +1489,25 @@ export const DEFAULT_STATE: EditorState = {
   cardGlassOverlayBg: '#ffffff18',
   watermarkTiled: false,
   watermarkTiledText: 'CONFIDENTIAL',
+  // Batch 20
+  bgGridLines: false,
+  bgGridLinesColor: '#8b5cf6',
+  bgGridLinesOpacity: 12,
+  imageInkDrop: false,
+  overlayDust: false,
+  overlayDustOpacity: 25,
+  titleNeonSign: false,
+  titleNeonSignColor: '#00ffff',
+  frameFilmStrip: false,
+  bgCircuitBoard: false,
+  bgCircuitBoardOpacity: 12,
+  imageChromeEffect: false,
+  textKerningWide: false,
+  overlayInkBleed: false,
+  overlayInkBleedOpacity: 30,
+  bgHexGrid: false,
+  bgHexGridColor: '#a78bfa',
+  bgHexGridOpacity: 12,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2459,6 +2497,55 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 20 templates
+  {
+    id: 'neon-sign',
+    name: 'Neon Sign',
+    emoji: '💡',
+    overrides: {
+      background: '#020208', backgroundId: 'pure-black',
+      padding: 56, borderRadius: 20, shadow: 80,
+      titleNeonSign: true, titleNeonSignColor: '#ff0080',
+      bgGridLines: true, bgGridLinesColor: '#1a0a2e', bgGridLinesOpacity: 30,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#ff0080',
+    },
+  },
+  {
+    id: 'film-strip',
+    name: 'Film Strip',
+    emoji: '🎞',
+    overrides: {
+      background: '#0a0a0a', backgroundId: 'pure-black',
+      padding: 48, borderRadius: 4, shadow: 50,
+      frameFilmStrip: true,
+      imageGrayscale: 20, filmGrain: 25,
+      overlayDust: true, overlayDustOpacity: 20,
+    },
+  },
+  {
+    id: 'circuit-tech',
+    name: 'Circuit',
+    emoji: '🔌',
+    overrides: {
+      background: 'linear-gradient(135deg, #000d0d 0%, #001a0a 100%)', backgroundId: 'dark-green',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgCircuitBoard: true, bgCircuitBoardOpacity: 18,
+      titleNeonSign: true, titleNeonSignColor: '#00ff88',
+      canvasBorderGlow: true, canvasBorderGlowColor: '#00ff88',
+    },
+  },
+  {
+    id: 'hex-cosmos',
+    name: 'Hex Cosmos',
+    emoji: '⬡',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 100%)', backgroundId: 'cosmic',
+      padding: 56, borderRadius: 20, shadow: 60,
+      bgHexGrid: true, bgHexGridColor: '#a78bfa', bgHexGridOpacity: 15,
+      overlayHolographic: true, overlayHolographicOpacity: 25,
+      titleGradient: true,
     },
   },
   // Batch 19 templates

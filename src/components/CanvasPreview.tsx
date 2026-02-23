@@ -733,6 +733,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 20
+    bgGridLines, bgGridLinesColor, bgGridLinesOpacity,
+    imageInkDrop,
+    overlayDust, overlayDustOpacity,
+    titleNeonSign, titleNeonSignColor,
+    frameFilmStrip,
+    bgCircuitBoard, bgCircuitBoardOpacity,
+    imageChromeEffect,
+    textKerningWide,
+    overlayInkBleed, overlayInkBleedOpacity,
+    bgHexGrid, bgHexGridColor, bgHexGridOpacity,
     // Batch 19
     titleGlitch, titleGlitchColor,
     bgDiamondPattern, bgDiamondOpacity,
@@ -947,6 +958,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 20 — ink drop: high-contrast desaturated with sepia ink tones
+  if (imageInkDrop ?? false) imageFilterParts.push('contrast(140%) saturate(40%) sepia(60%) brightness(95%)');
+  // Batch 20 — chrome metallic: desaturate + max contrast + cool tone
+  if (imageChromeEffect ?? false) imageFilterParts.push('grayscale(80%) contrast(160%) brightness(110%) saturate(20%) hue-rotate(200deg)');
   // Batch 18 — lomo film: boosted contrast/saturation + strong vignette via filter
   if (imageLomo ?? false) imageFilterParts.push('saturate(160%) contrast(125%) brightness(95%)');
   // Batch 18 — cross-process: push-processed look (cyan shadows, yellow highlights)
@@ -1371,6 +1386,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 20 — neon sign glow on title
+              if (titleNeonSign ?? false) {
+                const nc = titleNeonSignColor ?? '#00ffff';
+                ts.textShadow = `0 0 7px ${nc}, 0 0 14px ${nc}, 0 0 30px ${nc}, 0 0 60px ${nc}80`;
+                ts.color = nc;
+              }
+              // Batch 20 — wide kerning preset
+              if (textKerningWide ?? false) ts.letterSpacing = '0.25em';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
               if (titleDropCap ?? false) {
                 const [first, ...rest] = titleText;
@@ -2633,6 +2656,36 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
         )}
 
         {/* Watermark (supports custom text + position, Batch 3) */}
+        {/* Batch 20 — colored background grid lines */}
+        {(bgGridLines ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `linear-gradient(to right, ${bgGridLinesColor ?? '#8b5cf6'} 1px, transparent 1px)`,
+              `linear-gradient(to bottom, ${bgGridLinesColor ?? '#8b5cf6'} 1px, transparent 1px)`,
+            ].join(', '),
+            backgroundSize: '40px 40px',
+            opacity: (bgGridLinesOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 20 — hex grid background */}
+        {(bgHexGrid ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='60'%3E%3Cpolygon points='26 2 50 15 50 45 26 58 2 45 2 15' fill='none' stroke='${encodeURIComponent(bgHexGridColor ?? '#a78bfa')}' stroke-width='0.8' opacity='0.7'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgHexGridOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 20 — circuit board trace pattern */}
+        {(bgCircuitBoard ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M10 10 H30 V30 H50 M10 50 H20 V40 H40 V50 H55 M30 10 V5 M50 30 H55 M20 40 H5' fill='none' stroke='rgba(0,255,100,0.5)' stroke-width='0.8'/%3E%3Ccircle cx='30' cy='30' r='2.5' fill='rgba(0,255,100,0.5)'/%3E%3Ccircle cx='10' cy='10' r='2' fill='rgba(0,255,100,0.4)'/%3E%3Ccircle cx='20' cy='40' r='2' fill='rgba(0,255,100,0.4)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCircuitBoardOpacity ?? 12) / 100,
+          }} />
+        )}
+
         {/* Batch 19 — large glow orb behind everything */}
         {(bgGlowOrb ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{
@@ -2673,6 +2726,41 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             mixBlendMode: 'screen',
           }} />
         )}
+
+        {/* Batch 20 — dust and scratches overlay */}
+        {(overlayDust ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cline x1='10' y1='30' x2='15' y2='32' stroke='rgba(255,255,255,0.6)' stroke-width='0.5'/%3E%3Cline x1='80' y1='5' x2='82' y2='140' stroke='rgba(255,255,255,0.3)' stroke-width='0.4'/%3E%3Cline x1='150' y1='20' x2='152' y2='100' stroke='rgba(255,255,255,0.2)' stroke-width='0.3'/%3E%3Ccircle cx='50' cy='80' r='1' fill='rgba(255,255,255,0.4)'/%3E%3Ccircle cx='130' cy='150' r='0.8' fill='rgba(255,255,255,0.3)'/%3E%3Cline x1='40' y1='170' x2='43' y2='195' stroke='rgba(255,255,255,0.25)' stroke-width='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlayDustOpacity ?? 25) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 20 — ink bleed grunge overlay */}
+        {(overlayInkBleed ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='ib'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='4' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 -4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23ib)' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundSize: '300px 300px',
+            opacity: (overlayInkBleedOpacity ?? 30) / 100,
+            mixBlendMode: 'multiply',
+          }} />
+        )}
+
+        {/* Batch 20 — film strip perforations */}
+        {(frameFilmStrip ?? false) && (() => {
+          const holes = Array.from({ length: 8 });
+          return (
+            <>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 22, background: '#0a0a0a', zIndex: 36, pointerEvents: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', paddingTop: 8, paddingBottom: 8 }}>
+                {holes.map((_, i) => <div key={i} style={{ width: 10, height: 8, borderRadius: 2, background: '#222', border: '1px solid #444' }} />)}
+              </div>
+              <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 22, background: '#0a0a0a', zIndex: 36, pointerEvents: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', paddingTop: 8, paddingBottom: 8 }}>
+                {holes.map((_, i) => <div key={i} style={{ width: 10, height: 8, borderRadius: 2, background: '#222', border: '1px solid #444' }} />)}
+              </div>
+            </>
+          );
+        })()}
 
         {/* Batch 19 — holographic iridescent overlay */}
         {(overlayHolographic ?? false) && (
