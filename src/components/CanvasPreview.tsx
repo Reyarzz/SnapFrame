@@ -733,6 +733,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 29
+    bgMarble, bgMarbleColor, bgMarbleOpacity,
+    imageDuotone, imageDuotoneColor,
+    bgBrickWall, bgBrickWallColor, bgBrickWallOpacity,
+    imageChalk, overlayFlare, overlayFlareOpacity,
+    bgLattice, bgLatticeColor, bgLatticeOpacity,
+    textUnderlineWave, canvasSepia,
+    frameBezel, frameBezelColor,
     // Batch 28
     bgAurora, bgAuroraColor, bgAuroraOpacity,
     overlayStarburst, overlayStarburstOpacity,
@@ -937,6 +945,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 29 — bezel border: thick inset beveled shadow
+  if (frameBezel ?? false) {
+    const bc = frameBezelColor ?? '#c8a06e';
+    const bezelShadow = `inset 0 0 0 6px ${bc}, inset 0 0 0 8px ${bc}60, inset 0 0 0 10px ${bc}30`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${bezelShadow}` : bezelShadow;
+  }
   // Batch 28 — inner canvas glow: inset diffused glow
   if (canvasInnerGlow ?? false) {
     const igc = canvasInnerGlowColor ?? '#8b5cf6';
@@ -1091,6 +1105,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 29 — duotone: grayscale + hue-shift approximation
+  if (imageDuotone ?? false) imageFilterParts.push('grayscale(100%) sepia(80%) saturate(300%) hue-rotate(220deg) brightness(95%)');
+  // Batch 29 — chalk: bright soft matte pastel effect
+  if (imageChalk ?? false) imageFilterParts.push('brightness(118%) saturate(55%) contrast(82%) blur(0.3px)');
   // Batch 28 — saturation boost: vivid punchy colors
   if (imageSatBoost ?? false) imageFilterParts.push('saturate(260%) contrast(108%)');
   // Batch 27 — colorize: warm sepia + rich saturation
@@ -1576,6 +1594,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 29 — wavy underline on title
+              if (textUnderlineWave ?? false) ts.textDecoration = 'underline wavy';
               // Batch 28 — force italic on title
               if (textItalicForce ?? false) ts.fontStyle = 'italic';
               // Batch 28 — split two-tone title (early return, must be after skewStyle)
@@ -2912,6 +2932,55 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 29 — marble swirl vein background */}
+        {(bgMarble ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `linear-gradient(135deg, ${bgMarbleColor ?? '#c8a0d8'}55 0%, transparent 40%)`,
+              `linear-gradient(45deg, transparent 30%, ${bgMarbleColor ?? '#c8a0d8'}33 50%, transparent 70%)`,
+              `linear-gradient(160deg, transparent 20%, ${bgMarbleColor ?? '#c8a0d8'}44 45%, transparent 65%)`,
+              `linear-gradient(80deg, ${bgMarbleColor ?? '#c8a0d8'}22 0%, transparent 35%, ${bgMarbleColor ?? '#c8a0d8'}33 70%, transparent 100%)`,
+            ].join(', '),
+            opacity: (bgMarbleOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 29 — brick wall SVG pattern */}
+        {(bgBrickWall ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30'%3E%3Crect x='1' y='1' width='58' height='13' fill='none' stroke='${encodeURIComponent(bgBrickWallColor ?? '#8b5cf6')}' stroke-width='0.8' rx='1'/%3E%3Crect x='-29' y='15' width='58' height='13' fill='none' stroke='${encodeURIComponent(bgBrickWallColor ?? '#8b5cf6')}' stroke-width='0.8' rx='1'/%3E%3Crect x='31' y='15' width='58' height='13' fill='none' stroke='${encodeURIComponent(bgBrickWallColor ?? '#8b5cf6')}' stroke-width='0.8' rx='1'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgBrickWallOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 29 — diagonal lattice/mesh grid */}
+        {(bgLattice ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cline x1='0' y1='0' x2='20' y2='20' stroke='${encodeURIComponent(bgLatticeColor ?? '#8b5cf6')}' stroke-width='0.6' opacity='0.7'/%3E%3Cline x1='20' y1='0' x2='0' y2='20' stroke='${encodeURIComponent(bgLatticeColor ?? '#8b5cf6')}' stroke-width='0.6' opacity='0.7'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgLatticeOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 29 — lens flare radial spot */}
+        {(overlayFlare ?? false) && (
+          <div className="absolute pointer-events-none z-[6]" style={{
+            top: '-10%', right: '-5%',
+            width: '50%', height: '50%',
+            background: `radial-gradient(ellipse at 70% 30%, rgba(255,255,255,${((overlayFlareOpacity ?? 40) / 100) * 0.8}) 0%, rgba(255,220,100,${((overlayFlareOpacity ?? 40) / 100) * 0.4}) 20%, transparent 60%)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 29 — whole-canvas sepia tint */}
+        {(canvasSepia ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[4]" style={{
+            background: 'rgba(100,60,20,0.18)',
+            mixBlendMode: 'multiply',
           }} />
         )}
 

@@ -855,6 +855,25 @@ export interface EditorState {
   textItalicForce: boolean;         // force italic on title text
   frameCornerBrackets: boolean;     // L-shaped corner bracket decorations
   frameCornerBracketsColor: string;
+  // Batch 29
+  bgMarble: boolean;                // marble swirl vein background
+  bgMarbleColor: string;
+  bgMarbleOpacity: number;
+  imageDuotone: boolean;            // duotone two-color image filter
+  imageDuotoneColor: string;
+  bgBrickWall: boolean;             // brick wall pattern background
+  bgBrickWallColor: string;
+  bgBrickWallOpacity: number;
+  imageChalk: boolean;              // chalk/matte pastel effect on image
+  overlayFlare: boolean;            // lens flare radial spot overlay
+  overlayFlareOpacity: number;
+  bgLattice: boolean;               // diagonal lattice/mesh grid background
+  bgLatticeColor: string;
+  bgLatticeOpacity: number;
+  textUnderlineWave: boolean;       // wavy underline on title
+  canvasSepia: boolean;             // sepia tint on whole canvas
+  frameBezel: boolean;              // thick inset bezel border
+  frameBezelColor: string;
 }
 
 export interface StyleTemplate {
@@ -1848,6 +1867,25 @@ export const DEFAULT_STATE: EditorState = {
   textItalicForce: false,
   frameCornerBrackets: false,
   frameCornerBracketsColor: '#8b5cf6',
+  // Batch 29
+  bgMarble: false,
+  bgMarbleColor: '#c8a0d8',
+  bgMarbleOpacity: 20,
+  imageDuotone: false,
+  imageDuotoneColor: '#8b5cf6',
+  bgBrickWall: false,
+  bgBrickWallColor: '#8b5cf6',
+  bgBrickWallOpacity: 12,
+  imageChalk: false,
+  overlayFlare: false,
+  overlayFlareOpacity: 40,
+  bgLattice: false,
+  bgLatticeColor: '#8b5cf6',
+  bgLatticeOpacity: 15,
+  textUnderlineWave: false,
+  canvasSepia: false,
+  frameBezel: false,
+  frameBezelColor: '#c8a06e',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2837,6 +2875,59 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 29 templates
+  {
+    id: 'marble-luxury',
+    name: 'Marble',
+    emoji: '🪨',
+    overrides: {
+      background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e0f0 100%)', backgroundId: 'light',
+      padding: 56, borderRadius: 12, shadow: 60,
+      bgMarble: true, bgMarbleColor: '#c8a0d8', bgMarbleOpacity: 30,
+      frameBezel: true, frameBezelColor: '#c8a06e',
+      imageChalk: true,
+      titleColor: '#2d1b4e',
+    },
+  },
+  {
+    id: 'brick-grunge',
+    name: 'Brick',
+    emoji: '🧱',
+    overrides: {
+      background: '#1a0a00', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 0, shadow: 50,
+      bgBrickWall: true, bgBrickWallColor: '#c8502a', bgBrickWallOpacity: 25,
+      overlayFlare: true, overlayFlareOpacity: 30,
+      textShadowHard: true, textShadowHardColor: '#000000',
+      titleColor: '#ff9966',
+    },
+  },
+  {
+    id: 'duotone-cinema',
+    name: 'Duotone',
+    emoji: '🎬',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0020 0%, #200010 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 60,
+      imageDuotone: true, imageDuotoneColor: '#8b5cf6',
+      bgLattice: true, bgLatticeColor: '#8b5cf6', bgLatticeOpacity: 12,
+      canvasSepia: true,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'chalk-board',
+    name: 'Chalkboard',
+    emoji: '🖊️',
+    overrides: {
+      background: '#1a2e1a', backgroundId: 'solid-black',
+      padding: 56, borderRadius: 8, shadow: 40,
+      imageChalk: true,
+      bgFibers: true, bgFibersColor: '#ffffff', bgFibersOpacity: 6,
+      textUnderlineWave: true,
+      titleColor: '#e8f5e8', titleFont: 'serif',
     },
   },
   // Batch 28 templates

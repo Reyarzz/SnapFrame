@@ -2556,6 +2556,91 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 29 FX controls */}
+      <Card>
+        <SectionLabel>Marble BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgMarble ?? false} onChange={v => onChange({ bgMarble: v })}
+          desc="Marble swirl vein background" />
+        {(state.bgMarble ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgMarbleColor ?? '#c8a0d8'}
+                onChange={e => onChange({ bgMarbleColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgMarbleOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgMarbleOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Brick Wall</SectionLabel>
+        <Toggle label="Enable" value={state.bgBrickWall ?? false} onChange={v => onChange({ bgBrickWall: v })}
+          desc="Brick wall pattern background" />
+        {(state.bgBrickWall ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgBrickWallColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgBrickWallColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgBrickWallOpacity ?? 12} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgBrickWallOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Lattice BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgLattice ?? false} onChange={v => onChange({ bgLattice: v })}
+          desc="Diagonal lattice/diamond mesh background" />
+        {(state.bgLattice ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgLatticeColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgLatticeColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgLatticeOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgLatticeOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Lens Flare</SectionLabel>
+        <Toggle label="Enable" value={state.overlayFlare ?? false} onChange={v => onChange({ overlayFlare: v })}
+          desc="Lens flare radial glow spot overlay" />
+        {(state.overlayFlare ?? false) && (
+          <Slider label="Intensity" value={state.overlayFlareOpacity ?? 40} min={5} max={90} unit="%"
+            onChange={v => onChange({ overlayFlareOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Canvas Sepia</SectionLabel>
+        <Toggle label="Enable" value={state.canvasSepia ?? false} onChange={v => onChange({ canvasSepia: v })}
+          desc="Warm sepia multiply tint on whole canvas" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Bezel Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameBezel ?? false} onChange={v => onChange({ frameBezel: v })}
+          desc="Thick beveled inset bezel border" />
+        {(state.frameBezel ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameBezelColor ?? '#c8a06e'}
+              onChange={e => onChange({ frameBezelColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 28 FX controls */}
       <Card>
         <SectionLabel>Aurora BG</SectionLabel>
@@ -3777,6 +3862,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 29 adjust controls */}
+      <Card>
+        <SectionLabel>Duotone</SectionLabel>
+        <Toggle label="Enable" value={state.imageDuotone ?? false} onChange={v => onChange({ imageDuotone: v })}
+          desc="Duotone two-color image filter" />
+        {(state.imageDuotone ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Hue</span>
+            <input type="color" value={state.imageDuotoneColor ?? '#8b5cf6'}
+              onChange={e => onChange({ imageDuotoneColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Chalk</SectionLabel>
+        <Toggle label="Enable" value={state.imageChalk ?? false} onChange={v => onChange({ imageChalk: v })}
+          desc="Soft chalk/matte pastel image effect" />
+      </Card>
+
       {/* Batch 28 adjust controls */}
       <Card>
         <SectionLabel>Sat Boost</SectionLabel>
@@ -4637,6 +4743,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 29 text controls */}
+          <Card>
+            <SectionLabel>Wavy Underline</SectionLabel>
+            <Toggle label="Enable" value={state.textUnderlineWave ?? false} onChange={v => onChange({ textUnderlineWave: v })}
+              desc="Wavy underline decoration on title" />
           </Card>
 
           {/* Batch 28 text controls */}
