@@ -977,6 +977,30 @@ export interface EditorState {
   bgRetroLines: boolean;            // retro ruled horizontal lines
   bgRetroLinesColor: string;
   bgRetroLinesOpacity: number;
+  // Batch 35
+  bgSandstone: boolean;             // sandy grainy texture background
+  bgSandstoneColor: string;
+  bgSandstoneOpacity: number;
+  bgTopography: boolean;            // topographic contour map lines
+  bgTopographyColor: string;
+  bgTopographyOpacity: number;
+  overlayGoldDust: boolean;         // gold particle shimmer overlay
+  overlayGoldDustOpacity: number;
+  overlayFilmBurn: boolean;         // edge film burn warm corner vignette
+  overlayFilmBurnOpacity: number;
+  imageAnaglyph: boolean;           // red-cyan 3D anaglyph offset filter
+  titleBlink: boolean;              // blinking cursor caret on title
+  bgPaperTear: boolean;             // torn paper edge texture pattern
+  bgPaperTearColor: string;
+  bgPaperTearOpacity: number;
+  frameWoven: boolean;              // woven basket-weave inset frame
+  frameWovenColor: string;
+  canvasPolaroid: boolean;          // polaroid thick white-border look
+  bgGlitchNoise: boolean;           // digital RGB glitch noise blocks
+  bgGlitchNoiseOpacity: number;
+  bgHoneycomb2: boolean;            // tight honeycomb hex grid pattern
+  bgHoneycomb2Color: string;
+  bgHoneycomb2Opacity: number;
 }
 
 export interface StyleTemplate {
@@ -2092,6 +2116,30 @@ export const DEFAULT_STATE: EditorState = {
   bgRetroLines: false,
   bgRetroLinesColor: '#8b5cf6',
   bgRetroLinesOpacity: 15,
+  // Batch 35
+  bgSandstone: false,
+  bgSandstoneColor: '#c4a882',
+  bgSandstoneOpacity: 20,
+  bgTopography: false,
+  bgTopographyColor: '#8b5cf6',
+  bgTopographyOpacity: 15,
+  overlayGoldDust: false,
+  overlayGoldDustOpacity: 30,
+  overlayFilmBurn: false,
+  overlayFilmBurnOpacity: 40,
+  imageAnaglyph: false,
+  titleBlink: false,
+  bgPaperTear: false,
+  bgPaperTearColor: '#f5e6d0',
+  bgPaperTearOpacity: 20,
+  frameWoven: false,
+  frameWovenColor: '#8b6040',
+  canvasPolaroid: false,
+  bgGlitchNoise: false,
+  bgGlitchNoiseOpacity: 20,
+  bgHoneycomb2: false,
+  bgHoneycomb2Color: '#8b5cf6',
+  bgHoneycomb2Opacity: 15,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3081,6 +3129,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 35 templates
+  {
+    id: 'sandstone-desert',
+    name: 'Sandstone',
+    emoji: '🏜️',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a1208 0%, #0d0a04 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgSandstone: true, bgSandstoneColor: '#c4a882', bgSandstoneOpacity: 25,
+      bgTopography: true, bgTopographyColor: '#8b6040', bgTopographyOpacity: 12,
+      frameRusted: true, frameRustedColor: '#8b6040',
+      imageWarmTone: true,
+    },
+  },
+  {
+    id: 'polaroid-snap',
+    name: 'Polaroid',
+    emoji: '📷',
+    overrides: {
+      background: '#f5f0e8', backgroundId: 'solid-light',
+      padding: 48, borderRadius: 4, shadow: 60,
+      canvasPolaroid: true,
+      titleColor: '#1a1a1a', subtitleColor: '#555555',
+      imageEnhance: true,
+    },
+  },
+  {
+    id: 'glitch-digital',
+    name: 'Glitch',
+    emoji: '📡',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 8, shadow: 70,
+      bgGlitchNoise: true, bgGlitchNoiseOpacity: 25,
+      bgVHS: true, bgVHSOpacity: 20,
+      overlayScratches: true, overlayScratchesOpacity: 25,
+      imageAnaglyph: true, textChromatic: true,
+    },
+  },
+  {
+    id: 'golden-hour',
+    name: 'Golden',
+    emoji: '✨',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0800 0%, #1a1000 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      overlayGoldDust: true, overlayGoldDustOpacity: 35,
+      overlayFilmBurn: true, overlayFilmBurnOpacity: 40,
+      frameWoven: true, frameWovenColor: '#d4af37',
+      imageDaylight: true, titleGradient: true,
     },
   },
   // Batch 34 templates

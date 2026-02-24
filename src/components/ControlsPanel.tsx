@@ -2556,6 +2556,129 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 35 FX controls */}
+      <Card>
+        <SectionLabel>Sandstone</SectionLabel>
+        <Toggle label="Enable" value={state.bgSandstone ?? false} onChange={v => onChange({ bgSandstone: v })}
+          desc="Sandy diagonal grain texture" />
+        {(state.bgSandstone ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSandstoneColor ?? '#c4a882'}
+                onChange={e => onChange({ bgSandstoneColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSandstoneOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgSandstoneOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Topography</SectionLabel>
+        <Toggle label="Enable" value={state.bgTopography ?? false} onChange={v => onChange({ bgTopography: v })}
+          desc="Topographic contour map lines" />
+        {(state.bgTopography ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTopographyColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgTopographyColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTopographyOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgTopographyOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Honeycomb 2</SectionLabel>
+        <Toggle label="Enable" value={state.bgHoneycomb2 ?? false} onChange={v => onChange({ bgHoneycomb2: v })}
+          desc="Dense tight honeycomb hex grid" />
+        {(state.bgHoneycomb2 ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgHoneycomb2Color ?? '#8b5cf6'}
+                onChange={e => onChange({ bgHoneycomb2Color: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgHoneycomb2Opacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgHoneycomb2Opacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Paper Tear</SectionLabel>
+        <Toggle label="Enable" value={state.bgPaperTear ?? false} onChange={v => onChange({ bgPaperTear: v })}
+          desc="Torn paper ragged edge at bottom" />
+        {(state.bgPaperTear ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgPaperTearColor ?? '#f5e6d0'}
+                onChange={e => onChange({ bgPaperTearColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgPaperTearOpacity ?? 20} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgPaperTearOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Glitch Noise</SectionLabel>
+        <Toggle label="Enable" value={state.bgGlitchNoise ?? false} onChange={v => onChange({ bgGlitchNoise: v })}
+          desc="RGB digital glitch noise blocks" />
+        {(state.bgGlitchNoise ?? false) && (
+          <Slider label="Opacity" value={state.bgGlitchNoiseOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ bgGlitchNoiseOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Gold Dust</SectionLabel>
+        <Toggle label="Enable" value={state.overlayGoldDust ?? false} onChange={v => onChange({ overlayGoldDust: v })}
+          desc="Shimmering gold particle overlay" />
+        {(state.overlayGoldDust ?? false) && (
+          <Slider label="Opacity" value={state.overlayGoldDustOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayGoldDustOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Film Burn</SectionLabel>
+        <Toggle label="Enable" value={state.overlayFilmBurn ?? false} onChange={v => onChange({ overlayFilmBurn: v })}
+          desc="Warm orange edge film burn corners" />
+        {(state.overlayFilmBurn ?? false) && (
+          <Slider label="Opacity" value={state.overlayFilmBurnOpacity ?? 40} min={10} max={90} unit="%"
+            onChange={v => onChange({ overlayFilmBurnOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Woven Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameWoven ?? false} onChange={v => onChange({ frameWoven: v })}
+          desc="Woven basket-weave inset frame" />
+        {(state.frameWoven ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameWovenColor ?? '#8b6040'}
+              onChange={e => onChange({ frameWovenColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Polaroid</SectionLabel>
+        <Toggle label="Enable" value={state.canvasPolaroid ?? false} onChange={v => onChange({ canvasPolaroid: v })}
+          desc="Thick white polaroid photo border" />
+      </Card>
+
       {/* Batch 34 FX controls */}
       <Card>
         <SectionLabel>Smoke</SectionLabel>
@@ -4323,6 +4446,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 35 adjust controls */}
+      <Card>
+        <SectionLabel>Anaglyph</SectionLabel>
+        <Toggle label="Enable" value={state.imageAnaglyph ?? false} onChange={v => onChange({ imageAnaglyph: v })}
+          desc="Red-cyan 3D anaglyph color shift" />
+      </Card>
+
       {/* Batch 34 adjust controls */}
       <Card>
         <SectionLabel>Thermal</SectionLabel>
@@ -5251,6 +5381,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 35 text controls */}
+          <Card>
+            <SectionLabel>Blink</SectionLabel>
+            <Toggle label="Enable" value={state.titleBlink ?? false} onChange={v => onChange({ titleBlink: v })}
+              desc="Slow blinking cursor pulse on title" />
           </Card>
 
           {/* Batch 34 text controls */}

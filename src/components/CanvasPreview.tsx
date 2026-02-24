@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 35
+    bgSandstone, bgSandstoneColor, bgSandstoneOpacity,
+    bgTopography, bgTopographyColor, bgTopographyOpacity,
+    overlayGoldDust, overlayGoldDustOpacity,
+    overlayFilmBurn, overlayFilmBurnOpacity,
+    imageAnaglyph, titleBlink,
+    bgPaperTear, bgPaperTearColor, bgPaperTearOpacity,
+    frameWoven, frameWovenColor,
+    canvasPolaroid, bgGlitchNoise, bgGlitchNoiseOpacity,
+    bgHoneycomb2, bgHoneycomb2Color, bgHoneycomb2Opacity,
     // Batch 34
     bgSmoke, bgSmokeColor, bgSmokeOpacity,
     bgLavaLamp, bgLavaLampColor, bgLavaLampOpacity,
@@ -1008,6 +1018,20 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 35 — woven frame: basket-weave inset pattern border
+  if (frameWoven ?? false) {
+    const wc = frameWovenColor ?? '#8b6040';
+    const wovenShadow = `inset 0 0 0 5px ${wc}, inset 0 0 0 8px ${wc}40, inset 0 0 0 11px ${wc}20`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${wovenShadow}` : wovenShadow;
+  }
+  // Batch 35 — polaroid: thick white bottom border like a polaroid photo
+  if (canvasPolaroid ?? false) {
+    canvasStyle.border = '12px solid #f5f0e8';
+    canvasStyle.borderBottom = '44px solid #f5f0e8';
+    canvasStyle.boxShadow = canvasStyle.boxShadow
+      ? `${canvasStyle.boxShadow}, 0 8px 30px rgba(0,0,0,0.25)`
+      : '0 8px 30px rgba(0,0,0,0.25)';
+  }
   // Batch 34 — rusted frame: earthy inset shadow with corroded edge tones
   if (frameRusted ?? false) {
     const rc = frameRustedColor ?? '#8b4513';
@@ -1162,6 +1186,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 35 — anaglyph: red-cyan 3D offset illusion
+  if (imageAnaglyph ?? false) imageFilterParts.push('saturate(150%) contrast(110%) hue-rotate(-10deg)');
   // Batch 34 — thermal: false-color heat map approximation
   if (imageThermal ?? false) imageFilterParts.push('grayscale(100%) sepia(100%) saturate(400%) hue-rotate(300deg) brightness(90%) contrast(120%)');
   // Batch 33 — enhance: clarity boost with sharpened micro-contrast
@@ -1665,6 +1691,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 35 — blink: slow pulsing opacity like a cursor
+              if (titleBlink ?? false) ts.animation = 'flicker 1.5s step-start infinite';
               // Batch 34 — chromatic aberration: red/blue offset shadow illusion
               if (textChromatic ?? false) {
                 const existingShadow = ts.textShadow ? `${ts.textShadow}, ` : '';
@@ -3060,6 +3088,75 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 35 — sandstone: sandy diagonal grain lines */}
+        {(bgSandstone ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `repeating-linear-gradient(135deg, ${bgSandstoneColor ?? '#c4a882'}22 0px, ${bgSandstoneColor ?? '#c4a882'}22 1px, transparent 1px, transparent 6px)`,
+              `repeating-linear-gradient(45deg, ${bgSandstoneColor ?? '#c4a882'}11 0px, ${bgSandstoneColor ?? '#c4a882'}11 1px, transparent 1px, transparent 9px)`,
+            ].join(', '),
+            opacity: (bgSandstoneOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — topography: curved contour line map */}
+        {(bgTopography ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Cpath d='M0 50 Q50 30 100 50 Q150 70 200 50' fill='none' stroke='${encodeURIComponent(bgTopographyColor ?? '#8b5cf6')}' stroke-width='0.6' opacity='0.5'/%3E%3Cpath d='M0 70 Q50 50 100 70 Q150 90 200 70' fill='none' stroke='${encodeURIComponent(bgTopographyColor ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.35'/%3E%3Cpath d='M0 30 Q50 10 100 30 Q150 50 200 30' fill='none' stroke='${encodeURIComponent(bgTopographyColor ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.35'/%3E%3Cpath d='M0 85 Q60 65 120 85 Q160 100 200 85' fill='none' stroke='${encodeURIComponent(bgTopographyColor ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.25'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgTopographyOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — honeycomb 2: tight dense hex grid */}
+        {(bgHoneycomb2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='23'%3E%3Cpolygon points='10,1 19,6 19,17 10,22 1,17 1,6' fill='none' stroke='${encodeURIComponent(bgHoneycomb2Color ?? '#8b5cf6')}' stroke-width='0.6' opacity='0.6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgHoneycomb2Opacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — paper tear: rough torn paper edge marks */}
+        {(bgPaperTear ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20'%3E%3Cpath d='M0 10 Q5 6 10 10 Q15 14 20 8 Q25 4 30 10 Q35 16 40 10 Q45 4 50 9 Q55 14 60 8 Q65 3 70 10 Q75 16 80 10 Q85 5 90 11 Q95 16 100 10' fill='none' stroke='${encodeURIComponent(bgPaperTearColor ?? '#f5e6d0')}' stroke-width='1.5' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat-x',
+            backgroundPosition: '0 bottom',
+            opacity: (bgPaperTearOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — glitch noise: RGB color block digital noise */}
+        {(bgGlitchNoise ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[8]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='60'%3E%3Crect x='0' y='8' width='30' height='2' fill='%23ff0050' opacity='0.6'/%3E%3Crect x='50' y='8' width='30' height='2' fill='%230050ff' opacity='0.5'/%3E%3Crect x='10' y='22' width='40' height='1' fill='%2300ffcc' opacity='0.4'/%3E%3Crect x='0' y='35' width='20' height='3' fill='%23ff0050' opacity='0.5'/%3E%3Crect x='60' y='42' width='20' height='2' fill='%230050ff' opacity='0.4'/%3E%3Crect x='30' y='52' width='50' height='1' fill='%2300ffcc' opacity='0.35'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgGlitchNoiseOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — gold dust: small shimmering gold particles */}
+        {(overlayGoldDust ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='8' cy='10' r='1' fill='%23ffd700' opacity='0.9'/%3E%3Ccircle cx='28' cy='5' r='0.7' fill='%23d4af37' opacity='0.7'/%3E%3Ccircle cx='48' cy='18' r='1.2' fill='%23ffd700' opacity='0.8'/%3E%3Ccircle cx='15' cy='35' r='0.8' fill='%23f0c040' opacity='0.6'/%3E%3Ccircle cx='40' cy='40' r='1' fill='%23ffd700' opacity='0.9'/%3E%3Ccircle cx='55' cy='52' r='0.6' fill='%23d4af37' opacity='0.7'/%3E%3Ccircle cx='22' cy='55' r='0.9' fill='%23ffd700' opacity='0.8'/%3E%3Ccircle cx='5' cy='50' r='0.5' fill='%23f0c040' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlayGoldDustOpacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 35 — film burn: warm orange corner vignette */}
+        {(overlayFilmBurn ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: [
+              'radial-gradient(ellipse 60% 50% at 0% 0%, rgba(255,120,0,0.5) 0%, transparent 55%)',
+              'radial-gradient(ellipse 50% 60% at 100% 100%, rgba(200,60,0,0.4) 0%, transparent 50%)',
+              'radial-gradient(ellipse 40% 40% at 100% 0%, rgba(255,160,0,0.25) 0%, transparent 45%)',
+            ].join(', '),
+            opacity: (overlayFilmBurnOpacity ?? 40) / 100,
           }} />
         )}
 
