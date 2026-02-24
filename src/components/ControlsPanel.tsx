@@ -70,62 +70,62 @@ const Slider: React.FC<{
   }, [min, max, onChange, value]);
 
   return (
-    <div className="space-y-[7px]">
+    <div className="space-y-[6px]">
       <div className="flex items-center justify-between">
-        <span className="text-[12px] text-white/55 tracking-tight">{label}</span>
-        <div className="flex items-center gap-1.5">
+        <span className="text-[11.5px] text-white/50 tracking-tight font-medium">{label}</span>
+        <div className="flex items-center gap-1">
           <input
             type="number" min={min} max={max} step={step}
             value={raw}
             onChange={e => setRaw(e.target.value)}
             onBlur={e => commit(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') commit((e.target as HTMLInputElement).value); }}
-            className="no-spinner w-14 text-right text-[11.5px] text-white/80 font-mono tabular-nums
-              bg-white/[0.08] px-2 py-1 rounded-md outline-none
-              focus:ring-1 focus:ring-brand-500/60 transition-all"
+            className="no-spinner w-12 text-right text-[11px] text-white/75 font-mono tabular-nums
+              bg-white/[0.06] border border-white/[0.08] px-1.5 py-0.5 rounded-lg outline-none
+              focus:border-brand-500/50 focus:bg-white/[0.10] transition-all"
           />
-          {unit && <span className="text-[10px] text-white/25 w-4 flex-shrink-0 select-none">{unit}</span>}
+          {unit && <span className="text-[10px] text-white/20 w-3 flex-shrink-0 select-none">{unit}</span>}
         </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => { const v = Number(e.target.value); setRaw(String(v)); onChange(v); }}
         className="w-full"
-        style={{ '--track-fill': `linear-gradient(to right, #7c3aed 0%, #a78bfa ${pct}%, #1e1e38 ${pct}%)` } as React.CSSProperties}
+        style={{ '--track-fill': `linear-gradient(to right, #6d28d9 0%, #8b5cf6 ${pct}%, #1a1a30 ${pct}%)` } as React.CSSProperties}
       />
     </div>
   );
 };
 
 const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void; desc?: string }> = ({ label, value, onChange, desc }) => (
-  <div className="flex items-center justify-between gap-3 py-1">
+  <div className="flex items-center justify-between gap-3 py-0.5">
     <div className="min-w-0">
-      <span className="text-[12.5px] text-white/65 leading-none">{label}</span>
-      {desc && <p className="text-[10.5px] text-white/30 leading-snug mt-1">{desc}</p>}
+      <span className="text-[12px] text-white/60 leading-none font-medium">{label}</span>
+      {desc && <p className="text-[10px] text-white/25 leading-snug mt-0.5">{desc}</p>}
     </div>
     <button onClick={() => onChange(!value)} role="switch" aria-checked={value}
-      className={`relative w-[42px] h-[24px] rounded-full transition-all duration-200 flex-shrink-0
-        ${value
-          ? 'bg-gradient-to-r from-brand-600 to-brand-400 shadow-sm shadow-brand-600/40'
-          : 'bg-white/[0.10]'
-        }`}>
-      <div className={`absolute top-[4px] w-[16px] h-[16px] rounded-full shadow-md transition-all duration-200
-        ${value ? 'left-[22px] bg-white' : 'left-[3px] bg-white/70'}`} />
+      className={`relative w-[38px] h-[22px] rounded-full transition-all duration-200 flex-shrink-0 ${
+        value
+          ? 'bg-gradient-to-r from-violet-700 to-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.4)]'
+          : 'bg-white/[0.08] border border-white/[0.07]'
+      }`}>
+      <div className={`absolute top-[3px] w-[16px] h-[16px] rounded-full shadow-lg transition-all duration-200 ${
+        value ? 'left-[19px] bg-white' : 'left-[3px] bg-white/50'}`} />
     </button>
   </div>
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
-  <div className="flex items-center justify-between gap-2 pb-1.5">
-    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/35 select-none">{children}</p>
-    {action ?? <div className="flex-1 h-px bg-white/[0.06] ml-1.5" />}
+  <div className="flex items-center gap-2 pb-1">
+    <p className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-white/30 select-none shrink-0">{children}</p>
+    {action ?? <div className="flex-1 h-px bg-gradient-to-r from-white/[0.08] to-transparent" />}
   </div>
 );
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
-  <div className={`rounded-2xl p-5 space-y-4 transition-colors duration-150 ${
+  <div className={`rounded-xl p-4 space-y-3.5 transition-all duration-150 ${
     highlight
-      ? 'bg-brand-600/[0.10] ring-1 ring-brand-500/30'
-      : 'sf-card hover:bg-[#151528]'
+      ? 'bg-violet-600/[0.08] ring-1 ring-violet-500/25 shadow-[inset_0_1px_0_rgba(139,92,246,0.12)]'
+      : 'bg-white/[0.035] border border-white/[0.06] hover:bg-white/[0.055] hover:border-white/[0.10]'
   } ${className}`}>
     {children}
   </div>
@@ -133,8 +133,8 @@ const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?
 
 const ResetBtn: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Reset' }) => (
   <button onClick={onClick}
-    className="w-full py-2 rounded-xl text-[9.5px] font-medium text-white/20 hover:text-white/50 hover:bg-white/[0.05] transition-all flex items-center justify-center gap-1.5 border border-transparent hover:border-white/[0.06]">
-    <span className="text-[11px] leading-none">↺</span> {label}
+    className="w-full py-1.5 rounded-lg text-[9px] font-semibold text-white/18 hover:text-white/45 hover:bg-white/[0.04] transition-all flex items-center justify-center gap-1 border border-transparent hover:border-white/[0.05] tracking-wide uppercase">
+    <span className="text-[10px] leading-none">↺</span> {label}
   </button>
 );
 
@@ -142,11 +142,13 @@ const ColorDots: React.FC<{
   colors: { id: string; name: string; value: string }[];
   active: string; onSelect: (v: string) => void;
 }> = ({ colors, active, onSelect }) => (
-  <div className="flex gap-2 flex-wrap">
+  <div className="flex gap-1.5 flex-wrap">
     {colors.map(c => (
       <button key={c.id} onClick={() => onSelect(c.value)} title={c.name}
-        className={`w-6 h-6 rounded-full transition-all hover:scale-110 flex-shrink-0 ring-1 ${
-          active === c.value ? 'ring-2 ring-brand-400 ring-offset-2 ring-offset-[#0c0c18]' : 'ring-white/15 hover:ring-white/30'
+        className={`w-5 h-5 rounded-full transition-all hover:scale-110 flex-shrink-0 ${
+          active === c.value
+            ? 'ring-2 ring-violet-400 ring-offset-1 ring-offset-[#0c0c18] shadow-[0_0_6px_rgba(139,92,246,0.5)]'
+            : 'ring-1 ring-white/10 hover:ring-white/25'
         }`}
         style={{ background: c.value.replace(/[\d.]+\)$/, '1)') }} />
     ))}
@@ -155,10 +157,10 @@ const ColorDots: React.FC<{
 
 const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
   <button onClick={onClick}
-    className={`px-3 py-2 rounded-lg text-[11px] font-semibold transition-all duration-100 leading-none ${
+    className={`px-2.5 py-1.5 rounded-lg text-[10.5px] font-semibold transition-all duration-100 leading-none ${
       active
-        ? 'bg-brand-600/25 text-brand-300 ring-1 ring-brand-500/50'
-        : 'bg-white/[0.04] text-white/35 ring-1 ring-white/[0.06] hover:bg-white/[0.08] hover:text-white/60'
+        ? 'bg-violet-600/20 text-violet-300 border border-violet-500/40 shadow-[0_0_6px_rgba(139,92,246,0.2)]'
+        : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.07] hover:text-white/55 hover:border-white/[0.12]'
     }`}>
     {children}
   </button>
@@ -6580,18 +6582,20 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="shrink-0 flex bg-[#060609] border-b border-white/[0.06] overflow-x-auto no-scrollbar px-2 pt-2 gap-0.5">
+      <div className="shrink-0 flex bg-[#04040c] border-b border-white/[0.05] overflow-x-auto no-scrollbar px-2 py-1.5 gap-1">
         {TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button key={id} onClick={() => setActiveTab(id)}
-              className={`relative flex-1 min-w-[3.2rem] flex flex-col items-center gap-1.5 pb-3 pt-2.5 transition-colors duration-150 rounded-t-lg ${
-                isActive ? 'text-white' : 'text-white/25 hover:text-white/50'
+              className={`relative flex-1 min-w-[3rem] flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all duration-150 ${
+                isActive
+                  ? 'bg-violet-600/15 text-violet-300 shadow-[0_0_10px_rgba(139,92,246,0.15)]'
+                  : 'text-white/22 hover:text-white/50 hover:bg-white/[0.04]'
               }`}>
-              <Icon className={`w-[15px] h-[15px] ${isActive ? 'text-brand-400' : ''}`} />
-              <span className={`text-[8px] font-bold uppercase tracking-wider ${isActive ? 'text-white/80' : ''}`}>{label}</span>
+              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-violet-400' : ''}`} />
+              <span className={`text-[7.5px] font-bold uppercase tracking-[0.12em] leading-none ${isActive ? 'text-violet-300/90' : ''}`}>{label}</span>
               {isActive && (
-                <div className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-t-full bg-gradient-to-r from-brand-500 to-pink-500" />
+                <div className="absolute bottom-0.5 left-3 right-3 h-[1.5px] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 opacity-70" />
               )}
             </button>
           );
@@ -6599,19 +6603,20 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Scrollable content ── */}
-      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-4 py-4 space-y-3">
+      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-3 py-3.5 space-y-2.5">
         {renderTabContent()}
       </div>
 
       {/* ── Bottom action bar ── */}
       {activeTab !== 'export' && (
-        <div className="shrink-0 border-t border-white/[0.06] px-4 pt-4 pb-4 space-y-2.5 sf-panel">
+        <div className="shrink-0 border-t border-white/[0.05] px-3 pt-3 pb-3.5 space-y-2 bg-[#04040c]">
           {/* Primary export row */}
           <button onClick={() => onExport(fmt)} disabled={isExporting}
-            className="w-full py-3 rounded-xl font-bold text-white text-[13px]
-              bg-gradient-to-r from-brand-600 to-pink-500 hover:from-brand-500 hover:to-pink-400
-              transition-all duration-200 shadow-lg shadow-brand-600/20 hover:shadow-brand-500/30
-              flex items-center justify-center gap-2 active:scale-[0.99]
+            className="w-full py-2.5 rounded-xl font-bold text-white text-[12.5px]
+              bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600
+              hover:from-violet-600 hover:via-violet-500 hover:to-fuchsia-500
+              transition-all duration-200 shadow-[0_4px_20px_rgba(109,40,217,0.35)] hover:shadow-[0_4px_24px_rgba(109,40,217,0.5)]
+              flex items-center justify-center gap-2 active:scale-[0.98]
               disabled:opacity-50 disabled:cursor-not-allowed tracking-tight">
             {isExporting ? (
               <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Exporting…</>
@@ -6620,28 +6625,28 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             )}
           </button>
           {/* Secondary row */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button onClick={onCopy} title="Copy to clipboard"
-              className={`flex-1 py-2 rounded-xl text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 ring-1 ${
+              className={`flex-1 py-2 rounded-lg text-[10.5px] font-semibold transition-all flex items-center justify-center gap-1.5 border ${
                 copySuccess
-                  ? 'bg-green-500/15 text-green-300 ring-green-500/25'
-                  : 'bg-white/[0.05] text-white/40 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/65'
+                  ? 'bg-emerald-500/12 text-emerald-300 border-emerald-500/25'
+                  : 'bg-white/[0.04] text-white/35 border-white/[0.07] hover:bg-white/[0.08] hover:text-white/60 hover:border-white/[0.12]'
               }`}>
               {copySuccess ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
             </button>
             <button onClick={() => setActiveTab('export')} title="Export settings"
-              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/35
-                ring-1 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/60 transition-all">
+              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/30
+                border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/55 transition-all">
               <Grid3X3 className="w-3.5 h-3.5" />
             </button>
             <button onClick={onReset} title="Reset all settings"
-              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/30
-                ring-1 ring-white/[0.08] hover:bg-white/[0.09] hover:text-white/55 transition-all">
+              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/25
+                border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/50 transition-all">
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
             <button onClick={onRemoveImage} title="Remove image"
-              className="px-3 py-2 rounded-xl text-[11px] bg-white/[0.05] text-white/25
-                ring-1 ring-white/[0.08] hover:bg-red-500/10 hover:text-red-400/70 transition-all">
+              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/22
+                border border-white/[0.07] hover:bg-red-500/08 hover:text-red-400/60 hover:border-red-500/20 transition-all">
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
