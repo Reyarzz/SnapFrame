@@ -951,6 +951,32 @@ export interface EditorState {
   bgGeometric3DColor: string;
   bgGeometric3DOpacity: number;
   imageEnhance: boolean;            // smart enhance: clarity + micro-contrast
+  // Batch 34
+  bgSmoke: boolean;                 // wispy smoke cloud pattern
+  bgSmokeColor: string;
+  bgSmokeOpacity: number;
+  bgLavaLamp: boolean;              // lava-lamp blob circles pattern
+  bgLavaLampColor: string;
+  bgLavaLampOpacity: number;
+  bgCobblestone: boolean;           // cobblestone paving grid
+  bgCobblestoneColor: string;
+  bgCobblestoneOpacity: number;
+  overlayScratches: boolean;        // film scratch marks overlay
+  overlayScratchesOpacity: number;
+  imageThermal: boolean;            // thermal camera false-color filter
+  titleCinematic: boolean;          // cinematic wide letterbox bars on title
+  bgIkat: boolean;                  // woven ikat diamond textile pattern
+  bgIkatColor: string;
+  bgIkatOpacity: number;
+  textChromatic: boolean;           // chromatic aberration text color shift
+  frameRusted: boolean;             // rusted corroded inset border
+  frameRustedColor: string;
+  canvasGritty: boolean;            // gritty urban diagonal texture
+  bgVHS: boolean;                   // VHS scanline horizontal noise
+  bgVHSOpacity: number;
+  bgRetroLines: boolean;            // retro ruled horizontal lines
+  bgRetroLinesColor: string;
+  bgRetroLinesOpacity: number;
 }
 
 export interface StyleTemplate {
@@ -2040,6 +2066,32 @@ export const DEFAULT_STATE: EditorState = {
   bgGeometric3DColor: '#8b5cf6',
   bgGeometric3DOpacity: 15,
   imageEnhance: false,
+  // Batch 34
+  bgSmoke: false,
+  bgSmokeColor: '#aaaaaa',
+  bgSmokeOpacity: 20,
+  bgLavaLamp: false,
+  bgLavaLampColor: '#ec4899',
+  bgLavaLampOpacity: 20,
+  bgCobblestone: false,
+  bgCobblestoneColor: '#8b7355',
+  bgCobblestoneOpacity: 15,
+  overlayScratches: false,
+  overlayScratchesOpacity: 25,
+  imageThermal: false,
+  titleCinematic: false,
+  bgIkat: false,
+  bgIkatColor: '#8b5cf6',
+  bgIkatOpacity: 15,
+  textChromatic: false,
+  frameRusted: false,
+  frameRustedColor: '#8b4513',
+  canvasGritty: false,
+  bgVHS: false,
+  bgVHSOpacity: 20,
+  bgRetroLines: false,
+  bgRetroLinesColor: '#8b5cf6',
+  bgRetroLinesOpacity: 15,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3029,6 +3081,56 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 34 templates
+  {
+    id: 'smoke-mystery',
+    name: 'Smoke',
+    emoji: '🌫️',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 70,
+      bgSmoke: true, bgSmokeColor: '#aaaaaa', bgSmokeOpacity: 25,
+      overlayVignette2: true, overlayVignette2Opacity: 50,
+      imageChalk: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'lava-glow',
+    name: 'Lava',
+    emoji: '🌋',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0000 0%, #1a0500 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 20, shadow: 60,
+      bgLavaLamp: true, bgLavaLampColor: '#ff4500', bgLavaLampOpacity: 30,
+      frameGlow3D: true, frameGlow3DColor: '#ff6b35',
+      titleNeonPulse: true, canvasBloom: true,
+    },
+  },
+  {
+    id: 'vhs-retro',
+    name: 'VHS',
+    emoji: '📼',
+    overrides: {
+      background: '#0a0a0a', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 8, shadow: 60,
+      bgVHS: true, bgVHSOpacity: 30,
+      overlayScratches: true, overlayScratchesOpacity: 30,
+      imageGrayscale: 15, scanlines: 20,
+      titleCinematic: true, textStencil: true,
+    },
+  },
+  {
+    id: 'ikat-textile',
+    name: 'Ikat',
+    emoji: '🧵',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0830 0%, #0d0520 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgIkat: true, bgIkatColor: '#c084fc', bgIkatOpacity: 20,
+      bgStitching: true, bgStitchingColor: '#a78bfa', bgStitchingOpacity: 35,
+      textChromatic: true, imageSatBoost: true,
     },
   },
   // Batch 33 templates

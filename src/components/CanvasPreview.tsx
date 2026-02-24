@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 34
+    bgSmoke, bgSmokeColor, bgSmokeOpacity,
+    bgLavaLamp, bgLavaLampColor, bgLavaLampOpacity,
+    bgCobblestone, bgCobblestoneColor, bgCobblestoneOpacity,
+    overlayScratches, overlayScratchesOpacity,
+    imageThermal, titleCinematic,
+    bgIkat, bgIkatColor, bgIkatOpacity,
+    textChromatic, frameRusted, frameRustedColor,
+    canvasGritty, bgVHS, bgVHSOpacity,
+    bgRetroLines, bgRetroLinesColor, bgRetroLinesOpacity,
     // Batch 33
     bgStitching, bgStitchingColor, bgStitchingOpacity,
     titleWave, bgSunrise, bgSunriseOpacity,
@@ -998,6 +1008,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 34 — rusted frame: earthy inset shadow with corroded edge tones
+  if (frameRusted ?? false) {
+    const rc = frameRustedColor ?? '#8b4513';
+    const rustedShadow = `inset 0 0 0 4px ${rc}, inset 0 0 12px ${rc}80, inset 0 0 0 6px #5c2d0880`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${rustedShadow}` : rustedShadow;
+  }
   // Batch 33 — 3D glow frame: raised inset with multi-stop glow giving depth
   if (frameGlow3D ?? false) {
     const gc = frameGlow3DColor ?? '#8b5cf6';
@@ -1146,6 +1162,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 34 — thermal: false-color heat map approximation
+  if (imageThermal ?? false) imageFilterParts.push('grayscale(100%) sepia(100%) saturate(400%) hue-rotate(300deg) brightness(90%) contrast(120%)');
   // Batch 33 — enhance: clarity boost with sharpened micro-contrast
   if (imageEnhance ?? false) imageFilterParts.push('contrast(118%) brightness(106%) saturate(115%) drop-shadow(0 0 0.5px rgba(0,0,0,0.3))');
   // Batch 32 — sketch: grayscale + high contrast edge look
@@ -1647,6 +1665,11 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 34 — chromatic aberration: red/blue offset shadow illusion
+              if (textChromatic ?? false) {
+                const existingShadow = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existingShadow}-2px 0 3px rgba(255,0,80,0.8), 2px 0 3px rgba(0,200,255,0.8)`;
+              }
               // Batch 33 — double outline: layered text-stroke trick for doubled ring
               if (textOutlineDouble ?? false) {
                 const doc = textOutlineDoubleColor ?? '#8b5cf6';
@@ -1730,6 +1753,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               // Batch 21 — flip title horizontally
               if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              // Batch 34 — cinematic: letterbox bars above/below title text
+              if (titleCinematic ?? false) {
+                return (
+                  <div style={{ ...ts, ...skewStyle, position: 'relative', padding: '12px 0' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 12, background: '#000000cc' }} />
+                    {titleText}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 12, background: '#000000cc' }} />
+                  </div>
+                );
+              }
               // Batch 33 — wave title: each character vertically offset in a sin wave
               if (titleWave ?? false) {
                 const justify = textAlignVal === 'center' ? 'center' : textAlignVal === 'right' ? 'flex-end' : 'flex-start';
@@ -3027,6 +3060,83 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 34 — smoke: layered wispy cloud radial gradients */}
+        {(bgSmoke ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 70% 50% at 20% 30%, ${bgSmokeColor ?? '#aaaaaa'}88 0%, transparent 60%)`,
+              `radial-gradient(ellipse 60% 60% at 75% 20%, ${bgSmokeColor ?? '#aaaaaa'}55 0%, transparent 55%)`,
+              `radial-gradient(ellipse 80% 40% at 50% 70%, ${bgSmokeColor ?? '#aaaaaa'}44 0%, transparent 65%)`,
+              `radial-gradient(ellipse 50% 50% at 85% 65%, ${bgSmokeColor ?? '#aaaaaa'}33 0%, transparent 50%)`,
+            ].join(', '),
+            opacity: (bgSmokeOpacity ?? 20) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 34 — lava lamp: floating blob circles */}
+        {(bgLavaLamp ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='160'%3E%3Cellipse cx='60' cy='30' rx='28' ry='22' fill='${encodeURIComponent(bgLavaLampColor ?? '#ec4899')}' opacity='0.5'/%3E%3Cellipse cx='35' cy='80' rx='22' ry='28' fill='${encodeURIComponent(bgLavaLampColor ?? '#ec4899')}' opacity='0.4'/%3E%3Cellipse cx='85' cy='110' rx='26' ry='20' fill='${encodeURIComponent(bgLavaLampColor ?? '#ec4899')}' opacity='0.45'/%3E%3Cellipse cx='50' cy='148' rx='20' ry='16' fill='${encodeURIComponent(bgLavaLampColor ?? '#ec4899')}' opacity='0.35'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgLavaLampOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — cobblestone: rounded rect paving grid */}
+        {(bgCobblestone ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='20'%3E%3Crect x='1' y='1' width='27' height='17' fill='none' stroke='${encodeURIComponent(bgCobblestoneColor ?? '#8b7355')}' stroke-width='0.8' rx='4'/%3E%3Crect x='3' y='3' width='23' height='13' fill='${encodeURIComponent(bgCobblestoneColor ?? '#8b7355')}' opacity='0.08' rx='3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCobblestoneOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — ikat: woven diamond textile pattern */}
+        {(bgIkat ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpolygon points='15,2 28,15 15,28 2,15' fill='none' stroke='${encodeURIComponent(bgIkatColor ?? '#8b5cf6')}' stroke-width='1' opacity='0.6'/%3E%3Cpolygon points='15,7 23,15 15,23 7,15' fill='${encodeURIComponent(bgIkatColor ?? '#8b5cf6')}' opacity='0.25'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgIkatOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — VHS scanlines: horizontal noise bands */}
+        {(bgVHS ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[8]" style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px)',
+            backgroundSize: '100% 4px',
+            opacity: (bgVHSOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — retro ruled lines: horizontal ruled notebook lines */}
+        {(bgRetroLines ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `repeating-linear-gradient(0deg, transparent 0px, transparent 27px, ${bgRetroLinesColor ?? '#8b5cf6'} 27px, ${bgRetroLinesColor ?? '#8b5cf6'} 28px)`,
+            opacity: (bgRetroLinesOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — film scratches: vertical scratch line marks */}
+        {(overlayScratches ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='200'%3E%3Cline x1='15' y1='0' x2='14' y2='200' stroke='%23ffffff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='42' y1='20' x2='41' y2='160' stroke='%23ffffff' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='70' y1='0' x2='71' y2='200' stroke='%23ffffff' stroke-width='0.4' opacity='0.4'/%3E%3Cline x1='88' y1='40' x2='89' y2='180' stroke='%23ffffff' stroke-width='0.3' opacity='0.25'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat-x',
+            opacity: (overlayScratchesOpacity ?? 25) / 100,
+          }} />
+        )}
+
+        {/* Batch 34 — gritty canvas: diagonal urban texture */}
+        {(canvasGritty ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[3]" style={{
+            backgroundImage: [
+              'repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px)',
+              'repeating-linear-gradient(-45deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 8px)',
+            ].join(', '),
           }} />
         )}
 

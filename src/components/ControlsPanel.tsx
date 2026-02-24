@@ -2556,6 +2556,137 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 34 FX controls */}
+      <Card>
+        <SectionLabel>Smoke</SectionLabel>
+        <Toggle label="Enable" value={state.bgSmoke ?? false} onChange={v => onChange({ bgSmoke: v })}
+          desc="Wispy smoke cloud radial overlay" />
+        {(state.bgSmoke ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSmokeColor ?? '#aaaaaa'}
+                onChange={e => onChange({ bgSmokeColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSmokeOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgSmokeOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Lava Lamp</SectionLabel>
+        <Toggle label="Enable" value={state.bgLavaLamp ?? false} onChange={v => onChange({ bgLavaLamp: v })}
+          desc="Floating blob lava-lamp circles" />
+        {(state.bgLavaLamp ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgLavaLampColor ?? '#ec4899'}
+                onChange={e => onChange({ bgLavaLampColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgLavaLampOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgLavaLampOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Cobblestone</SectionLabel>
+        <Toggle label="Enable" value={state.bgCobblestone ?? false} onChange={v => onChange({ bgCobblestone: v })}
+          desc="Rounded cobblestone paving pattern" />
+        {(state.bgCobblestone ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgCobblestoneColor ?? '#8b7355'}
+                onChange={e => onChange({ bgCobblestoneColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgCobblestoneOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgCobblestoneOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Ikat</SectionLabel>
+        <Toggle label="Enable" value={state.bgIkat ?? false} onChange={v => onChange({ bgIkat: v })}
+          desc="Woven ikat diamond textile pattern" />
+        {(state.bgIkat ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgIkatColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgIkatColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgIkatOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgIkatOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>VHS</SectionLabel>
+        <Toggle label="Enable" value={state.bgVHS ?? false} onChange={v => onChange({ bgVHS: v })}
+          desc="VHS scanline horizontal noise bands" />
+        {(state.bgVHS ?? false) && (
+          <Slider label="Opacity" value={state.bgVHSOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ bgVHSOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Retro Lines</SectionLabel>
+        <Toggle label="Enable" value={state.bgRetroLines ?? false} onChange={v => onChange({ bgRetroLines: v })}
+          desc="Horizontal ruled notebook line pattern" />
+        {(state.bgRetroLines ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgRetroLinesColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgRetroLinesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgRetroLinesOpacity ?? 15} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgRetroLinesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Film Scratches</SectionLabel>
+        <Toggle label="Enable" value={state.overlayScratches ?? false} onChange={v => onChange({ overlayScratches: v })}
+          desc="Vertical film scratch marks overlay" />
+        {(state.overlayScratches ?? false) && (
+          <Slider label="Opacity" value={state.overlayScratchesOpacity ?? 25} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayScratchesOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Gritty</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGritty ?? false} onChange={v => onChange({ canvasGritty: v })}
+          desc="Urban diagonal gritty texture overlay" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Rusted Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameRusted ?? false} onChange={v => onChange({ frameRusted: v })}
+          desc="Corroded rusted inset border effect" />
+        {(state.frameRusted ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameRustedColor ?? '#8b4513'}
+              onChange={e => onChange({ frameRustedColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 33 FX controls */}
       <Card>
         <SectionLabel>Stitching</SectionLabel>
@@ -4192,6 +4323,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 34 adjust controls */}
+      <Card>
+        <SectionLabel>Thermal</SectionLabel>
+        <Toggle label="Enable" value={state.imageThermal ?? false} onChange={v => onChange({ imageThermal: v })}
+          desc="Thermal camera false-color filter" />
+      </Card>
+
       {/* Batch 33 adjust controls */}
       <Card>
         <SectionLabel>Enhance</SectionLabel>
@@ -5113,6 +5251,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 34 text controls */}
+          <Card>
+            <SectionLabel>Cinematic</SectionLabel>
+            <Toggle label="Enable" value={state.titleCinematic ?? false} onChange={v => onChange({ titleCinematic: v })}
+              desc="Letterbox bars above/below title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Chromatic</SectionLabel>
+            <Toggle label="Enable" value={state.textChromatic ?? false} onChange={v => onChange({ textChromatic: v })}
+              desc="Chromatic aberration red/blue text split" />
           </Card>
 
           {/* Batch 33 text controls */}
