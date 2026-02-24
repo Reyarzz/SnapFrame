@@ -1055,6 +1055,32 @@ export interface EditorState {
   bgAstroColor: string;
   bgAstroOpacity: number;
   textDisco: boolean;               // disco rainbow color cycling text
+  // Batch 38
+  bgDesert: boolean;                // desert sand dune wave lines
+  bgDesertColor: string;
+  bgDesertOpacity: number;
+  bgArctic: boolean;                // arctic ice crystal frost pattern
+  bgArcticOpacity: number;
+  bgJungle: boolean;                // dense jungle tropical leaf pattern
+  bgJungleColor: string;
+  bgJungleOpacity: number;
+  bgCoral: boolean;                 // coral reef organic branching pattern
+  bgCoralColor: string;
+  bgCoralOpacity: number;
+  bgObsidian: boolean;              // obsidian volcanic glass shard facets
+  bgObsidianOpacity: number;
+  bgParchment: boolean;             // aged parchment/vellum texture
+  bgParchmentOpacity: number;
+  overlayAurora2: boolean;          // aurora borealis light curtain bands
+  overlayAurora2Opacity: number;
+  overlayFog: boolean;              // ground-level dense fog layer
+  overlayFogOpacity: number;
+  imageDawn: boolean;               // warm golden dawn hour photo filter
+  frameVine: boolean;               // decorative vine leaf corner frame
+  frameVineColor: string;
+  canvasBevel: boolean;             // beveled 3D raised edge effect
+  textShadowSoft: boolean;          // soft diffused ambient text shadow
+  textShadowSoftColor: string;
 }
 
 export interface StyleTemplate {
@@ -2248,6 +2274,32 @@ export const DEFAULT_STATE: EditorState = {
   bgAstroColor: '#ffffff',
   bgAstroOpacity: 20,
   textDisco: false,
+  // Batch 38
+  bgDesert: false,
+  bgDesertColor: '#c4a055',
+  bgDesertOpacity: 20,
+  bgArctic: false,
+  bgArcticOpacity: 20,
+  bgJungle: false,
+  bgJungleColor: '#2d6a1e',
+  bgJungleOpacity: 15,
+  bgCoral: false,
+  bgCoralColor: '#e8735a',
+  bgCoralOpacity: 15,
+  bgObsidian: false,
+  bgObsidianOpacity: 15,
+  bgParchment: false,
+  bgParchmentOpacity: 20,
+  overlayAurora2: false,
+  overlayAurora2Opacity: 30,
+  overlayFog: false,
+  overlayFogOpacity: 35,
+  imageDawn: false,
+  frameVine: false,
+  frameVineColor: '#4a7c2f',
+  canvasBevel: false,
+  textShadowSoft: false,
+  textShadowSoftColor: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3237,6 +3289,60 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 38 templates
+  {
+    id: 'desert-dunes',
+    name: 'Desert',
+    emoji: '🏜️',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0e00 0%, #0d0800 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgDesert: true, bgDesertColor: '#c4a055', bgDesertOpacity: 22,
+      bgParchment: true, bgParchmentOpacity: 18,
+      imageDawn: true, imageWarmTone: true,
+      frameVine: true, frameVineColor: '#8b6040',
+    },
+  },
+  {
+    id: 'arctic-frost',
+    name: 'Arctic',
+    emoji: '🧊',
+    overrides: {
+      background: 'linear-gradient(135deg, #020e1a 0%, #05101a 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgArctic: true, bgArcticOpacity: 25,
+      overlayIce: true, overlayIceOpacity: 25,
+      overlayAurora2: true, overlayAurora2Opacity: 35,
+      imageCoolTone: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'jungle-deep',
+    name: 'Jungle',
+    emoji: '🌿',
+    overrides: {
+      background: 'linear-gradient(135deg, #010a02 0%, #020d02 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgJungle: true, bgJungleColor: '#1a4d10', bgJungleOpacity: 22,
+      bgCoral: true, bgCoralColor: '#4a9a35', bgCoralOpacity: 12,
+      overlayFog: true, overlayFogOpacity: 25,
+      imageEnhance: true,
+    },
+  },
+  {
+    id: 'obsidian-glass',
+    name: 'Obsidian',
+    emoji: '🖤',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 80,
+      bgObsidian: true, bgObsidianOpacity: 20,
+      canvasBevel: true,
+      textShadowSoft: true, textShadowSoftColor: '#7c3aed',
+      frameGlow3D: true, frameGlow3DColor: '#4c1d95',
+      titleGradient: true,
     },
   },
   // Batch 37 templates

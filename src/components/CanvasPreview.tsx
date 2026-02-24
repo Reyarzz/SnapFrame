@@ -733,6 +733,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 38
+    bgDesert, bgDesertColor, bgDesertOpacity,
+    bgArctic, bgArcticOpacity,
+    bgJungle, bgJungleColor, bgJungleOpacity,
+    bgCoral, bgCoralColor, bgCoralOpacity,
+    bgObsidian, bgObsidianOpacity,
+    bgParchment, bgParchmentOpacity,
+    overlayAurora2, overlayAurora2Opacity,
+    overlayFog, overlayFogOpacity,
+    imageDawn, frameVine, frameVineColor,
+    canvasBevel, textShadowSoft, textShadowSoftColor,
     // Batch 37
     bgOcean, bgOceanColor, bgOceanOpacity,
     bgLightning, bgLightningColor, bgLightningOpacity,
@@ -1040,6 +1051,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 38 — vine frame: green leaf vine inset border
+  if (frameVine ?? false) {
+    const vc = frameVineColor ?? '#4a7c2f';
+    const vineShadow = `inset 0 0 0 4px ${vc}, inset 0 0 0 6px ${vc}60, inset 0 0 12px ${vc}30`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${vineShadow}` : vineShadow;
+  }
+  // Batch 38 — bevel: raised 3D beveled edge highlight/shadow
+  if (canvasBevel ?? false) {
+    const bevelShadow = `inset 2px 2px 4px rgba(255,255,255,0.08), inset -2px -2px 4px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.06)`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${bevelShadow}` : bevelShadow;
+  }
   // Batch 37 — natural frame: earthy rounded stone/wood inset border
   if (frameNatural ?? false) {
     const nc = frameNaturalColor ?? '#8b6040';
@@ -1227,6 +1249,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 38 — dawn: warm rosy golden-hour dawn filter
+  if (imageDawn ?? false) imageFilterParts.push('sepia(20%) saturate(130%) brightness(108%) hue-rotate(-15deg) contrast(102%)');
   // Batch 37 — HDR: high dynamic range tone-mapping approximation
   if (imageHDR ?? false) imageFilterParts.push('contrast(130%) brightness(110%) saturate(140%) drop-shadow(0 2px 4px rgba(0,0,0,0.4))');
   // Batch 36 — vibrant: hyper-saturated vivid pop
@@ -1736,6 +1760,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 38 — soft shadow: diffused ambient shadow bloom
+              if (textShadowSoft ?? false) {
+                const ssc = textShadowSoftColor ?? '#8b5cf6';
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}0 4px 16px ${ssc}60, 0 8px 32px ${ssc}30, 0 2px 6px ${ssc}40`;
+              }
               // Batch 37 — pop: chunky bold pop-art weight + transform
               if (titlePop ?? false) {
                 ts.fontWeight = 900;
@@ -3161,6 +3191,83 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 38 — desert: sand dune sinusoidal wave ripples */}
+        {(bgDesert ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='50'%3E%3Cpath d='M0 25 Q50 10 100 25 Q150 40 200 25' fill='${encodeURIComponent(bgDesertColor ?? '#c4a055')}' opacity='0.18'/%3E%3Cpath d='M0 35 Q50 20 100 35 Q150 50 200 35' fill='${encodeURIComponent(bgDesertColor ?? '#c4a055')}' opacity='0.12'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgDesertOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — arctic: ice crystal geometric frost */}
+        {(bgArctic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Cline x1='25' y1='0' x2='25' y2='50' stroke='%23c8e8ff' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='0' y1='25' x2='50' y2='25' stroke='%23c8e8ff' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='0' y1='0' x2='50' y2='50' stroke='%23c8e8ff' stroke-width='0.3' opacity='0.35'/%3E%3Cline x1='50' y1='0' x2='0' y2='50' stroke='%23c8e8ff' stroke-width='0.3' opacity='0.35'/%3E%3Ccircle cx='25' cy='25' r='3' fill='none' stroke='%23c8e8ff' stroke-width='0.4' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgArcticOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — jungle: tropical leaf silhouette pattern */}
+        {(bgJungle ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cellipse cx='15' cy='30' rx='12' ry='6' fill='${encodeURIComponent(bgJungleColor ?? '#2d6a1e')}' opacity='0.45' transform='rotate(-30 15 30)'/%3E%3Cellipse cx='45' cy='15' rx='10' ry='5' fill='${encodeURIComponent(bgJungleColor ?? '#2d6a1e')}' opacity='0.35' transform='rotate(20 45 15)'/%3E%3Cellipse cx='40' cy='48' rx='13' ry='5' fill='${encodeURIComponent(bgJungleColor ?? '#2d6a1e')}' opacity='0.4' transform='rotate(-15 40 48)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgJungleOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — coral: branching organic reef pattern */}
+        {(bgCoral ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='70'%3E%3Cline x1='25' y1='65' x2='25' y2='40' stroke='${encodeURIComponent(bgCoralColor ?? '#e8735a')}' stroke-width='1.5' opacity='0.4' stroke-linecap='round'/%3E%3Cline x1='25' y1='50' x2='15' y2='35' stroke='${encodeURIComponent(bgCoralColor ?? '#e8735a')}' stroke-width='1' opacity='0.35' stroke-linecap='round'/%3E%3Cline x1='25' y1='50' x2='35' y2='33' stroke='${encodeURIComponent(bgCoralColor ?? '#e8735a')}' stroke-width='1' opacity='0.35' stroke-linecap='round'/%3E%3Cline x1='25' y1='40' x2='18' y2='25' stroke='${encodeURIComponent(bgCoralColor ?? '#e8735a')}' stroke-width='0.8' opacity='0.3' stroke-linecap='round'/%3E%3Cline x1='25' y1='40' x2='32' y2='22' stroke='${encodeURIComponent(bgCoralColor ?? '#e8735a')}' stroke-width='0.8' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCoralOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — obsidian: dark glass shard polygon facets */}
+        {(bgObsidian ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Cpolygon points='35,5 65,20 60,55 35,65 10,50 15,15' fill='none' stroke='%23ffffff' stroke-width='0.4' opacity='0.15'/%3E%3Cpolygon points='35,20 55,30 52,50 35,58 18,48 20,28' fill='none' stroke='%23ffffff' stroke-width='0.3' opacity='0.08'/%3E%3Cline x1='35' y1='5' x2='35' y2='20' stroke='%23ffffff' stroke-width='0.3' opacity='0.12'/%3E%3Cline x1='65' y1='20' x2='55' y2='30' stroke='%23ffffff' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgObsidianOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — parchment: aged paper fibrous texture */}
+        {(bgParchment ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              'repeating-linear-gradient(88deg, rgba(200,160,80,0.06) 0px, rgba(200,160,80,0.06) 1px, transparent 1px, transparent 12px)',
+              'repeating-linear-gradient(2deg, rgba(160,120,60,0.04) 0px, rgba(160,120,60,0.04) 1px, transparent 1px, transparent 18px)',
+            ].join(', '),
+            opacity: (bgParchmentOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 38 — aurora 2: colored light curtain bands */}
+        {(overlayAurora2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: [
+              'linear-gradient(180deg, rgba(0,255,128,0.15) 0%, transparent 30%)',
+              'linear-gradient(180deg, transparent 20%, rgba(0,180,255,0.12) 35%, transparent 55%)',
+              'linear-gradient(180deg, transparent 40%, rgba(140,0,255,0.10) 55%, transparent 70%)',
+            ].join(', '),
+            opacity: (overlayAurora2Opacity ?? 30) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 38 — fog: dense ground-level white fog layer at bottom */}
+        {(overlayFog ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'linear-gradient(to top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 30%, transparent 60%)',
+            opacity: (overlayFogOpacity ?? 35) / 100,
           }} />
         )}
 
