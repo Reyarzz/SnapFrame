@@ -2556,6 +2556,99 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 28 FX controls */}
+      <Card>
+        <SectionLabel>Aurora BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgAurora ?? false} onChange={v => onChange({ bgAurora: v })}
+          desc="Aurora borealis multi-color gradient" />
+        {(state.bgAurora ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgAuroraColor ?? '#00c8a0'}
+                onChange={e => onChange({ bgAuroraColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgAuroraOpacity ?? 25} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgAuroraOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Scales BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgScales ?? false} onChange={v => onChange({ bgScales: v })}
+          desc="Fish-scale arc overlap background" />
+        {(state.bgScales ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgScalesColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgScalesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgScalesOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgScalesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Fibers BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgFibers ?? false} onChange={v => onChange({ bgFibers: v })}
+          desc="Diagonal fiber/line texture background" />
+        {(state.bgFibers ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgFibersColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgFibersColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgFibersOpacity ?? 12} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgFibersOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Starburst</SectionLabel>
+        <Toggle label="Enable" value={state.overlayStarburst ?? false} onChange={v => onChange({ overlayStarburst: v })}
+          desc="Sunray conic-gradient starburst overlay" />
+        {(state.overlayStarburst ?? false) && (
+          <Slider label="Intensity" value={state.overlayStarburstOpacity ?? 15} min={3} max={60} unit="%"
+            onChange={v => onChange({ overlayStarburstOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Inner Glow</SectionLabel>
+        <Toggle label="Enable" value={state.canvasInnerGlow ?? false} onChange={v => onChange({ canvasInnerGlow: v })}
+          desc="Inward diffused canvas glow" />
+        {(state.canvasInnerGlow ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.canvasInnerGlowColor ?? '#8b5cf6'}
+              onChange={e => onChange({ canvasInnerGlowColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Corner Brackets</SectionLabel>
+        <Toggle label="Enable" value={state.frameCornerBrackets ?? false} onChange={v => onChange({ frameCornerBrackets: v })}
+          desc="L-shaped corner bracket decorations" />
+        {(state.frameCornerBrackets ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameCornerBracketsColor ?? '#8b5cf6'}
+              onChange={e => onChange({ frameCornerBracketsColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 27 FX controls */}
       <Card>
         <SectionLabel>Polka Dots</SectionLabel>
@@ -3684,6 +3777,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 28 adjust controls */}
+      <Card>
+        <SectionLabel>Sat Boost</SectionLabel>
+        <Toggle label="Enable" value={state.imageSatBoost ?? false} onChange={v => onChange({ imageSatBoost: v })}
+          desc="Strong saturation boost for vivid colors" />
+      </Card>
+
       {/* Batch 27 adjust controls */}
       <Card>
         <SectionLabel>Colorize</SectionLabel>
@@ -4537,6 +4637,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 28 text controls */}
+          <Card>
+            <SectionLabel>Split Title</SectionLabel>
+            <Toggle label="Enable" value={state.titleSplit ?? false} onChange={v => onChange({ titleSplit: v })}
+              desc="Title split in two halves with different colors" />
+            {(state.titleSplit ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color B</span>
+                <input type="color" value={state.titleSplitColorB ?? '#ec4899'}
+                  onChange={e => onChange({ titleSplitColorB: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Force Italic</SectionLabel>
+            <Toggle label="Enable" value={state.textItalicForce ?? false} onChange={v => onChange({ textItalicForce: v })}
+              desc="Force italic style on title text" />
           </Card>
 
           {/* Batch 27 text controls */}

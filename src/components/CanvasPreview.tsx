@@ -733,6 +733,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 28
+    bgAurora, bgAuroraColor, bgAuroraOpacity,
+    overlayStarburst, overlayStarburstOpacity,
+    imageSatBoost, titleSplit, titleSplitColorB,
+    canvasInnerGlow, canvasInnerGlowColor,
+    bgScales, bgScalesColor, bgScalesOpacity,
+    bgFibers, bgFibersColor, bgFibersOpacity,
+    textItalicForce, frameCornerBrackets, frameCornerBracketsColor,
     // Batch 27
     bgCamo, bgCamoColor, bgCamoOpacity,
     bgHalftone, bgHalftoneColor, bgHalftoneOpacity,
@@ -929,6 +937,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 28 — inner canvas glow: inset diffused glow
+  if (canvasInnerGlow ?? false) {
+    const igc = canvasInnerGlowColor ?? '#8b5cf6';
+    const innerGlow = `inset 0 0 30px ${igc}50, inset 0 0 60px ${igc}20`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${innerGlow}` : innerGlow;
+  }
   // Batch 27 — paint stroke: rough inset border with staggered shadows
   if (framePaintStroke ?? false) {
     const psc = framePaintStrokeColor ?? '#8b5cf6';
@@ -1077,6 +1091,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 28 — saturation boost: vivid punchy colors
+  if (imageSatBoost ?? false) imageFilterParts.push('saturate(260%) contrast(108%)');
   // Batch 27 — colorize: warm sepia + rich saturation
   if (imageColorize ?? false) imageFilterParts.push('sepia(100%) saturate(200%) brightness(92%)');
   // Batch 26 — old photo: sepia + faded soft vintage
@@ -1560,6 +1576,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 28 — force italic on title
+              if (textItalicForce ?? false) ts.fontStyle = 'italic';
+              // Batch 28 — split two-tone title (early return, must be after skewStyle)
+              // (handled below after skewStyle declaration)
               // Batch 27 — rainbow spectrum gradient on title
               if (titleRainbow ?? false) {
                 ts.background = 'linear-gradient(90deg, #ff0000, #ff8c00, #ffd700, #00c800, #0088ff, #8800ff)';
@@ -1608,6 +1628,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               // Batch 21 — flip title horizontally
               if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              // Batch 28 — split two-tone title (first half one color, second half another)
+              if (titleSplit ?? false) {
+                const half = Math.ceil(titleText.length / 2);
+                const colorA = titleColor ?? '#ffffff';
+                const colorB = titleSplitColorB ?? '#ec4899';
+                return (
+                  <span style={{ ...ts, ...skewStyle, background: undefined, WebkitBackgroundClip: undefined, WebkitTextFillColor: undefined, color: undefined }}>
+                    <span style={{ color: colorA }}>{titleText.slice(0, half)}</span>
+                    <span style={{ color: colorB }}>{titleText.slice(half)}</span>
+                  </span>
+                );
+              }
               // Batch 25 — wide word spacing
               if (titleWordSpacingWide ?? false) ts.wordSpacing = '0.5em';
               // Batch 24 — bouncy wave baseline per character
@@ -2881,6 +2913,66 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
           }} />
+        )}
+
+        {/* Batch 28 — aurora borealis multi-color gradient */}
+        {(bgAurora ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 80% 40% at 20% 30%, ${bgAuroraColor ?? '#00c8a0'}cc 0%, transparent 60%)`,
+              `radial-gradient(ellipse 60% 35% at 70% 20%, #7c3aed99 0%, transparent 55%)`,
+              `radial-gradient(ellipse 70% 30% at 50% 80%, ${bgAuroraColor ?? '#00c8a0'}88 0%, transparent 50%)`,
+              `radial-gradient(ellipse 50% 40% at 10% 70%, #0ea5e944 0%, transparent 50%)`,
+            ].join(', '),
+            opacity: (bgAuroraOpacity ?? 25) / 100,
+          }} />
+        )}
+
+        {/* Batch 28 — fish-scale / arc overlap background */}
+        {(bgScales ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='40' r='20' fill='none' stroke='${encodeURIComponent(bgScalesColor ?? '#8b5cf6')}' stroke-width='1'/%3E%3Ccircle cx='0' cy='40' r='20' fill='none' stroke='${encodeURIComponent(bgScalesColor ?? '#8b5cf6')}' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='${encodeURIComponent(bgScalesColor ?? '#8b5cf6')}' stroke-width='1'/%3E%3Ccircle cx='20' cy='20' r='20' fill='none' stroke='${encodeURIComponent(bgScalesColor ?? '#8b5cf6')}' stroke-width='1' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgScalesOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 28 — diagonal fiber/line texture */}
+        {(bgFibers ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cline x1='0' y1='12' x2='12' y2='0' stroke='${encodeURIComponent(bgFibersColor ?? '#8b5cf6')}' stroke-width='0.6' opacity='0.6'/%3E%3Cline x1='6' y1='12' x2='12' y2='6' stroke='${encodeURIComponent(bgFibersColor ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.35'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgFibersOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 28 — starburst conic overlay */}
+        {(overlayStarburst ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,${((overlayStarburstOpacity ?? 15) / 100) * 0.3}) 4deg, transparent 8deg, transparent 16deg, rgba(255,255,255,${((overlayStarburstOpacity ?? 15) / 100) * 0.2}) 20deg, transparent 24deg, transparent 32deg, rgba(255,255,255,${((overlayStarburstOpacity ?? 15) / 100) * 0.25}) 36deg, transparent 40deg)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 28 — corner bracket decorations */}
+        {(frameCornerBrackets ?? false) && (
+          <>
+            {([
+              { top: 8, left: 8, borderTop: true, borderLeft: true },
+              { top: 8, right: 8, borderTop: true, borderRight: true },
+              { bottom: 8, left: 8, borderBottom: true, borderLeft: true },
+              { bottom: 8, right: 8, borderBottom: true, borderRight: true },
+            ] as { top?: number; bottom?: number; left?: number; right?: number; borderTop?: boolean; borderBottom?: boolean; borderLeft?: boolean; borderRight?: boolean }[]).map((c, i) => (
+              <div key={i} className="absolute pointer-events-none z-[50]" style={{
+                top: c.top, bottom: c.bottom, left: c.left, right: c.right,
+                width: 20, height: 20,
+                borderTop: c.borderTop ? `2px solid ${frameCornerBracketsColor ?? '#8b5cf6'}` : undefined,
+                borderBottom: c.borderBottom ? `2px solid ${frameCornerBracketsColor ?? '#8b5cf6'}` : undefined,
+                borderLeft: c.borderLeft ? `2px solid ${frameCornerBracketsColor ?? '#8b5cf6'}` : undefined,
+                borderRight: c.borderRight ? `2px solid ${frameCornerBracketsColor ?? '#8b5cf6'}` : undefined,
+              }} />
+            ))}
+          </>
         )}
 
         {/* Batch 27 — polka dot circle background */}

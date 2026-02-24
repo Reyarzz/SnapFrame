@@ -835,6 +835,26 @@ export interface EditorState {
   bgPolkaDotsColor: string;
   bgPolkaDotsOpacity: number;
   canvasTapeCorners: boolean;       // tape strip stickers on canvas corners
+  // Batch 28
+  bgAurora: boolean;                // aurora borealis multi-color gradient background
+  bgAuroraColor: string;
+  bgAuroraOpacity: number;
+  overlayStarburst: boolean;        // starburst/sunray conic overlay
+  overlayStarburstOpacity: number;
+  imageSatBoost: boolean;           // strong saturation boost filter
+  titleSplit: boolean;              // title with two halves in different colors
+  titleSplitColorB: string;
+  canvasInnerGlow: boolean;         // inward canvas glow border
+  canvasInnerGlowColor: string;
+  bgScales: boolean;                // fish-scale / arc overlap background
+  bgScalesColor: string;
+  bgScalesOpacity: number;
+  bgFibers: boolean;                // diagonal fiber/line texture background
+  bgFibersColor: string;
+  bgFibersOpacity: number;
+  textItalicForce: boolean;         // force italic on title text
+  frameCornerBrackets: boolean;     // L-shaped corner bracket decorations
+  frameCornerBracketsColor: string;
 }
 
 export interface StyleTemplate {
@@ -1808,6 +1828,26 @@ export const DEFAULT_STATE: EditorState = {
   bgPolkaDotsColor: '#8b5cf6',
   bgPolkaDotsOpacity: 15,
   canvasTapeCorners: false,
+  // Batch 28
+  bgAurora: false,
+  bgAuroraColor: '#00c8a0',
+  bgAuroraOpacity: 25,
+  overlayStarburst: false,
+  overlayStarburstOpacity: 15,
+  imageSatBoost: false,
+  titleSplit: false,
+  titleSplitColorB: '#ec4899',
+  canvasInnerGlow: false,
+  canvasInnerGlowColor: '#8b5cf6',
+  bgScales: false,
+  bgScalesColor: '#8b5cf6',
+  bgScalesOpacity: 15,
+  bgFibers: false,
+  bgFibersColor: '#8b5cf6',
+  bgFibersOpacity: 12,
+  textItalicForce: false,
+  frameCornerBrackets: false,
+  frameCornerBracketsColor: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2797,6 +2837,56 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 28 templates
+  {
+    id: 'aurora-dream',
+    name: 'Aurora',
+    emoji: '🌌',
+    overrides: {
+      background: 'linear-gradient(160deg, #020d1f 0%, #040a14 100%)', backgroundId: 'midnight',
+      padding: 56, borderRadius: 20, shadow: 60,
+      bgAurora: true, bgAuroraColor: '#00c8a0', bgAuroraOpacity: 30,
+      canvasInnerGlow: true, canvasInnerGlowColor: '#00c8a0',
+      titleGradient: true, overlayStarburst: true, overlayStarburstOpacity: 8,
+    },
+  },
+  {
+    id: 'fish-scales',
+    name: 'Scales',
+    emoji: '🐠',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a1628 0%, #1a2840 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgScales: true, bgScalesColor: '#4d96ff', bgScalesOpacity: 20,
+      overlayStarburst: true, overlayStarburstOpacity: 12,
+      canvasInnerGlow: true, canvasInnerGlowColor: '#4d96ff',
+      titleColor: '#93c5fd',
+    },
+  },
+  {
+    id: 'fiber-bracket',
+    name: 'Fiber',
+    emoji: '🧵',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a2e 0%, #0f0820 100%)', backgroundId: 'midnight',
+      padding: 60, borderRadius: 8, shadow: 50,
+      bgFibers: true, bgFibersColor: '#a78bfa', bgFibersOpacity: 18,
+      frameCornerBrackets: true, frameCornerBracketsColor: '#a78bfa',
+      canvasFloatShadow: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'split-pop',
+    name: 'Split',
+    emoji: '🎨',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0010 0%, #1a0028 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      titleSplit: true, titleColor: '#a78bfa', titleSplitColorB: '#ec4899',
+      imageSatBoost: true,
+      textItalicForce: true,
     },
   },
   // Batch 27 templates
