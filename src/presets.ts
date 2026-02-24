@@ -1109,6 +1109,35 @@ export interface EditorState {
   bgBoltColor: string;
   bgBoltOpacity: number;
   textRubber: boolean;              // rubber stamp distressed text style
+  // Batch 40
+  bgSolarFlare: boolean;            // solar flare radial corona burst
+  bgSolarFlareColor: string;
+  bgSolarFlareOpacity: number;
+  bgNanotech: boolean;              // nano atomic concentric ring pattern
+  bgNanotechColor: string;
+  bgNanotechOpacity: number;
+  bgLeather: boolean;               // leather stitch texture pattern
+  bgLeatherColor: string;
+  bgLeatherOpacity: number;
+  bgWicker: boolean;                // wicker diagonal basket weave
+  bgWickerColor: string;
+  bgWickerOpacity: number;
+  bgRadar: boolean;                 // radar sweep concentric ring display
+  bgRadarColor: string;
+  bgRadarOpacity: number;
+  overlayOilSlick: boolean;         // iridescent oil slick rainbow sheen
+  overlayOilSlickOpacity: number;
+  overlayTea: boolean;              // warm tea-stain aged paper tint
+  overlayTeaOpacity: number;
+  imageVintage2: boolean;           // deep vintage cross-process look
+  frameArc: boolean;                // decorative arc ornamental top frame
+  frameArcColor: string;
+  bgWindmill: boolean;              // windmill pinwheel radial pattern
+  bgWindmillColor: string;
+  bgWindmillOpacity: number;
+  textPressure: boolean;            // pressed embossed relief text style
+  canvasGlow3: boolean;             // pulsing neon outer halo glow
+  canvasGlow3Color: string;
 }
 
 export interface StyleTemplate {
@@ -2356,6 +2385,35 @@ export const DEFAULT_STATE: EditorState = {
   bgBoltColor: '#f0e040',
   bgBoltOpacity: 15,
   textRubber: false,
+  // Batch 40
+  bgSolarFlare: false,
+  bgSolarFlareColor: '#ff8800',
+  bgSolarFlareOpacity: 20,
+  bgNanotech: false,
+  bgNanotechColor: '#00ccff',
+  bgNanotechOpacity: 15,
+  bgLeather: false,
+  bgLeatherColor: '#8b5a2b',
+  bgLeatherOpacity: 15,
+  bgWicker: false,
+  bgWickerColor: '#c8a060',
+  bgWickerOpacity: 15,
+  bgRadar: false,
+  bgRadarColor: '#00ff88',
+  bgRadarOpacity: 15,
+  overlayOilSlick: false,
+  overlayOilSlickOpacity: 25,
+  overlayTea: false,
+  overlayTeaOpacity: 25,
+  imageVintage2: false,
+  frameArc: false,
+  frameArcColor: '#d4af37',
+  bgWindmill: false,
+  bgWindmillColor: '#8b5cf6',
+  bgWindmillOpacity: 15,
+  textPressure: false,
+  canvasGlow3: false,
+  canvasGlow3Color: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3345,6 +3403,59 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 40 templates
+  {
+    id: 'solar-corona',
+    name: 'Solar',
+    emoji: '☀️',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0500 0%, #150800 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 20, shadow: 70,
+      bgSolarFlare: true, bgSolarFlareColor: '#ff8800', bgSolarFlareOpacity: 25,
+      canvasGlow3: true, canvasGlow3Color: '#ff6600',
+      overlayFilmBurn: true, overlayFilmBurnOpacity: 30,
+      imageDaylight: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'nanotech-blue',
+    name: 'Nanotech',
+    emoji: '⚛️',
+    overrides: {
+      background: '#000810', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 70,
+      bgNanotech: true, bgNanotechColor: '#00ccff', bgNanotechOpacity: 18,
+      bgRadar: true, bgRadarColor: '#00ccff', bgRadarOpacity: 10,
+      frameGlow3D: true, frameGlow3DColor: '#00ccff',
+      titleNeonPulse: true,
+    },
+  },
+  {
+    id: 'leather-vintage',
+    name: 'Leather',
+    emoji: '🟤',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0800 0%, #1a1000 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 50,
+      bgLeather: true, bgLeatherColor: '#8b5a2b', bgLeatherOpacity: 20,
+      bgWicker: true, bgWickerColor: '#c8a060', bgWickerOpacity: 12,
+      overlayTea: true, overlayTeaOpacity: 30,
+      imageVintage2: true, textPressure: true,
+    },
+  },
+  {
+    id: 'radar-pulse',
+    name: 'Radar',
+    emoji: '📡',
+    overrides: {
+      background: '#000a04', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 70,
+      bgRadar: true, bgRadarColor: '#00ff88', bgRadarOpacity: 20,
+      bgWindmill: true, bgWindmillColor: '#00ff88', bgWindmillOpacity: 8,
+      canvasGlow3: true, canvasGlow3Color: '#00ff88',
+      bgGrid3D: true, bgGrid3DColor: '#00ff88', bgGrid3DOpacity: 6,
     },
   },
   // Batch 39 templates

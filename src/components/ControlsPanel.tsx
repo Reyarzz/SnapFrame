@@ -2558,6 +2558,163 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 40 FX controls */}
+      <Card>
+        <SectionLabel>Solar Flare</SectionLabel>
+        <Toggle label="Enable" value={state.bgSolarFlare ?? false} onChange={v => onChange({ bgSolarFlare: v })}
+          desc="Radial corona burst from corner" />
+        {(state.bgSolarFlare ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSolarFlareColor ?? '#ff8800'}
+                onChange={e => onChange({ bgSolarFlareColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSolarFlareOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgSolarFlareOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Nanotech</SectionLabel>
+        <Toggle label="Enable" value={state.bgNanotech ?? false} onChange={v => onChange({ bgNanotech: v })}
+          desc="Atomic concentric ring node pattern" />
+        {(state.bgNanotech ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgNanotechColor ?? '#00ccff'}
+                onChange={e => onChange({ bgNanotechColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgNanotechOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgNanotechOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Leather</SectionLabel>
+        <Toggle label="Enable" value={state.bgLeather ?? false} onChange={v => onChange({ bgLeather: v })}
+          desc="Cross-stitch leather texture" />
+        {(state.bgLeather ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgLeatherColor ?? '#8b5a2b'}
+                onChange={e => onChange({ bgLeatherColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgLeatherOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgLeatherOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Wicker</SectionLabel>
+        <Toggle label="Enable" value={state.bgWicker ?? false} onChange={v => onChange({ bgWicker: v })}
+          desc="Diagonal interlaced basket weave" />
+        {(state.bgWicker ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgWickerColor ?? '#c8a060'}
+                onChange={e => onChange({ bgWickerColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgWickerOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgWickerOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Radar</SectionLabel>
+        <Toggle label="Enable" value={state.bgRadar ?? false} onChange={v => onChange({ bgRadar: v })}
+          desc="Radar sweep concentric ring display" />
+        {(state.bgRadar ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgRadarColor ?? '#00ff88'}
+                onChange={e => onChange({ bgRadarColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgRadarOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgRadarOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Windmill</SectionLabel>
+        <Toggle label="Enable" value={state.bgWindmill ?? false} onChange={v => onChange({ bgWindmill: v })}
+          desc="Pinwheel radial blade pattern" />
+        {(state.bgWindmill ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgWindmillColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgWindmillColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgWindmillOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgWindmillOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Oil Slick</SectionLabel>
+        <Toggle label="Enable" value={state.overlayOilSlick ?? false} onChange={v => onChange({ overlayOilSlick: v })}
+          desc="Iridescent rainbow oil slick sheen" />
+        {(state.overlayOilSlick ?? false) && (
+          <Slider label="Opacity" value={state.overlayOilSlickOpacity ?? 25} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayOilSlickOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tea Stain</SectionLabel>
+        <Toggle label="Enable" value={state.overlayTea ?? false} onChange={v => onChange({ overlayTea: v })}
+          desc="Warm tea-stain aged paper tint" />
+        {(state.overlayTea ?? false) && (
+          <Slider label="Opacity" value={state.overlayTeaOpacity ?? 25} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayTeaOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Arc Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameArc ?? false} onChange={v => onChange({ frameArc: v })}
+          desc="Ornamental top-arc decorative frame" />
+        {(state.frameArc ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameArcColor ?? '#d4af37'}
+              onChange={e => onChange({ frameArcColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Outer Glow 3</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGlow3 ?? false} onChange={v => onChange({ canvasGlow3: v })}
+          desc="Pulsing neon outer halo glow" />
+        {(state.canvasGlow3 ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.canvasGlow3Color ?? '#8b5cf6'}
+              onChange={e => onChange({ canvasGlow3Color: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 39 FX controls */}
       <Card>
         <SectionLabel>Microchip</SectionLabel>
@@ -4994,6 +5151,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 40 adjust controls */}
+      <Card>
+        <SectionLabel>Vintage 2</SectionLabel>
+        <Toggle label="Enable" value={state.imageVintage2 ?? false} onChange={v => onChange({ imageVintage2: v })}
+          desc="Deep vintage cross-process cinematic look" />
+      </Card>
+
       {/* Batch 39 adjust controls */}
       <Card>
         <SectionLabel>Faded</SectionLabel>
@@ -5957,6 +6121,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 40 text controls */}
+          <Card>
+            <SectionLabel>Pressure</SectionLabel>
+            <Toggle label="Enable" value={state.textPressure ?? false} onChange={v => onChange({ textPressure: v })}
+              desc="Pressed embossed relief text style" />
           </Card>
 
           {/* Batch 39 text controls */}

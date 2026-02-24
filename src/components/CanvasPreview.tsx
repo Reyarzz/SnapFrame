@@ -733,6 +733,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 40
+    bgSolarFlare, bgSolarFlareColor, bgSolarFlareOpacity,
+    bgNanotech, bgNanotechColor, bgNanotechOpacity,
+    bgLeather, bgLeatherColor, bgLeatherOpacity,
+    bgWicker, bgWickerColor, bgWickerOpacity,
+    bgRadar, bgRadarColor, bgRadarOpacity,
+    overlayOilSlick, overlayOilSlickOpacity,
+    overlayTea, overlayTeaOpacity,
+    imageVintage2, frameArc, frameArcColor,
+    bgWindmill, bgWindmillColor, bgWindmillOpacity,
+    textPressure, canvasGlow3, canvasGlow3Color,
     // Batch 39
     bgMicrochip, bgMicrochipColor, bgMicrochipOpacity,
     bgSeabed, bgSeabedColor, bgSeabedOpacity,
@@ -1062,6 +1073,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 40 — glow 3: pulsing neon outer halo
+  if (canvasGlow3 ?? false) {
+    const g3c = canvasGlow3Color ?? '#8b5cf6';
+    const glow3 = `0 0 20px ${g3c}aa, 0 0 50px ${g3c}55, 0 0 80px ${g3c}22, inset 0 0 0 1px ${g3c}40`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${glow3}` : glow3;
+  }
+  // Batch 40 — arc frame: ornamental top-arc decorative inset
+  if (frameArc ?? false) {
+    const ac = frameArcColor ?? '#d4af37';
+    const arcShadow = `inset 0 4px 0 ${ac}, inset 0 0 0 2px ${ac}60`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${arcShadow}` : arcShadow;
+  }
   // Batch 39 — metallic frame: brushed metallic inset sheen border
   if (frameMetal ?? false) {
     const mc = frameMetalColor ?? '#a0a0b0';
@@ -1266,6 +1289,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 40 — vintage 2: deep cross-processed cinematic vintage
+  if (imageVintage2 ?? false) imageFilterParts.push('sepia(60%) contrast(115%) brightness(90%) saturate(130%) hue-rotate(-10deg)');
   // Batch 39 — faded: bleached desaturated vintage film fade
   if (imageFaded ?? false) imageFilterParts.push('brightness(115%) saturate(40%) contrast(80%) sepia(15%)');
   // Batch 38 — dawn: warm rosy golden-hour dawn filter
@@ -1779,6 +1804,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 40 — pressure: embossed inset relief text look
+              if (textPressure ?? false) {
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}1px 1px 2px rgba(255,255,255,0.15), -1px -1px 2px rgba(0,0,0,0.6)`;
+                ts.filter = 'drop-shadow(0 1px 1px rgba(0,0,0,0.4))';
+                ts.opacity = 0.9;
+              }
               // Batch 39 — rubber stamp: wide tracking uppercase distressed look
               if (textRubber ?? false) {
                 ts.textTransform = 'uppercase';
@@ -3220,6 +3252,84 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 40 — solar flare: radial corona burst from corner */}
+        {(bgSolarFlare ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 80% 60% at 0% 0%, ${bgSolarFlareColor ?? '#ff8800'}44 0%, ${bgSolarFlareColor ?? '#ff8800'}11 40%, transparent 65%)`,
+              `radial-gradient(ellipse 50% 40% at 15% 15%, ${bgSolarFlareColor ?? '#ff8800'}22 0%, transparent 55%)`,
+            ].join(', '),
+            opacity: (bgSolarFlareOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — nanotech: atomic concentric rings + nodes */}
+        {(bgNanotech ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='8' fill='none' stroke='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='40' cy='40' r='18' fill='none' stroke='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' stroke-width='0.4' opacity='0.4'/%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' stroke-width='0.3' opacity='0.3'/%3E%3Ccircle cx='40' cy='22' r='2.5' fill='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' opacity='0.4'/%3E%3Ccircle cx='58' cy='40' r='2.5' fill='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' opacity='0.4'/%3E%3Ccircle cx='40' cy='58' r='2.5' fill='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' opacity='0.4'/%3E%3Ccircle cx='22' cy='40' r='2.5' fill='${encodeURIComponent(bgNanotechColor ?? '#00ccff')}' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgNanotechOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — leather: cross-stitch texture diagonal lines */}
+        {(bgLeather ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `repeating-linear-gradient(45deg, ${bgLeatherColor ?? '#8b5a2b'}18 0px, ${bgLeatherColor ?? '#8b5a2b'}18 1px, transparent 1px, transparent 8px)`,
+              `repeating-linear-gradient(-45deg, ${bgLeatherColor ?? '#8b5a2b'}10 0px, ${bgLeatherColor ?? '#8b5a2b'}10 1px, transparent 1px, transparent 8px)`,
+            ].join(', '),
+            opacity: (bgLeatherOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — wicker: diagonal interlaced basket weave */}
+        {(bgWicker ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cline x1='0' y1='0' x2='20' y2='20' stroke='${encodeURIComponent(bgWickerColor ?? '#c8a060')}' stroke-width='2' opacity='0.4'/%3E%3Cline x1='0' y1='10' x2='10' y2='20' stroke='${encodeURIComponent(bgWickerColor ?? '#c8a060')}' stroke-width='2' opacity='0.3'/%3E%3Cline x1='10' y1='0' x2='20' y2='10' stroke='${encodeURIComponent(bgWickerColor ?? '#c8a060')}' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgWickerOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — radar: concentric sweep rings */}
+        {(bgRadar ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='15' fill='none' stroke='${encodeURIComponent(bgRadarColor ?? '#00ff88')}' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='${encodeURIComponent(bgRadarColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.4'/%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='${encodeURIComponent(bgRadarColor ?? '#00ff88')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='50' y1='5' x2='50' y2='95' stroke='${encodeURIComponent(bgRadarColor ?? '#00ff88')}' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='5' y1='50' x2='95' y2='50' stroke='${encodeURIComponent(bgRadarColor ?? '#00ff88')}' stroke-width='0.3' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgRadarOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — windmill: pinwheel radial blade pattern */}
+        {(bgWindmill ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 40 L40 10 Q55 25 40 40' fill='${encodeURIComponent(bgWindmillColor ?? '#8b5cf6')}' opacity='0.25'/%3E%3Cpath d='M40 40 L70 40 Q55 55 40 40' fill='${encodeURIComponent(bgWindmillColor ?? '#8b5cf6')}' opacity='0.2'/%3E%3Cpath d='M40 40 L40 70 Q25 55 40 40' fill='${encodeURIComponent(bgWindmillColor ?? '#8b5cf6')}' opacity='0.25'/%3E%3Cpath d='M40 40 L10 40 Q25 25 40 40' fill='${encodeURIComponent(bgWindmillColor ?? '#8b5cf6')}' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgWindmillOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 40 — oil slick: iridescent rainbow sheen */}
+        {(overlayOilSlick ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'linear-gradient(135deg, rgba(255,0,128,0.08) 0%, rgba(255,140,0,0.06) 15%, rgba(255,255,0,0.05) 30%, rgba(0,255,128,0.06) 45%, rgba(0,200,255,0.07) 60%, rgba(128,0,255,0.08) 75%, rgba(255,0,128,0.06) 90%)',
+            opacity: (overlayOilSlickOpacity ?? 25) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 40 — tea stain: warm sepia brown aged tint */}
+        {(overlayTea ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: [
+              'radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, rgba(120,80,20,0.2) 100%)',
+              'linear-gradient(135deg, rgba(180,130,50,0.08) 0%, rgba(140,90,30,0.05) 100%)',
+            ].join(', '),
+            opacity: (overlayTeaOpacity ?? 25) / 100,
           }} />
         )}
 
