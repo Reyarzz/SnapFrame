@@ -893,6 +893,25 @@ export interface EditorState {
   bgDenimOpacity: number;
   textStencil: boolean;             // stencil-style wide-tracked title
   canvasOldPaper: boolean;          // aged warm parchment tint on canvas
+  // Batch 31
+  bgTieDye: boolean;                // tie-dye radial swirl pattern background
+  bgTieDyeColor: string;
+  bgTieDyeOpacity: number;
+  overlayMatrix: boolean;           // matrix falling binary characters overlay
+  overlayMatrixOpacity: number;
+  imageNeonEdge: boolean;           // neon edge-detection approximation filter
+  titleFlicker: boolean;            // flickering neon animation on title
+  bgCrystal: boolean;               // crystal/gem geometric facets background
+  bgCrystalOpacity: number;
+  imageBokeh: boolean;              // bokeh dreamy soft light effect
+  bgWoodGrain: boolean;             // wood grain diagonal ripple background
+  bgWoodGrainColor: string;
+  bgWoodGrainOpacity: number;
+  textCursive: boolean;             // cursive/script font on title
+  bgTartanPlaid: boolean;           // tartan plaid crosshatch background
+  bgTartanPlaidColor: string;
+  bgTartanPlaidOpacity: number;
+  canvasBloom: boolean;             // soft bloom glow on canvas center
 }
 
 export interface StyleTemplate {
@@ -1924,6 +1943,25 @@ export const DEFAULT_STATE: EditorState = {
   bgDenimOpacity: 12,
   textStencil: false,
   canvasOldPaper: false,
+  // Batch 31
+  bgTieDye: false,
+  bgTieDyeColor: '#8b5cf6',
+  bgTieDyeOpacity: 25,
+  overlayMatrix: false,
+  overlayMatrixOpacity: 20,
+  imageNeonEdge: false,
+  titleFlicker: false,
+  bgCrystal: false,
+  bgCrystalOpacity: 15,
+  imageBokeh: false,
+  bgWoodGrain: false,
+  bgWoodGrainColor: '#8b6040',
+  bgWoodGrainOpacity: 20,
+  textCursive: false,
+  bgTartanPlaid: false,
+  bgTartanPlaidColor: '#8b5cf6',
+  bgTartanPlaidOpacity: 15,
+  canvasBloom: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2913,6 +2951,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 31 templates
+  {
+    id: 'tie-dye-psychedelic',
+    name: 'Tie Dye',
+    emoji: '🌀',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0030 0%, #000820 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 50,
+      bgTieDye: true, bgTieDyeColor: '#ff6eb4', bgTieDyeOpacity: 35,
+      titleFlicker: true, titleGradient: true,
+      overlayMatrix: true, overlayMatrixOpacity: 10,
+    },
+  },
+  {
+    id: 'matrix-hacker',
+    name: 'Matrix',
+    emoji: '💻',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 48, borderRadius: 0, shadow: 40,
+      overlayMatrix: true, overlayMatrixOpacity: 30,
+      imageNeonEdge: true,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#00ff41',
+      titleColor: '#00ff41', titleFont: 'monospace',
+    },
+  },
+  {
+    id: 'wood-rustic',
+    name: 'Wood',
+    emoji: '🪵',
+    overrides: {
+      background: '#2d1a0a', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 4, shadow: 50,
+      bgWoodGrain: true, bgWoodGrainColor: '#8b6040', bgWoodGrainOpacity: 30,
+      textCursive: true, canvasBloom: true,
+      frameBezel: true, frameBezelColor: '#8b6040',
+      titleColor: '#f5deb3', titleFont: 'serif',
+    },
+  },
+  {
+    id: 'tartan-classic',
+    name: 'Tartan',
+    emoji: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+    overrides: {
+      background: '#1a0a0a', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 8, shadow: 50,
+      bgTartanPlaid: true, bgTartanPlaidColor: '#dc2626', bgTartanPlaidOpacity: 25,
+      bgCrystal: true, bgCrystalOpacity: 12,
+      imageBokeh: true,
+      titleColor: '#fef2f2',
     },
   },
   // Batch 30 templates

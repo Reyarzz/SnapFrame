@@ -89,6 +89,14 @@ body {
   50% { text-shadow: 0 0 14px #c4b5fd, 0 0 35px #a78bfaaa, 0 0 70px #7c3aed90; }
 }
 
+@keyframes flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96% { opacity: 0.4; }
+  97% { opacity: 1; }
+  98% { opacity: 0.2; }
+  99% { opacity: 0.9; }
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }

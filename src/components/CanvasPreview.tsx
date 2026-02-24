@@ -733,6 +733,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 31
+    bgTieDye, bgTieDyeColor, bgTieDyeOpacity,
+    overlayMatrix, overlayMatrixOpacity,
+    imageNeonEdge, titleFlicker,
+    bgCrystal, bgCrystalOpacity,
+    imageBokeh,
+    bgWoodGrain, bgWoodGrainColor, bgWoodGrainOpacity,
+    textCursive, bgTartanPlaid, bgTartanPlaidColor, bgTartanPlaidOpacity,
+    canvasBloom,
     // Batch 30
     bgTerrazzo, bgTerrazzoColor, bgTerrazzoOpacity,
     overlayPaintDrip, overlayPaintDripColor, overlayPaintDripOpacity,
@@ -953,6 +962,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 31 — canvas bloom: soft center-glow overlay (applied via overlay div below)
+  // (rendered as overlay, no canvasStyle mutation needed)
   // Batch 29 — bezel border: thick inset beveled shadow
   if (frameBezel ?? false) {
     const bc = frameBezelColor ?? '#c8a06e';
@@ -1113,6 +1124,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 31 — neon edge: high-contrast invert approximation
+  if (imageNeonEdge ?? false) imageFilterParts.push('contrast(400%) brightness(180%) invert(80%) hue-rotate(120deg) saturate(300%)');
+  // Batch 31 — bokeh: soft dreamy light circles approximation
+  if (imageBokeh ?? false) imageFilterParts.push('blur(0.6px) brightness(128%) contrast(88%) saturate(145%)');
   // Batch 30 — lens blur: subtle depth-of-field softening
   if (imageLensBlur ?? false) imageFilterParts.push('blur(1.8px) brightness(103%)');
   // Batch 29 — duotone: grayscale + hue-shift approximation
@@ -1604,6 +1619,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 31 — cursive/script font on title
+              if (textCursive ?? false) ts.fontFamily = 'Georgia, "Times New Roman", cursive, serif';
+              // Batch 31 — flickering neon animation
+              if (titleFlicker ?? false) ts.animation = 'flicker 3s linear infinite';
               // Batch 30 — stencil: wide tracking + uppercase
               if (textStencil ?? false) { ts.letterSpacing = '0.3em'; ts.textTransform = 'uppercase'; ts.fontWeight = 700; }
               // Batch 30 — ghost: phantom offset shadow behind title
@@ -2950,6 +2969,69 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 31 — tie-dye radial swirl */}
+        {(bgTieDye ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 60% 60% at 30% 40%, ${bgTieDyeColor ?? '#8b5cf6'}cc 0%, transparent 50%)`,
+              `radial-gradient(ellipse 50% 50% at 70% 30%, #ff6eb4cc 0%, transparent 45%)`,
+              `radial-gradient(ellipse 55% 55% at 50% 75%, #00c8a0aa 0%, transparent 50%)`,
+              `radial-gradient(ellipse 40% 40% at 80% 70%, #ffd700aa 0%, transparent 40%)`,
+              `radial-gradient(ellipse 45% 45% at 15% 70%, #ff4500aa 0%, transparent 45%)`,
+            ].join(', '),
+            opacity: (bgTieDyeOpacity ?? 25) / 100,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 31 — tartan plaid crosshatch */}
+        {(bgTartanPlaid ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: [
+              `repeating-linear-gradient(0deg, ${bgTartanPlaidColor ?? '#8b5cf6'}55 0px, ${bgTartanPlaidColor ?? '#8b5cf6'}55 4px, transparent 4px, transparent 20px)`,
+              `repeating-linear-gradient(90deg, ${bgTartanPlaidColor ?? '#8b5cf6'}55 0px, ${bgTartanPlaidColor ?? '#8b5cf6'}55 4px, transparent 4px, transparent 20px)`,
+              `repeating-linear-gradient(0deg, ${bgTartanPlaidColor ?? '#8b5cf6'}22 0px, ${bgTartanPlaidColor ?? '#8b5cf6'}22 2px, transparent 2px, transparent 10px)`,
+              `repeating-linear-gradient(90deg, ${bgTartanPlaidColor ?? '#8b5cf6'}22 0px, ${bgTartanPlaidColor ?? '#8b5cf6'}22 2px, transparent 2px, transparent 10px)`,
+            ].join(', '),
+            opacity: (bgTartanPlaidOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 31 — wood grain ripple lines */}
+        {(bgWoodGrain ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8'%3E%3Cpath d='M0 4 Q50 2 100 4 Q150 6 200 4' fill='none' stroke='${encodeURIComponent(bgWoodGrainColor ?? '#8b6040')}' stroke-width='0.7' opacity='0.5'/%3E%3Cpath d='M0 7 Q50 5 100 7 Q150 9 200 7' fill='none' stroke='${encodeURIComponent(bgWoodGrainColor ?? '#8b6040')}' stroke-width='0.4' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgWoodGrainOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 31 — crystal/gem geometric facets */}
+        {(bgCrystal ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Cpolygon points='25,2 48,15 48,35 25,48 2,35 2,15' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.4'/%3E%3Cpolygon points='25,10 40,20 40,32 25,42 10,32 10,20' fill='none' stroke='%23ffffff' stroke-width='0.3' opacity='0.25'/%3E%3Cline x1='2' y1='15' x2='25' y2='25' stroke='%23ffffff' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='48' y1='15' x2='25' y2='25' stroke='%23ffffff' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='25' y1='48' x2='25' y2='25' stroke='%23ffffff' stroke-width='0.3' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCrystalOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 31 — matrix binary characters */}
+        {(overlayMatrix ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='80'%3E%3Ctext x='5' y='12' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.8'%3E1%3C/text%3E%3Ctext x='20' y='28' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.5'%3E0%3C/text%3E%3Ctext x='38' y='16' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.7'%3E1%3C/text%3E%3Ctext x='10' y='44' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.4'%3E0%3C/text%3E%3Ctext x='42' y='50' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.6'%3E1%3C/text%3E%3Ctext x='2' y='65' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.5'%3E0%3C/text%3E%3Ctext x='28' y='72' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.7'%3E1%3C/text%3E%3Ctext x='50' y='78' font-family='monospace' font-size='10' fill='%2300ff41' opacity='0.4'%3E0%3C/text%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlayMatrixOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 31 — canvas bloom: soft center glow */}
+        {(canvasBloom ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: 'radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)',
+            mixBlendMode: 'screen',
           }} />
         )}
 

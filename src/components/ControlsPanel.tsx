@@ -2556,6 +2556,87 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 31 FX controls */}
+      <Card>
+        <SectionLabel>Tie Dye</SectionLabel>
+        <Toggle label="Enable" value={state.bgTieDye ?? false} onChange={v => onChange({ bgTieDye: v })}
+          desc="Tie-dye radial swirl background" />
+        {(state.bgTieDye ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTieDyeColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgTieDyeColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTieDyeOpacity ?? 25} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgTieDyeOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tartan Plaid</SectionLabel>
+        <Toggle label="Enable" value={state.bgTartanPlaid ?? false} onChange={v => onChange({ bgTartanPlaid: v })}
+          desc="Tartan plaid crosshatch background" />
+        {(state.bgTartanPlaid ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTartanPlaidColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgTartanPlaidColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTartanPlaidOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgTartanPlaidOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Wood Grain</SectionLabel>
+        <Toggle label="Enable" value={state.bgWoodGrain ?? false} onChange={v => onChange({ bgWoodGrain: v })}
+          desc="Wood grain ripple line background" />
+        {(state.bgWoodGrain ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgWoodGrainColor ?? '#8b6040'}
+                onChange={e => onChange({ bgWoodGrainColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgWoodGrainOpacity ?? 20} min={3} max={70} unit="%"
+              onChange={v => onChange({ bgWoodGrainOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Crystal</SectionLabel>
+        <Toggle label="Enable" value={state.bgCrystal ?? false} onChange={v => onChange({ bgCrystal: v })}
+          desc="Crystal/gem geometric facets background" />
+        {(state.bgCrystal ?? false) && (
+          <Slider label="Opacity" value={state.bgCrystalOpacity ?? 15} min={3} max={60} unit="%"
+            onChange={v => onChange({ bgCrystalOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Matrix</SectionLabel>
+        <Toggle label="Enable" value={state.overlayMatrix ?? false} onChange={v => onChange({ overlayMatrix: v })}
+          desc="Matrix binary character overlay" />
+        {(state.overlayMatrix ?? false) && (
+          <Slider label="Opacity" value={state.overlayMatrixOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayMatrixOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Bloom</SectionLabel>
+        <Toggle label="Enable" value={state.canvasBloom ?? false} onChange={v => onChange({ canvasBloom: v })}
+          desc="Soft bloom glow in canvas center" />
+      </Card>
+
       {/* Batch 30 FX controls */}
       <Card>
         <SectionLabel>Terrazzo</SectionLabel>
@@ -3943,6 +4024,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 31 adjust controls */}
+      <Card>
+        <SectionLabel>Neon Edge</SectionLabel>
+        <Toggle label="Enable" value={state.imageNeonEdge ?? false} onChange={v => onChange({ imageNeonEdge: v })}
+          desc="Neon edge-detection invert filter" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Bokeh</SectionLabel>
+        <Toggle label="Enable" value={state.imageBokeh ?? false} onChange={v => onChange({ imageBokeh: v })}
+          desc="Dreamy bokeh soft-light blur effect" />
+      </Card>
+
       {/* Batch 30 adjust controls */}
       <Card>
         <SectionLabel>Lens Blur</SectionLabel>
@@ -4831,6 +4925,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 31 text controls */}
+          <Card>
+            <SectionLabel>Flicker</SectionLabel>
+            <Toggle label="Enable" value={state.titleFlicker ?? false} onChange={v => onChange({ titleFlicker: v })}
+              desc="Flickering neon animation on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Cursive Font</SectionLabel>
+            <Toggle label="Enable" value={state.textCursive ?? false} onChange={v => onChange({ textCursive: v })}
+              desc="Script/cursive serif font on title" />
           </Card>
 
           {/* Batch 30 text controls */}
