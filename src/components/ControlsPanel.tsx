@@ -2556,6 +2556,139 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 36 FX controls */}
+      <Card>
+        <SectionLabel>Cracked Earth</SectionLabel>
+        <Toggle label="Enable" value={state.bgCracked ?? false} onChange={v => onChange({ bgCracked: v })}
+          desc="Cracked dry earth polygon network" />
+        {(state.bgCracked ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgCrackedColor ?? '#8b6040'}
+                onChange={e => onChange({ bgCrackedColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgCrackedOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgCrackedOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Malachite</SectionLabel>
+        <Toggle label="Enable" value={state.bgMalachite ?? false} onChange={v => onChange({ bgMalachite: v })}
+          desc="Malachite stone curved band swirl" />
+        {(state.bgMalachite ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgMalachiteColor ?? '#2d8a4e'}
+                onChange={e => onChange({ bgMalachiteColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgMalachiteOpacity ?? 20} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgMalachiteOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Terrain</SectionLabel>
+        <Toggle label="Enable" value={state.bgTerrain ?? false} onChange={v => onChange({ bgTerrain: v })}
+          desc="3D terrain elevation contour lines" />
+        {(state.bgTerrain ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTerrainColor ?? '#4a7c59'}
+                onChange={e => onChange({ bgTerrainColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTerrainOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgTerrainOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>3D Grid</SectionLabel>
+        <Toggle label="Enable" value={state.bgGrid3D ?? false} onChange={v => onChange({ bgGrid3D: v })}
+          desc="Perspective vanishing-point 3D grid" />
+        {(state.bgGrid3D ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgGrid3DColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgGrid3DColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgGrid3DOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgGrid3DOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Spiral 2</SectionLabel>
+        <Toggle label="Enable" value={state.bgSpiral2 ?? false} onChange={v => onChange({ bgSpiral2: v })}
+          desc="Concentric spiral ring pattern" />
+        {(state.bgSpiral2 ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSpiral2Color ?? '#8b5cf6'}
+                onChange={e => onChange({ bgSpiral2Color: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSpiral2Opacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgSpiral2Opacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Snowfall</SectionLabel>
+        <Toggle label="Enable" value={state.overlaySnowfall ?? false} onChange={v => onChange({ overlaySnowfall: v })}
+          desc="Scattered snowflake overlay" />
+        {(state.overlaySnowfall ?? false) && (
+          <Slider label="Opacity" value={state.overlaySnowfallOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlaySnowfallOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Bamboo Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameBamboo ?? false} onChange={v => onChange({ frameBamboo: v })}
+          desc="Green bamboo strip inset frame" />
+        {(state.frameBamboo ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameBambooColor ?? '#6b8c42'}
+              onChange={e => onChange({ frameBambooColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Watermark</SectionLabel>
+        <Toggle label="Enable" value={state.canvasWatermark ?? false} onChange={v => onChange({ canvasWatermark: v })}
+          desc="Diagonal repeating text watermark" />
+        {(state.canvasWatermark ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Text</span>
+              <input type="text" value={state.canvasWatermarkText ?? 'DRAFT'}
+                onChange={e => onChange({ canvasWatermarkText: e.target.value })}
+                className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white/80" />
+            </div>
+            <Slider label="Opacity" value={state.canvasWatermarkOpacity ?? 8} min={2} max={30} unit="%"
+              onChange={v => onChange({ canvasWatermarkOpacity: v })} />
+          </>
+        )}
+      </Card>
+
       {/* Batch 35 FX controls */}
       <Card>
         <SectionLabel>Sandstone</SectionLabel>
@@ -4446,6 +4579,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 36 adjust controls */}
+      <Card>
+        <SectionLabel>Vibrant</SectionLabel>
+        <Toggle label="Enable" value={state.imageVibrant ?? false} onChange={v => onChange({ imageVibrant: v })}
+          desc="Hyper-saturated vivid color pop" />
+      </Card>
+
       {/* Batch 35 adjust controls */}
       <Card>
         <SectionLabel>Anaglyph</SectionLabel>
@@ -5381,6 +5521,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 36 text controls */}
+          <Card>
+            <SectionLabel>3D Outline</SectionLabel>
+            <Toggle label="Enable" value={state.titleOutline3D ?? false} onChange={v => onChange({ titleOutline3D: v })}
+              desc="3D extruded offset shadow on title" />
+            {(state.titleOutline3D ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleOutline3DColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ titleOutline3DColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Soft Glow</SectionLabel>
+            <Toggle label="Enable" value={state.textGlowSoft ?? false} onChange={v => onChange({ textGlowSoft: v })}
+              desc="Ambient soft bloom glow on title" />
           </Card>
 
           {/* Batch 35 text controls */}

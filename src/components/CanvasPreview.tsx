@@ -733,6 +733,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 36
+    bgCracked, bgCrackedColor, bgCrackedOpacity,
+    bgMalachite, bgMalachiteColor, bgMalachiteOpacity,
+    bgTerrain, bgTerrainColor, bgTerrainOpacity,
+    overlaySnowfall, overlaySnowfallOpacity,
+    imageVibrant, titleOutline3D, titleOutline3DColor,
+    frameBamboo, frameBambooColor,
+    canvasWatermark, canvasWatermarkText, canvasWatermarkOpacity,
+    bgGrid3D, bgGrid3DColor, bgGrid3DOpacity,
+    textGlowSoft, bgSpiral2, bgSpiral2Color, bgSpiral2Opacity,
     // Batch 35
     bgSandstone, bgSandstoneColor, bgSandstoneOpacity,
     bgTopography, bgTopographyColor, bgTopographyOpacity,
@@ -1018,6 +1028,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 36 — bamboo frame: green bamboo strip inset border
+  if (frameBamboo ?? false) {
+    const bc = frameBambooColor ?? '#6b8c42';
+    const bambooShadow = `inset 0 0 0 6px ${bc}, inset 0 0 0 8px ${bc}60, inset 0 0 0 10px ${bc}30`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${bambooShadow}` : bambooShadow;
+  }
   // Batch 35 — woven frame: basket-weave inset pattern border
   if (frameWoven ?? false) {
     const wc = frameWovenColor ?? '#8b6040';
@@ -1186,6 +1202,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 36 — vibrant: hyper-saturated vivid pop
+  if (imageVibrant ?? false) imageFilterParts.push('saturate(300%) contrast(120%) brightness(105%)');
   // Batch 35 — anaglyph: red-cyan 3D offset illusion
   if (imageAnaglyph ?? false) imageFilterParts.push('saturate(150%) contrast(110%) hue-rotate(-10deg)');
   // Batch 34 — thermal: false-color heat map approximation
@@ -1691,6 +1709,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 36 — 3D extruded title: stacked offset shadows for depth
+              if (titleOutline3D ?? false) {
+                const c3 = titleOutline3DColor ?? '#8b5cf6';
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}1px 1px 0 ${c3}, 2px 2px 0 ${c3}cc, 3px 3px 0 ${c3}99, 4px 4px 0 ${c3}66, 5px 5px 8px ${c3}44`;
+              }
+              // Batch 36 — soft glow: ambient bloom glow around text
+              if (textGlowSoft ?? false) {
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor`;
+                ts.filter = 'drop-shadow(0 0 8px currentColor)';
+              }
               // Batch 35 — blink: slow pulsing opacity like a cursor
               if (titleBlink ?? false) ts.animation = 'flicker 1.5s step-start infinite';
               // Batch 34 — chromatic aberration: red/blue offset shadow illusion
@@ -3089,6 +3119,73 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
           }} />
+        )}
+
+        {/* Batch 36 — cracked earth: polygon crack line network */}
+        {(bgCracked ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M50 0 L60 30 L80 20 L70 50 L100 45 L75 60 L90 80 L60 70 L50 100 L40 70 L10 80 L25 60 L0 50 L30 45 L20 20 L40 30 Z' fill='none' stroke='${encodeURIComponent(bgCrackedColor ?? '#8b6040')}' stroke-width='0.6' opacity='0.5'/%3E%3Cpath d='M50 30 L60 50 L50 70 L40 50 Z' fill='none' stroke='${encodeURIComponent(bgCrackedColor ?? '#8b6040')}' stroke-width='0.4' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCrackedOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — malachite: curved band mineral swirl */}
+        {(bgMalachite ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 10 Q20 5 40 10 Q60 15 80 10' fill='none' stroke='${encodeURIComponent(bgMalachiteColor ?? '#2d8a4e')}' stroke-width='3' opacity='0.4'/%3E%3Cpath d='M0 20 Q20 15 40 20 Q60 25 80 20' fill='none' stroke='${encodeURIComponent(bgMalachiteColor ?? '#2d8a4e')}' stroke-width='5' opacity='0.3'/%3E%3Cpath d='M0 30 Q20 25 40 30 Q60 35 80 30' fill='none' stroke='${encodeURIComponent(bgMalachiteColor ?? '#2d8a4e')}' stroke-width='2' opacity='0.5'/%3E%3Cpath d='M0 38 Q20 33 40 38 Q60 43 80 38' fill='none' stroke='${encodeURIComponent(bgMalachiteColor ?? '#2d8a4e')}' stroke-width='4' opacity='0.25'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgMalachiteOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — terrain: 3D terrain elevation curved lines */}
+        {(bgTerrain ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='80'%3E%3Cpath d='M0 40 Q20 20 40 35 Q60 50 80 30 Q100 10 120 35 Q140 55 160 40' fill='none' stroke='${encodeURIComponent(bgTerrainColor ?? '#4a7c59')}' stroke-width='0.7' opacity='0.5'/%3E%3Cpath d='M0 55 Q25 35 50 50 Q75 65 100 45 Q125 25 150 50 Q155 55 160 52' fill='none' stroke='${encodeURIComponent(bgTerrainColor ?? '#4a7c59')}' stroke-width='0.5' opacity='0.35'/%3E%3Cpath d='M0 25 Q30 10 60 22 Q90 34 120 18 Q145 6 160 22' fill='none' stroke='${encodeURIComponent(bgTerrainColor ?? '#4a7c59')}' stroke-width='0.4' opacity='0.25'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgTerrainOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — 3D grid: perspective vanishing point grid */}
+        {(bgGrid3D ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='40' y1='40' x2='0' y2='80' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.4'/%3E%3Cline x1='40' y1='40' x2='40' y2='80' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.4'/%3E%3Cline x1='40' y1='40' x2='80' y2='80' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.4'/%3E%3Cline x1='40' y1='40' x2='0' y2='60' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.3' opacity='0.25'/%3E%3Cline x1='40' y1='40' x2='80' y2='60' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.3' opacity='0.25'/%3E%3Cline x1='0' y1='60' x2='80' y2='60' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='0' y1='80' x2='80' y2='80' stroke='${encodeURIComponent(bgGrid3DColor ?? '#8b5cf6')}' stroke-width='0.3' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgGrid3DOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — spiral 2: concentric spiral line pattern */}
+        {(bgSpiral2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='10' fill='none' stroke='${encodeURIComponent(bgSpiral2Color ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='${encodeURIComponent(bgSpiral2Color ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='${encodeURIComponent(bgSpiral2Color ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='${encodeURIComponent(bgSpiral2Color ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.2'/%3E%3Ccircle cx='50' cy='50' r='48' fill='none' stroke='${encodeURIComponent(bgSpiral2Color ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.15'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgSpiral2Opacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — snowfall: white snowflake scatter */}
+        {(overlaySnowfall ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ctext x='8' y='12' font-size='8' fill='%23ffffff' opacity='0.9'%3E❄%3C/text%3E%3Ctext x='45' y='25' font-size='5' fill='%23ffffff' opacity='0.6'%3E❄%3C/text%3E%3Ctext x='22' y='45' font-size='10' fill='%23ffffff' opacity='0.8'%3E❄%3C/text%3E%3Ctext x='62' y='55' font-size='6' fill='%23ffffff' opacity='0.5'%3E❄%3C/text%3E%3Ctext x='3' y='68' font-size='7' fill='%23ffffff' opacity='0.7'%3E❄%3C/text%3E%3Ctext x='50' y='75' font-size='4' fill='%23ffffff' opacity='0.6'%3E❄%3C/text%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlaySnowfallOpacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 36 — watermark: diagonal repeating text watermark */}
+        {(canvasWatermark ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[10] overflow-hidden" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='80'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' font-weight='bold' fill='%23ffffff' opacity='${(canvasWatermarkOpacity ?? 8) / 100}' transform='rotate(-25 100 40)'%3E${encodeURIComponent(canvasWatermarkText ?? 'DRAFT')}%3C/text%3E%3C/svg%3E")`,
+              backgroundRepeat: 'repeat',
+            }} />
+          </div>
         )}
 
         {/* Batch 35 — sandstone: sandy diagonal grain lines */}

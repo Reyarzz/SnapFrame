@@ -1001,6 +1001,33 @@ export interface EditorState {
   bgHoneycomb2: boolean;            // tight honeycomb hex grid pattern
   bgHoneycomb2Color: string;
   bgHoneycomb2Opacity: number;
+  // Batch 36
+  bgCracked: boolean;               // cracked earth dry mud pattern
+  bgCrackedColor: string;
+  bgCrackedOpacity: number;
+  bgMalachite: boolean;             // malachite stone green swirl
+  bgMalachiteColor: string;
+  bgMalachiteOpacity: number;
+  bgTerrain: boolean;               // terrain elevation contour map
+  bgTerrainColor: string;
+  bgTerrainOpacity: number;
+  overlaySnowfall: boolean;         // falling snowflake dots overlay
+  overlaySnowfallOpacity: number;
+  imageVibrant: boolean;            // hyper vibrant saturation pop filter
+  titleOutline3D: boolean;          // 3D extruded offset shadow title
+  titleOutline3DColor: string;
+  frameBamboo: boolean;             // bamboo strip pattern inset frame
+  frameBambooColor: string;
+  canvasWatermark: boolean;         // subtle diagonal text watermark
+  canvasWatermarkText: string;
+  canvasWatermarkOpacity: number;
+  bgGrid3D: boolean;                // 3D perspective grid lines
+  bgGrid3DColor: string;
+  bgGrid3DOpacity: number;
+  textGlowSoft: boolean;            // soft ambient glow around title text
+  bgSpiral2: boolean;               // spiral line swirl pattern
+  bgSpiral2Color: string;
+  bgSpiral2Opacity: number;
 }
 
 export interface StyleTemplate {
@@ -2140,6 +2167,33 @@ export const DEFAULT_STATE: EditorState = {
   bgHoneycomb2: false,
   bgHoneycomb2Color: '#8b5cf6',
   bgHoneycomb2Opacity: 15,
+  // Batch 36
+  bgCracked: false,
+  bgCrackedColor: '#8b6040',
+  bgCrackedOpacity: 15,
+  bgMalachite: false,
+  bgMalachiteColor: '#2d8a4e',
+  bgMalachiteOpacity: 20,
+  bgTerrain: false,
+  bgTerrainColor: '#4a7c59',
+  bgTerrainOpacity: 15,
+  overlaySnowfall: false,
+  overlaySnowfallOpacity: 30,
+  imageVibrant: false,
+  titleOutline3D: false,
+  titleOutline3DColor: '#8b5cf6',
+  frameBamboo: false,
+  frameBambooColor: '#6b8c42',
+  canvasWatermark: false,
+  canvasWatermarkText: 'DRAFT',
+  canvasWatermarkOpacity: 8,
+  bgGrid3D: false,
+  bgGrid3DColor: '#8b5cf6',
+  bgGrid3DOpacity: 15,
+  textGlowSoft: false,
+  bgSpiral2: false,
+  bgSpiral2Color: '#8b5cf6',
+  bgSpiral2Opacity: 15,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3129,6 +3183,56 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 36 templates
+  {
+    id: 'cracked-earth',
+    name: 'Cracked',
+    emoji: '🌍',
+    overrides: {
+      background: 'linear-gradient(135deg, #0d0800 0%, #1a1000 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 60,
+      bgCracked: true, bgCrackedColor: '#8b6040', bgCrackedOpacity: 20,
+      bgTerrain: true, bgTerrainColor: '#5c3d1e', bgTerrainOpacity: 12,
+      imageWarmTone: true, canvasSepia: true,
+    },
+  },
+  {
+    id: 'malachite-stone',
+    name: 'Malachite',
+    emoji: '💚',
+    overrides: {
+      background: 'linear-gradient(135deg, #001a0d 0%, #00120a 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgMalachite: true, bgMalachiteColor: '#2d8a4e', bgMalachiteOpacity: 25,
+      frameBamboo: true, frameBambooColor: '#2d6a4f',
+      imageEnhance: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'winter-snow',
+    name: 'Snowfall',
+    emoji: '❄️',
+    overrides: {
+      background: 'linear-gradient(135deg, #050520 0%, #0a0a30 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      overlaySnowfall: true, overlaySnowfallOpacity: 35,
+      bgGrid3D: true, bgGrid3DColor: '#88aaff', bgGrid3DOpacity: 8,
+      overlayIce: true, overlayIceOpacity: 20,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'spiral-cosmos',
+    name: 'Spiral',
+    emoji: '🌀',
+    overrides: {
+      background: 'linear-gradient(135deg, #020210 0%, #08082a 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 70,
+      bgSpiral2: true, bgSpiral2Color: '#7c3aed', bgSpiral2Opacity: 20,
+      bgGrid3D: true, bgGrid3DColor: '#8b5cf6', bgGrid3DOpacity: 10,
+      textGlowSoft: true, titleOutline3D: true, titleOutline3DColor: '#a78bfa',
     },
   },
   // Batch 35 templates
