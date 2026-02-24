@@ -2556,6 +2556,91 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 27 FX controls */}
+      <Card>
+        <SectionLabel>Polka Dots</SectionLabel>
+        <Toggle label="Enable" value={state.bgPolkaDots ?? false} onChange={v => onChange({ bgPolkaDots: v })}
+          desc="Polka dot circle background pattern" />
+        {(state.bgPolkaDots ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgPolkaDotsColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgPolkaDotsColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgPolkaDotsOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgPolkaDotsOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Halftone</SectionLabel>
+        <Toggle label="Enable" value={state.bgHalftone ?? false} onChange={v => onChange({ bgHalftone: v })}
+          desc="Halftone dot grid background" />
+        {(state.bgHalftone ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgHalftoneColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgHalftoneColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgHalftoneOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgHalftoneOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Camo Pattern</SectionLabel>
+        <Toggle label="Enable" value={state.bgCamo ?? false} onChange={v => onChange({ bgCamo: v })}
+          desc="Organic camouflage blob background" />
+        {(state.bgCamo ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgCamoColor ?? '#4a6741'}
+                onChange={e => onChange({ bgCamoColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgCamoOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgCamoOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Noise 2</SectionLabel>
+        <Toggle label="Enable" value={state.overlayNoise2 ?? false} onChange={v => onChange({ overlayNoise2: v })}
+          desc="Secondary fine grain noise overlay" />
+        {(state.overlayNoise2 ?? false) && (
+          <Slider label="Opacity" value={state.overlayNoise2Opacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayNoise2Opacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Paint Stroke</SectionLabel>
+        <Toggle label="Enable" value={state.framePaintStroke ?? false} onChange={v => onChange({ framePaintStroke: v })}
+          desc="Rough painted brush-stroke border" />
+        {(state.framePaintStroke ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.framePaintStrokeColor ?? '#8b5cf6'}
+              onChange={e => onChange({ framePaintStrokeColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Tape Corners</SectionLabel>
+        <Toggle label="Enable" value={state.canvasTapeCorners ?? false} onChange={v => onChange({ canvasTapeCorners: v })}
+          desc="Tape sticker strips on canvas corners" />
+      </Card>
+
       {/* Batch 26 FX controls */}
       <Card>
         <SectionLabel>Waveform BG</SectionLabel>
@@ -3599,6 +3684,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 27 adjust controls */}
+      <Card>
+        <SectionLabel>Colorize</SectionLabel>
+        <Toggle label="Enable" value={state.imageColorize ?? false} onChange={v => onChange({ imageColorize: v })}
+          desc="Warm sepia colorize on image" />
+      </Card>
+
       {/* Batch 26 adjust controls */}
       <Card>
         <SectionLabel>Old Photo</SectionLabel>
@@ -4443,6 +4535,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 27 text controls */}
+          <Card>
+            <SectionLabel>Rainbow Title</SectionLabel>
+            <Toggle label="Enable" value={state.titleRainbow ?? false} onChange={v => onChange({ titleRainbow: v })}
+              desc="Rainbow spectrum gradient on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Hard Shadow</SectionLabel>
+            <Toggle label="Enable" value={state.textShadowHard ?? false} onChange={v => onChange({ textShadowHard: v })}
+              desc="Hard sharp drop shadow on title" />
+            {(state.textShadowHard ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.textShadowHardColor ?? '#000000'}
+                  onChange={e => onChange({ textShadowHardColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>

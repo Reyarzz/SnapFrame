@@ -816,6 +816,25 @@ export interface EditorState {
   bgWaveformOpacity: number;
   canvasFloatShadow: boolean;       // deep floating drop shadow below canvas
   textSmallCaps: boolean;           // small-caps font variant on body text
+  // Batch 27
+  bgCamo: boolean;                  // organic camouflage blob pattern background
+  bgCamoColor: string;
+  bgCamoOpacity: number;
+  bgHalftone: boolean;              // halftone dot grid background
+  bgHalftoneColor: string;
+  bgHalftoneOpacity: number;
+  overlayNoise2: boolean;           // secondary fine grain noise overlay
+  overlayNoise2Opacity: number;
+  imageColorize: boolean;           // warm sepia colorize on image
+  titleRainbow: boolean;            // rainbow spectrum gradient on title
+  framePaintStroke: boolean;        // rough painted brush-stroke border
+  framePaintStrokeColor: string;
+  textShadowHard: boolean;          // hard no-blur drop shadow on title
+  textShadowHardColor: string;
+  bgPolkaDots: boolean;             // polka dot circle background
+  bgPolkaDotsColor: string;
+  bgPolkaDotsOpacity: number;
+  canvasTapeCorners: boolean;       // tape strip stickers on canvas corners
 }
 
 export interface StyleTemplate {
@@ -1770,6 +1789,25 @@ export const DEFAULT_STATE: EditorState = {
   bgWaveformOpacity: 15,
   canvasFloatShadow: false,
   textSmallCaps: false,
+  // Batch 27
+  bgCamo: false,
+  bgCamoColor: '#4a6741',
+  bgCamoOpacity: 20,
+  bgHalftone: false,
+  bgHalftoneColor: '#8b5cf6',
+  bgHalftoneOpacity: 15,
+  overlayNoise2: false,
+  overlayNoise2Opacity: 20,
+  imageColorize: false,
+  titleRainbow: false,
+  framePaintStroke: false,
+  framePaintStrokeColor: '#8b5cf6',
+  textShadowHard: false,
+  textShadowHardColor: '#000000',
+  bgPolkaDots: false,
+  bgPolkaDotsColor: '#8b5cf6',
+  bgPolkaDotsOpacity: 15,
+  canvasTapeCorners: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2759,6 +2797,57 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 27 templates
+  {
+    id: 'halftone-pop',
+    name: 'Halftone',
+    emoji: '🔵',
+    overrides: {
+      background: 'linear-gradient(135deg, #fff5f5 0%, #fff0ff 100%)', backgroundId: 'light',
+      padding: 52, borderRadius: 16, shadow: 40,
+      bgHalftone: true, bgHalftoneColor: '#8b5cf6', bgHalftoneOpacity: 20,
+      titleRainbow: true,
+      framePaintStroke: true, framePaintStrokeColor: '#8b5cf6',
+    },
+  },
+  {
+    id: 'camo-tactical',
+    name: 'Camo',
+    emoji: '🎖️',
+    overrides: {
+      background: '#1a2410', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 0, shadow: 50,
+      bgCamo: true, bgCamoColor: '#4a6741', bgCamoOpacity: 30,
+      textShadowHard: true, textShadowHardColor: '#000000',
+      titleColor: '#c8d8a0', titleFont: 'monospace',
+    },
+  },
+  {
+    id: 'polka-vintage',
+    name: 'Polka',
+    emoji: '🟣',
+    overrides: {
+      background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', backgroundId: 'warm',
+      padding: 56, borderRadius: 20, shadow: 40,
+      bgPolkaDots: true, bgPolkaDotsColor: '#ec4899', bgPolkaDotsOpacity: 20,
+      canvasTapeCorners: true,
+      imageColorize: true,
+      titleColor: '#9d174d',
+    },
+  },
+  {
+    id: 'paint-stroke-frame',
+    name: 'Paint Frame',
+    emoji: '🖌️',
+    overrides: {
+      background: 'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 100%)', backgroundId: 'midnight',
+      padding: 60, borderRadius: 8, shadow: 60,
+      framePaintStroke: true, framePaintStrokeColor: '#a78bfa',
+      overlayNoise2: true, overlayNoise2Opacity: 25,
+      canvasFloatShadow: true,
+      titleGradient: true,
     },
   },
   // Batch 26 templates

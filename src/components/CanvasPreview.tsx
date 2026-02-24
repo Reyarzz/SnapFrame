@@ -733,6 +733,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 27
+    bgCamo, bgCamoColor, bgCamoOpacity,
+    bgHalftone, bgHalftoneColor, bgHalftoneOpacity,
+    overlayNoise2, overlayNoise2Opacity,
+    imageColorize, titleRainbow,
+    framePaintStroke, framePaintStrokeColor,
+    textShadowHard, textShadowHardColor,
+    bgPolkaDots, bgPolkaDotsColor, bgPolkaDotsOpacity,
+    canvasTapeCorners,
     // Batch 26
     overlayLightLeak2, overlayLightLeak2Opacity,
     imageOldPhoto, titleNeonPulse,
@@ -920,6 +929,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 27 — paint stroke: rough inset border with staggered shadows
+  if (framePaintStroke ?? false) {
+    const psc = framePaintStrokeColor ?? '#8b5cf6';
+    const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
+  }
   // Batch 26 — double stroke: two concentric inset border rings
   if (frameDoubleStroke ?? false) {
     const dsc = frameDoubleStrokeColor ?? '#8b5cf6';
@@ -1062,6 +1077,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 27 — colorize: warm sepia + rich saturation
+  if (imageColorize ?? false) imageFilterParts.push('sepia(100%) saturate(200%) brightness(92%)');
   // Batch 26 — old photo: sepia + faded soft vintage
   if (imageOldPhoto ?? false) imageFilterParts.push('sepia(85%) contrast(88%) brightness(88%) saturate(80%)');
   // Batch 26 — holographic foil: rainbow hue + rich saturation
@@ -1543,6 +1560,19 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 27 — rainbow spectrum gradient on title
+              if (titleRainbow ?? false) {
+                ts.background = 'linear-gradient(90deg, #ff0000, #ff8c00, #ffd700, #00c800, #0088ff, #8800ff)';
+                ts.WebkitBackgroundClip = 'text';
+                ts.WebkitTextFillColor = 'transparent';
+                ts.backgroundClip = 'text';
+              }
+              // Batch 27 — hard sharp drop shadow (no blur)
+              if (textShadowHard ?? false) {
+                const hsc = textShadowHardColor ?? '#000000';
+                const existingShadow = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existingShadow}3px 3px 0px ${hsc}`;
+              }
               // Batch 26 — neon pulse: soft animated glow cycle on title
               if (titleNeonPulse ?? false) {
                 ts.textShadow = `0 0 8px #a78bfa, 0 0 20px #a78bfa80, 0 0 40px #7c3aed60`;
@@ -2851,6 +2881,68 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
           }} />
+        )}
+
+        {/* Batch 27 — polka dot circle background */}
+        {(bgPolkaDots ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='7' fill='${encodeURIComponent(bgPolkaDotsColor ?? '#8b5cf6')}'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgPolkaDotsOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 27 — halftone dot grid background */}
+        {(bgHalftone ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='3.5' fill='${encodeURIComponent(bgHalftoneColor ?? '#8b5cf6')}'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgHalftoneOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 27 — organic camo blob pattern */}
+        {(bgCamo ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `radial-gradient(ellipse 42% 22% at 25% 28%, ${bgCamoColor ?? '#4a6741'} 0%, transparent 100%)`,
+              `radial-gradient(ellipse 30% 28% at 70% 18%, ${bgCamoColor ?? '#4a6741'}cc 0%, transparent 100%)`,
+              `radial-gradient(ellipse 48% 30% at 50% 68%, ${bgCamoColor ?? '#4a6741'} 0%, transparent 100%)`,
+              `radial-gradient(ellipse 28% 38% at 15% 78%, ${bgCamoColor ?? '#4a6741'}aa 0%, transparent 100%)`,
+              `radial-gradient(ellipse 36% 22% at 85% 82%, ${bgCamoColor ?? '#4a6741'}dd 0%, transparent 100%)`,
+              `radial-gradient(ellipse 22% 32% at 88% 35%, ${bgCamoColor ?? '#4a6741'}88 0%, transparent 100%)`,
+            ].join(', '),
+            opacity: (bgCamoOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 27 — secondary fine grain noise */}
+        {(overlayNoise2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[7]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='%23fff' opacity='0.4'/%3E%3Ccircle cx='3' cy='3' r='0.4' fill='%23fff' opacity='0.25'/%3E%3Ccircle cx='1' cy='3' r='0.5' fill='%23000' opacity='0.15'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlayNoise2Opacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 27 — tape corner stickers */}
+        {(canvasTapeCorners ?? false) && (
+          <>
+            {([
+              { pos: { top: 10, left: 10 }, angle: -45 },
+              { pos: { top: 10, right: 10 }, angle: 45 },
+              { pos: { bottom: 10, left: 10 }, angle: 45 },
+              { pos: { bottom: 10, right: 10 }, angle: -45 },
+            ] as { pos: React.CSSProperties; angle: number }[]).map(({ pos, angle }, i) => (
+              <div key={i} className="absolute pointer-events-none z-[50]" style={{
+                ...pos,
+                width: 36, height: 14,
+                background: 'rgba(255,240,180,0.75)',
+                transform: `rotate(${angle}deg)`,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              }} />
+            ))}
+          </>
         )}
 
         {/* Batch 26 — waveform/equalizer bars background */}
