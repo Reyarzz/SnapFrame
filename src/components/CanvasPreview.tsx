@@ -733,6 +733,18 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 37
+    bgOcean, bgOceanColor, bgOceanOpacity,
+    bgLightning, bgLightningColor, bgLightningOpacity,
+    bgCloud, bgCloudOpacity,
+    overlayBloom2, overlayBloom2Opacity,
+    imageHDR, titlePop,
+    bgVolcanic, bgVolcanicColor, bgVolcanicOpacity,
+    frameNatural, frameNaturalColor,
+    bgForest, bgForestColor, bgForestOpacity,
+    canvasGlow2, canvasGlow2Color,
+    bgAstro, bgAstroColor, bgAstroOpacity,
+    textDisco,
     // Batch 36
     bgCracked, bgCrackedColor, bgCrackedOpacity,
     bgMalachite, bgMalachiteColor, bgMalachiteOpacity,
@@ -1028,6 +1040,19 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 37 — natural frame: earthy rounded stone/wood inset border
+  if (frameNatural ?? false) {
+    const nc = frameNaturalColor ?? '#8b6040';
+    const naturalShadow = `inset 0 0 0 5px ${nc}, inset 0 0 0 7px ${nc}80, 0 4px 16px ${nc}40`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${naturalShadow}` : naturalShadow;
+    canvasStyle.borderRadius = (canvasStyle.borderRadius as number ?? 12) + 4;
+  }
+  // Batch 37 — outer glow 2: wide soft halo outside canvas
+  if (canvasGlow2 ?? false) {
+    const gc = canvasGlow2Color ?? '#8b5cf6';
+    const glow2 = `0 0 30px ${gc}80, 0 0 60px ${gc}40, 0 0 100px ${gc}20`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${glow2}` : glow2;
+  }
   // Batch 36 — bamboo frame: green bamboo strip inset border
   if (frameBamboo ?? false) {
     const bc = frameBambooColor ?? '#6b8c42';
@@ -1202,6 +1227,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 37 — HDR: high dynamic range tone-mapping approximation
+  if (imageHDR ?? false) imageFilterParts.push('contrast(130%) brightness(110%) saturate(140%) drop-shadow(0 2px 4px rgba(0,0,0,0.4))');
   // Batch 36 — vibrant: hyper-saturated vivid pop
   if (imageVibrant ?? false) imageFilterParts.push('saturate(300%) contrast(120%) brightness(105%)');
   // Batch 35 — anaglyph: red-cyan 3D offset illusion
@@ -1709,6 +1736,22 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 37 — pop: chunky bold pop-art weight + transform
+              if (titlePop ?? false) {
+                ts.fontWeight = 900;
+                ts.letterSpacing = '-0.02em';
+                ts.textTransform = 'uppercase';
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000`;
+              }
+              // Batch 37 — disco: cycling rainbow hue shift gradient
+              if (textDisco ?? false) {
+                ts.background = 'linear-gradient(90deg, #ff0080, #ff8c00, #ffd700, #00c800, #0088ff, #8800ff, #ff0080)';
+                ts.WebkitBackgroundClip = 'text';
+                ts.WebkitTextFillColor = 'transparent';
+                ts.backgroundClip = 'text';
+                ts.backgroundSize = '200% auto';
+              }
               // Batch 36 — 3D extruded title: stacked offset shadows for depth
               if (titleOutline3D ?? false) {
                 const c3 = titleOutline3DColor ?? '#8b5cf6';
@@ -3118,6 +3161,68 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 37 — ocean waves: sinusoidal wave lines */}
+        {(bgOcean ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40'%3E%3Cpath d='M0 20 Q20 10 40 20 Q60 30 80 20 Q100 10 120 20 Q140 30 160 20' fill='none' stroke='${encodeURIComponent(bgOceanColor ?? '#0077be')}' stroke-width='1.5' opacity='0.6'/%3E%3Cpath d='M0 28 Q20 18 40 28 Q60 38 80 28 Q100 18 120 28 Q140 38 160 28' fill='none' stroke='${encodeURIComponent(bgOceanColor ?? '#0077be')}' stroke-width='1' opacity='0.4'/%3E%3Cpath d='M0 12 Q20 2 40 12 Q60 22 80 12 Q100 2 120 12 Q140 22 160 12' fill='none' stroke='${encodeURIComponent(bgOceanColor ?? '#0077be')}' stroke-width='0.8' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgOceanOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — lightning: zigzag bolt pattern */}
+        {(bgLightning ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='100'%3E%3Cpolyline points='35,5 20,45 32,45 15,95' fill='none' stroke='${encodeURIComponent(bgLightningColor ?? '#f0e040')}' stroke-width='1.5' opacity='0.6' stroke-linecap='round'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgLightningOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — clouds: white cloud puff silhouettes */}
+        {(bgCloud ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cellipse cx='40' cy='35' rx='25' ry='14' fill='%23ffffff' opacity='0.12'/%3E%3Ccircle cx='28' cy='32' r='12' fill='%23ffffff' opacity='0.1'/%3E%3Ccircle cx='52' cy='30' r='10' fill='%23ffffff' opacity='0.1'/%3E%3Cellipse cx='95' cy='45' rx='18' ry='10' fill='%23ffffff' opacity='0.08'/%3E%3Ccircle cx='84' cy='42' r='8' fill='%23ffffff' opacity='0.07'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCloudOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — volcanic: hexagonal lava rock grid */}
+        {(bgVolcanic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='35'%3E%3Cpolygon points='15,2 28,9.5 28,24.5 15,32 2,24.5 2,9.5' fill='${encodeURIComponent(bgVolcanicColor ?? '#ff4500')}' opacity='0.12' stroke='${encodeURIComponent(bgVolcanicColor ?? '#ff4500')}' stroke-width='0.5' opacity2='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgVolcanicOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — forest: pine tree silhouettes */}
+        {(bgForest ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60'%3E%3Cpolygon points='20,5 32,25 25,25 30,40 10,40 15,25 8,25' fill='${encodeURIComponent(bgForestColor ?? '#2d5a27')}' opacity='0.5'/%3E%3Crect x='17' y='40' width='6' height='12' fill='${encodeURIComponent(bgForestColor ?? '#2d5a27')}' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgForestOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — galaxy astro: scattered star points */}
+        {(bgAstro ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='10' cy='15' r='1' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.9'/%3E%3Ccircle cx='35' cy='8' r='0.6' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.6'/%3E%3Ccircle cx='62' cy='22' r='1.2' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.8'/%3E%3Ccircle cx='88' cy='5' r='0.8' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.7'/%3E%3Ccircle cx='20' cy='48' r='1' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.5'/%3E%3Ccircle cx='75' cy='55' r='0.7' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.8'/%3E%3Ccircle cx='45' cy='70' r='1.1' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.6'/%3E%3Ccircle cx='90' cy='80' r='0.9' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.7'/%3E%3Ccircle cx='5' cy='85' r='0.6' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.5'/%3E%3Ccircle cx='55' cy='92' r='0.8' fill='${encodeURIComponent(bgAstroColor ?? '#ffffff')}' opacity='0.9'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgAstroOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 37 — bloom 2: soft radial light glow at center */}
+        {(overlayBloom2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)',
+            opacity: (overlayBloom2Opacity ?? 40) / 100,
           }} />
         )}
 

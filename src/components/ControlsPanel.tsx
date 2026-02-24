@@ -2556,6 +2556,145 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 37 FX controls */}
+      <Card>
+        <SectionLabel>Ocean</SectionLabel>
+        <Toggle label="Enable" value={state.bgOcean ?? false} onChange={v => onChange({ bgOcean: v })}
+          desc="Ocean wave ripple line pattern" />
+        {(state.bgOcean ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgOceanColor ?? '#0077be'}
+                onChange={e => onChange({ bgOceanColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgOceanOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgOceanOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Lightning</SectionLabel>
+        <Toggle label="Enable" value={state.bgLightning ?? false} onChange={v => onChange({ bgLightning: v })}
+          desc="Lightning bolt zigzag pattern" />
+        {(state.bgLightning ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgLightningColor ?? '#f0e040'}
+                onChange={e => onChange({ bgLightningColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgLightningOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgLightningOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Clouds</SectionLabel>
+        <Toggle label="Enable" value={state.bgCloud ?? false} onChange={v => onChange({ bgCloud: v })}
+          desc="Fluffy cloud silhouette formations" />
+        {(state.bgCloud ?? false) && (
+          <Slider label="Opacity" value={state.bgCloudOpacity ?? 20} min={5} max={60} unit="%"
+            onChange={v => onChange({ bgCloudOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Volcanic</SectionLabel>
+        <Toggle label="Enable" value={state.bgVolcanic ?? false} onChange={v => onChange({ bgVolcanic: v })}
+          desc="Volcanic hexagonal lava rock grid" />
+        {(state.bgVolcanic ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgVolcanicColor ?? '#ff4500'}
+                onChange={e => onChange({ bgVolcanicColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgVolcanicOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgVolcanicOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Forest</SectionLabel>
+        <Toggle label="Enable" value={state.bgForest ?? false} onChange={v => onChange({ bgForest: v })}
+          desc="Pine tree silhouette pattern" />
+        {(state.bgForest ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgForestColor ?? '#2d5a27'}
+                onChange={e => onChange({ bgForestColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgForestOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgForestOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Astro</SectionLabel>
+        <Toggle label="Enable" value={state.bgAstro ?? false} onChange={v => onChange({ bgAstro: v })}
+          desc="Galaxy star cluster scatter pattern" />
+        {(state.bgAstro ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgAstroColor ?? '#ffffff'}
+                onChange={e => onChange({ bgAstroColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgAstroOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgAstroOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Bloom 2</SectionLabel>
+        <Toggle label="Enable" value={state.overlayBloom2 ?? false} onChange={v => onChange({ overlayBloom2: v })}
+          desc="Soft radial light bloom at center" />
+        {(state.overlayBloom2 ?? false) && (
+          <Slider label="Opacity" value={state.overlayBloom2Opacity ?? 40} min={10} max={90} unit="%"
+            onChange={v => onChange({ overlayBloom2Opacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Natural Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameNatural ?? false} onChange={v => onChange({ frameNatural: v })}
+          desc="Natural stone/wood rounded frame" />
+        {(state.frameNatural ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameNaturalColor ?? '#8b6040'}
+              onChange={e => onChange({ frameNaturalColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Outer Glow 2</SectionLabel>
+        <Toggle label="Enable" value={state.canvasGlow2 ?? false} onChange={v => onChange({ canvasGlow2: v })}
+          desc="Wide soft outer halo around canvas" />
+        {(state.canvasGlow2 ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.canvasGlow2Color ?? '#8b5cf6'}
+              onChange={e => onChange({ canvasGlow2Color: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 36 FX controls */}
       <Card>
         <SectionLabel>Cracked Earth</SectionLabel>
@@ -4579,6 +4718,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 37 adjust controls */}
+      <Card>
+        <SectionLabel>HDR</SectionLabel>
+        <Toggle label="Enable" value={state.imageHDR ?? false} onChange={v => onChange({ imageHDR: v })}
+          desc="High dynamic range tone boost" />
+      </Card>
+
       {/* Batch 36 adjust controls */}
       <Card>
         <SectionLabel>Vibrant</SectionLabel>
@@ -5521,6 +5667,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 37 text controls */}
+          <Card>
+            <SectionLabel>Pop Art</SectionLabel>
+            <Toggle label="Enable" value={state.titlePop ?? false} onChange={v => onChange({ titlePop: v })}
+              desc="Chunky pop-art bold outlined title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Disco</SectionLabel>
+            <Toggle label="Enable" value={state.textDisco ?? false} onChange={v => onChange({ textDisco: v })}
+              desc="Rainbow disco gradient on title text" />
           </Card>
 
           {/* Batch 36 text controls */}

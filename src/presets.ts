@@ -1028,6 +1028,33 @@ export interface EditorState {
   bgSpiral2: boolean;               // spiral line swirl pattern
   bgSpiral2Color: string;
   bgSpiral2Opacity: number;
+  // Batch 37
+  bgOcean: boolean;                 // ocean wave ripple lines
+  bgOceanColor: string;
+  bgOceanOpacity: number;
+  bgLightning: boolean;             // lightning bolt zigzag pattern
+  bgLightningColor: string;
+  bgLightningOpacity: number;
+  bgCloud: boolean;                 // cloud formation silhouettes
+  bgCloudOpacity: number;
+  overlayBloom2: boolean;           // soft radial light bloom glow
+  overlayBloom2Opacity: number;
+  imageHDR: boolean;                // HDR-style high dynamic range boost
+  titlePop: boolean;                // chunky bold pop-art 3D style
+  bgVolcanic: boolean;              // volcanic hexagonal lava rock
+  bgVolcanicColor: string;
+  bgVolcanicOpacity: number;
+  frameNatural: boolean;            // natural stone/wood rounded frame
+  frameNaturalColor: string;
+  bgForest: boolean;                // pine tree silhouette pattern
+  bgForestColor: string;
+  bgForestOpacity: number;
+  canvasGlow2: boolean;             // outer glow halo around canvas
+  canvasGlow2Color: string;
+  bgAstro: boolean;                 // galaxy star cluster pattern
+  bgAstroColor: string;
+  bgAstroOpacity: number;
+  textDisco: boolean;               // disco rainbow color cycling text
 }
 
 export interface StyleTemplate {
@@ -2194,6 +2221,33 @@ export const DEFAULT_STATE: EditorState = {
   bgSpiral2: false,
   bgSpiral2Color: '#8b5cf6',
   bgSpiral2Opacity: 15,
+  // Batch 37
+  bgOcean: false,
+  bgOceanColor: '#0077be',
+  bgOceanOpacity: 20,
+  bgLightning: false,
+  bgLightningColor: '#f0e040',
+  bgLightningOpacity: 15,
+  bgCloud: false,
+  bgCloudOpacity: 20,
+  overlayBloom2: false,
+  overlayBloom2Opacity: 40,
+  imageHDR: false,
+  titlePop: false,
+  bgVolcanic: false,
+  bgVolcanicColor: '#ff4500',
+  bgVolcanicOpacity: 15,
+  frameNatural: false,
+  frameNaturalColor: '#8b6040',
+  bgForest: false,
+  bgForestColor: '#2d5a27',
+  bgForestOpacity: 15,
+  canvasGlow2: false,
+  canvasGlow2Color: '#8b5cf6',
+  bgAstro: false,
+  bgAstroColor: '#ffffff',
+  bgAstroOpacity: 20,
+  textDisco: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3183,6 +3237,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 37 templates
+  {
+    id: 'ocean-deep',
+    name: 'Ocean',
+    emoji: '🌊',
+    overrides: {
+      background: 'linear-gradient(135deg, #001a33 0%, #000d1a 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgOcean: true, bgOceanColor: '#0077be', bgOceanOpacity: 25,
+      overlayBloom2: true, overlayBloom2Opacity: 30,
+      imageCoolTone: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'storm-lightning',
+    name: 'Storm',
+    emoji: '⚡',
+    overrides: {
+      background: '#050510', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 80,
+      bgLightning: true, bgLightningColor: '#f0e040', bgLightningOpacity: 20,
+      bgCloud: true, bgCloudOpacity: 15,
+      canvasGlow2: true, canvasGlow2Color: '#f0e040',
+      titleNeonPulse: true,
+    },
+  },
+  {
+    id: 'forest-dark',
+    name: 'Forest',
+    emoji: '🌲',
+    overrides: {
+      background: 'linear-gradient(135deg, #010d04 0%, #050f02 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgForest: true, bgForestColor: '#1a3d16', bgForestOpacity: 20,
+      bgTerrain: true, bgTerrainColor: '#2d5a27', bgTerrainOpacity: 10,
+      frameBamboo: true, frameBambooColor: '#3a7d32',
+      imageEnhance: true,
+    },
+  },
+  {
+    id: 'galaxy-astro',
+    name: 'Astro',
+    emoji: '🔭',
+    overrides: {
+      background: 'linear-gradient(135deg, #000008 0%, #020215 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 70,
+      bgAstro: true, bgAstroColor: '#ffffff', bgAstroOpacity: 25,
+      bgVolcanic: true, bgVolcanicColor: '#8b5cf6', bgVolcanicOpacity: 8,
+      overlayBloom2: true, overlayBloom2Opacity: 25,
+      textDisco: true, titleGradient: true,
     },
   },
   // Batch 36 templates
