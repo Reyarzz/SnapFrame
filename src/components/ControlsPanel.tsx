@@ -2556,6 +2556,75 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 26 FX controls */}
+      <Card>
+        <SectionLabel>Waveform BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgWaveform ?? false} onChange={v => onChange({ bgWaveform: v })}
+          desc="Audio waveform bars background pattern" />
+        {(state.bgWaveform ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgWaveformColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgWaveformColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgWaveformOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgWaveformOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Light Leak 2</SectionLabel>
+        <Toggle label="Enable" value={state.overlayLightLeak2 ?? false} onChange={v => onChange({ overlayLightLeak2: v })}
+          desc="Warm orange/amber second light leak overlay" />
+        {(state.overlayLightLeak2 ?? false) && (
+          <Slider label="Intensity" value={state.overlayLightLeak2Opacity ?? 35} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayLightLeak2Opacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Raindrops</SectionLabel>
+        <Toggle label="Enable" value={state.overlayRaindrops ?? false} onChange={v => onChange({ overlayRaindrops: v })}
+          desc="Simulated raindrop dot texture overlay" />
+        {(state.overlayRaindrops ?? false) && (
+          <Slider label="Opacity" value={state.overlayRaindropsOpacity ?? 20} min={5} max={60} unit="%"
+            onChange={v => onChange({ overlayRaindropsOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Double Stroke</SectionLabel>
+        <Toggle label="Enable" value={state.frameDoubleStroke ?? false} onChange={v => onChange({ frameDoubleStroke: v })}
+          desc="Two concentric border stroke rings" />
+        {(state.frameDoubleStroke ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameDoubleStrokeColor ?? '#8b5cf6'}
+              onChange={e => onChange({ frameDoubleStrokeColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Float Shadow</SectionLabel>
+        <Toggle label="Enable" value={state.canvasFloatShadow ?? false} onChange={v => onChange({ canvasFloatShadow: v })}
+          desc="Deep layered drop shadow beneath canvas" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Circuit Color</SectionLabel>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+          <input type="color" value={state.bgCircuitBoardColor ?? '#00ff64'}
+            onChange={e => onChange({ bgCircuitBoardColor: e.target.value })}
+            className="w-8 h-8 rounded-lg cursor-pointer" />
+        </div>
+      </Card>
+
       {/* Batch 25 FX controls */}
       <Card>
         <SectionLabel>Zigzag Stripes</SectionLabel>
@@ -3530,6 +3599,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 26 adjust controls */}
+      <Card>
+        <SectionLabel>Old Photo</SectionLabel>
+        <Toggle label="Enable" value={state.imageOldPhoto ?? false} onChange={v => onChange({ imageOldPhoto: v })}
+          desc="Aged sepia vintage photo filter" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Holographic</SectionLabel>
+        <Toggle label="Enable" value={state.imageHolographic ?? false} onChange={v => onChange({ imageHolographic: v })}
+          desc="Holographic rainbow foil look" />
+      </Card>
+
       {/* Batch 25 adjust controls */}
       <Card>
         <SectionLabel>X-Ray</SectionLabel>
@@ -4363,6 +4445,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 26 text controls */}
+          <Card>
+            <SectionLabel>Neon Pulse</SectionLabel>
+            <Toggle label="Enable" value={state.titleNeonPulse ?? false} onChange={v => onChange({ titleNeonPulse: v })}
+              desc="Animated neon glow pulse on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Small Caps</SectionLabel>
+            <Toggle label="Enable" value={state.textSmallCaps ?? false} onChange={v => onChange({ textSmallCaps: v })}
+              desc="Small-caps font variant on title" />
           </Card>
 
           {/* Batch 25 text controls */}

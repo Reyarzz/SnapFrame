@@ -733,6 +733,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 26
+    overlayLightLeak2, overlayLightLeak2Opacity,
+    imageOldPhoto, titleNeonPulse,
+    frameDoubleStroke, frameDoubleStrokeColor,
+    bgCircuitBoardColor,
+    imageHolographic, overlayRaindrops, overlayRaindropsOpacity,
+    bgWaveform, bgWaveformColor, bgWaveformOpacity,
+    canvasFloatShadow, textSmallCaps,
     // Batch 25
     imageXRay, bgMandala, bgMandalaColor, bgMandalaOpacity,
     overlayGlare, overlayGlareOpacity,
@@ -912,6 +920,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     canvasStyle.clipPath = 'polygon(22px 0%, calc(100% - 22px) 0%, 100% 22px, 100% calc(100% - 22px), calc(100% - 22px) 100%, 22px 100%, 0% calc(100% - 22px), 0% 22px)';
     canvasStyle.borderRadius = undefined;
   }
+  // Batch 26 — double stroke: two concentric inset border rings
+  if (frameDoubleStroke ?? false) {
+    const dsc = frameDoubleStrokeColor ?? '#8b5cf6';
+    const doubleShadow = `inset 0 0 0 3px ${dsc}, inset 0 0 0 7px ${dsc}40`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${doubleShadow}` : doubleShadow;
+  }
+  // Batch 26 — float shadow: deep layered drop shadow beneath canvas
+  if (canvasFloatShadow ?? false) {
+    const floatShadow = '0 24px 60px rgba(0,0,0,0.65), 0 8px 20px rgba(0,0,0,0.40)';
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${floatShadow}` : floatShadow;
+  }
   // Batch 25 — canvas outline only (transparent bg)
   if (canvasOutlineOnly ?? false) {
     canvasStyle.background = 'transparent';
@@ -1043,6 +1062,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 26 — old photo: sepia + faded soft vintage
+  if (imageOldPhoto ?? false) imageFilterParts.push('sepia(85%) contrast(88%) brightness(88%) saturate(80%)');
+  // Batch 26 — holographic foil: rainbow hue + rich saturation
+  if (imageHolographic ?? false) imageFilterParts.push('hue-rotate(30deg) saturate(180%) brightness(110%) contrast(108%)');
   // Batch 25 — X-ray negative invert
   if (imageXRay ?? false) imageFilterParts.push('invert(100%) contrast(150%) grayscale(100%)');
   // Batch 25 — glitch scan: vivid contrast shift
@@ -1520,6 +1543,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 26 — neon pulse: soft animated glow cycle on title
+              if (titleNeonPulse ?? false) {
+                ts.textShadow = `0 0 8px #a78bfa, 0 0 20px #a78bfa80, 0 0 40px #7c3aed60`;
+                ts.animation = 'neon-pulse 2.2s ease-in-out infinite';
+              }
+              // Batch 26 — small caps font variant
+              if (textSmallCaps ?? false) ts.fontVariant = 'small-caps';
               // Batch 20 — neon sign glow on title
               if (titleNeonSign ?? false) {
                 const nc = titleNeonSignColor ?? '#00ffff';
@@ -2823,6 +2853,48 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           }} />
         )}
 
+        {/* Batch 26 — waveform/equalizer bars background */}
+        {(bgWaveform ?? false) && (() => {
+          const wc = encodeURIComponent(bgWaveformColor ?? '#8b5cf6');
+          const heights = [20, 35, 50, 28, 42, 55, 32, 48, 22, 40, 58, 30, 45, 25, 52];
+          const bars = heights.map((h, i) => `%3Crect x='${i * 8 + 2}' y='${60 - h}' width='5' height='${h}' fill='${wc}' rx='2'/%3E`).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='124' height='60'%3E${bars}%3C/svg%3E")`,
+              backgroundRepeat: 'repeat',
+              opacity: (bgWaveformOpacity ?? 15) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 26 — warm orange second light leak */}
+        {(overlayLightLeak2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[6]" style={{
+            background: `linear-gradient(135deg, rgba(255,180,50,${((overlayLightLeak2Opacity ?? 35) / 100) * 0.7}) 0%, rgba(255,100,30,${((overlayLightLeak2Opacity ?? 35) / 100) * 0.5}) 30%, transparent 60%)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 26 — raindrop dots SVG overlay */}
+        {(overlayRaindrops ?? false) && (() => {
+          const drops = [
+            [8, 12, 3], [24, 5, 2], [40, 18, 4], [55, 8, 2.5], [70, 22, 3.5],
+            [85, 6, 2], [15, 35, 2.5], [32, 42, 3], [48, 30, 2], [65, 38, 4],
+            [80, 28, 2.5], [5, 55, 3], [22, 60, 2], [38, 50, 3.5], [52, 58, 2],
+            [68, 52, 4], [82, 62, 2.5], [12, 75, 3], [28, 80, 2], [45, 72, 3],
+          ] as [number, number, number][];
+          const circles = drops.map(([cx, cy, r]) =>
+            `%3Ccircle cx='${cx}' cy='${cy}' r='${r}' fill='%23ffffff' opacity='0.35'/%3E`
+          ).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E${circles}%3C/svg%3E")`,
+              backgroundRepeat: 'repeat',
+              opacity: (overlayRaindropsOpacity ?? 20) / 100,
+            }} />
+          );
+        })()}
+
         {/* Watermark (supports custom text + position, Batch 3) */}
         {/* Batch 25 — zigzag stripe background */}
         {(bgZigzagStripes ?? false) && (
@@ -3174,10 +3246,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
           }} />
         )}
 
-        {/* Batch 20 — circuit board trace pattern */}
+        {/* Batch 20 — circuit board trace pattern (color updated Batch 26) */}
         {(bgCircuitBoard ?? false) && (
           <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M10 10 H30 V30 H50 M10 50 H20 V40 H40 V50 H55 M30 10 V5 M50 30 H55 M20 40 H5' fill='none' stroke='rgba(0,255,100,0.5)' stroke-width='0.8'/%3E%3Ccircle cx='30' cy='30' r='2.5' fill='rgba(0,255,100,0.5)'/%3E%3Ccircle cx='10' cy='10' r='2' fill='rgba(0,255,100,0.4)'/%3E%3Ccircle cx='20' cy='40' r='2' fill='rgba(0,255,100,0.4)'/%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M10 10 H30 V30 H50 M10 50 H20 V40 H40 V50 H55 M30 10 V5 M50 30 H55 M20 40 H5' fill='none' stroke='${encodeURIComponent(bgCircuitBoardColor ?? '#00ff64')}' stroke-width='0.8' opacity='0.7'/%3E%3Ccircle cx='30' cy='30' r='2.5' fill='${encodeURIComponent(bgCircuitBoardColor ?? '#00ff64')}' opacity='0.7'/%3E%3Ccircle cx='10' cy='10' r='2' fill='${encodeURIComponent(bgCircuitBoardColor ?? '#00ff64')}' opacity='0.6'/%3E%3Ccircle cx='20' cy='40' r='2' fill='${encodeURIComponent(bgCircuitBoardColor ?? '#00ff64')}' opacity='0.6'/%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat',
             opacity: (bgCircuitBoardOpacity ?? 12) / 100,
           }} />

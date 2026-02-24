@@ -800,6 +800,22 @@ export interface EditorState {
   bgPrismaticSheenOpacity: number;
   imageCrossProcess2: boolean;      // alternate cross-process: green shadows
   canvasOutlineOnly: boolean;       // show canvas as outline box, no fill bg
+  // Batch 26
+  overlayLightLeak2: boolean;       // warm orange/amber second light leak
+  overlayLightLeak2Opacity: number;
+  imageOldPhoto: boolean;           // aged/vintage old photo filter
+  titleNeonPulse: boolean;          // animated neon glow pulse on title
+  frameDoubleStroke: boolean;       // two concentric border strokes
+  frameDoubleStrokeColor: string;
+  bgCircuitBoardColor: string;      // color for circuit board pattern
+  imageHolographic: boolean;        // holographic rainbow foil look
+  overlayRaindrops: boolean;        // simulated raindrop dots overlay
+  overlayRaindropsOpacity: number;
+  bgWaveform: boolean;              // audio waveform bars background
+  bgWaveformColor: string;
+  bgWaveformOpacity: number;
+  canvasFloatShadow: boolean;       // deep floating drop shadow below canvas
+  textSmallCaps: boolean;           // small-caps font variant on body text
 }
 
 export interface StyleTemplate {
@@ -1738,6 +1754,22 @@ export const DEFAULT_STATE: EditorState = {
   bgPrismaticSheenOpacity: 20,
   imageCrossProcess2: false,
   canvasOutlineOnly: false,
+  // Batch 26
+  overlayLightLeak2: false,
+  overlayLightLeak2Opacity: 35,
+  imageOldPhoto: false,
+  titleNeonPulse: false,
+  frameDoubleStroke: false,
+  frameDoubleStrokeColor: '#8b5cf6',
+  bgCircuitBoardColor: '#8b5cf6',
+  imageHolographic: false,
+  overlayRaindrops: false,
+  overlayRaindropsOpacity: 20,
+  bgWaveform: false,
+  bgWaveformColor: '#8b5cf6',
+  bgWaveformOpacity: 15,
+  canvasFloatShadow: false,
+  textSmallCaps: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2727,6 +2759,59 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 26 templates
+  {
+    id: 'old-photo-warm',
+    name: 'Old Photo',
+    emoji: '📷',
+    overrides: {
+      background: 'linear-gradient(135deg, #2d1b00 0%, #1a0f00 100%)', backgroundId: 'vintage',
+      padding: 52, borderRadius: 4, shadow: 60,
+      imageOldPhoto: true,
+      overlayLightLeak2: true, overlayLightLeak2Opacity: 45,
+      frameDoubleStroke: true, frameDoubleStrokeColor: '#c8a26e',
+      titleFont: 'serif', titleColor: '#f5e6c8',
+    },
+  },
+  {
+    id: 'holographic-foil',
+    name: 'Holographic',
+    emoji: '🌈',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%)', backgroundId: 'cosmic',
+      padding: 56, borderRadius: 20, shadow: 70,
+      imageHolographic: true,
+      overlayRaindrops: true, overlayRaindropsOpacity: 25,
+      canvasFloatShadow: true,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'waveform-audio',
+    name: 'Waveform',
+    emoji: '🎵',
+    overrides: {
+      background: 'linear-gradient(135deg, #020215 0%, #0a0020 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgWaveform: true, bgWaveformColor: '#8b5cf6', bgWaveformOpacity: 20,
+      bgCircuitBoard: true, bgCircuitBoardColor: '#5b21b6', bgCircuitBoardOpacity: 8,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#8b5cf6',
+      titleNeonPulse: true, titleColor: '#a78bfa',
+    },
+  },
+  {
+    id: 'double-stroke-art',
+    name: 'Double Frame',
+    emoji: '🖼️',
+    overrides: {
+      background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)', backgroundId: 'midnight',
+      padding: 60, borderRadius: 12, shadow: 60,
+      frameDoubleStroke: true, frameDoubleStrokeColor: '#e2c97e',
+      canvasFloatShadow: true,
+      textSmallCaps: true,
+      titleFont: 'serif', titleColor: '#e2c97e',
     },
   },
   // Batch 25 templates

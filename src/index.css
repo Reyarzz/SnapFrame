@@ -84,6 +84,11 @@ body {
   100% { background-position: 200% 0; }
 }
 
+@keyframes neon-pulse {
+  0%, 100% { text-shadow: 0 0 8px #a78bfa, 0 0 20px #a78bfa80, 0 0 40px #7c3aed60; }
+  50% { text-shadow: 0 0 14px #c4b5fd, 0 0 35px #a78bfaaa, 0 0 70px #7c3aed90; }
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
