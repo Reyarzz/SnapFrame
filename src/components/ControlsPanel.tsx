@@ -13,6 +13,7 @@ import {
   EditorState, GRADIENT_PRESETS, MESH_PRESETS,
   SHADOW_COLORS, GLOW_COLORS, ASPECT_PRESETS,
   BG_PATTERNS, TITLE_FONTS, STYLE_TEMPLATES, FILM_LOOKS, IMAGE_PRESETS,
+  DEFAULT_STATE,
 } from '../presets';
 
 interface ControlsPanelProps {
@@ -345,7 +346,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           {STYLE_TEMPLATES
             .filter(t => styleFilter === 'all' || getStyleCat(t.id) === styleFilter)
             .map(tmpl => (
-              <button key={tmpl.id} onClick={() => onChange(tmpl.overrides)}
+              <button key={tmpl.id} onClick={() => onChange({
+                  ...DEFAULT_STATE,
+                  image: state.image,
+                  fileName: state.fileName,
+                  bgImage: state.bgImage,
+                  ...tmpl.overrides,
+                })}
                 className="flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-[9.5px] font-medium
                   bg-white/[0.03] text-white/50 ring-1 ring-white/[0.06]
                   hover:bg-white/[0.08] hover:text-white/80 hover:ring-brand-500/25
