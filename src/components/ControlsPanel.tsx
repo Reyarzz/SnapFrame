@@ -53,6 +53,35 @@ const GRADIENT_CATEGORIES = [
   { key: 'solid',   label: 'Solid' },
 ] as const;
 
+const STYLE_CATS = [
+  { id: 'all',    label: 'All'    },
+  { id: 'device', label: 'Device' },
+  { id: 'dark',   label: 'Dark'   },
+  { id: 'neon',   label: 'Neon'   },
+  { id: 'retro',  label: 'Retro'  },
+  { id: 'nature', label: 'Nature' },
+  { id: 'space',  label: 'Space'  },
+  { id: 'social', label: 'Social' },
+];
+
+const STYLE_CAT_KEYS: Record<string, string[]> = {
+  device: ['phone','ipad','imac','macos','macbook','android','iphone','browser','terminal','figma','notion','smarttv','kindle','windows','arc','samsung','vision'],
+  neon:   ['neon','glow','plasma','cyber','electric','laser','vaporwave','synthwave','retrowave'],
+  retro:  ['retro','vhs','film','vintage','analog','polaroid','cinema','kodak'],
+  nature: ['ocean','forest','desert','jungle','coral','beach','sand','snow','winter','aurora','sunrise','sunset','nature','moss','linen'],
+  space:  ['galaxy','space','astro','nebula','cosmic','star','solar'],
+  dark:   ['dark','smoke','obsidian','ink','midnight','gothic','noir','shadow','black'],
+  social: ['social','saas','product','viral','hero','marketing','portfolio','app','game','presentation'],
+};
+
+function getStyleCat(id: string): string {
+  const lower = id.toLowerCase();
+  for (const [cat, keys] of Object.entries(STYLE_CAT_KEYS)) {
+    if (keys.some(k => lower.includes(k))) return cat;
+  }
+  return 'other';
+}
+
 /* ── Primitives ─────────────────────────────────── */
 
 const Slider: React.FC<{
@@ -166,6 +195,27 @@ const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: Reac
   </button>
 );
 
+function SubTabs<T extends string>({ tabs, active, onChange }: {
+  tabs: { id: T; label: string }[];
+  active: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="flex gap-1 mb-4 bg-white/[0.04] rounded-lg p-1 shrink-0">
+      {tabs.map(t => (
+        <button key={t.id} onClick={() => onChange(t.id)}
+          className={`flex-1 py-1.5 text-[10.5px] font-semibold rounded-md transition-all leading-none ${
+            active === t.id
+              ? 'bg-violet-600/80 text-white shadow-sm'
+              : 'text-white/35 hover:text-white/65 hover:bg-white/[0.05]'
+          }`}>
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /* ── Main component ──────────────────────────────── */
 
 const ControlsPanel: React.FC<ControlsPanelProps> = ({
@@ -174,6 +224,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   canUndo, canRedo, isExporting,
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>('style');
+  const [styleFilter, setStyleFilter] = useState('all');
+  const [fxSub, setFxSub] = useState<'core'|'overlays'|'extra'>('core');
+  const [brandSub, setBrandSub] = useState<'text'|'effects'>('text');
+  const [adjSub, setAdjSub] = useState<'tone'|'filters'>('tone');
   const bgImageInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
@@ -269,18 +323,37 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       <Card>
-        <SectionLabel>Quick Styles</SectionLabel>
-        <div className="grid grid-cols-4 gap-2">
-          {STYLE_TEMPLATES.map(tmpl => (
-            <button key={tmpl.id} onClick={() => onChange(tmpl.overrides)}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-xl text-[10px] font-medium
-                bg-white/[0.03] text-white/50 ring-1 ring-white/[0.06]
-                hover:bg-white/[0.08] hover:text-white/80 hover:ring-brand-500/25
-                transition-all active:scale-95">
-              <span className="text-xl leading-none">{tmpl.emoji}</span>
-              <span className="truncate w-full text-center px-1">{tmpl.name}</span>
+        <SectionLabel>Quick Styles
+          <span className="ml-1.5 text-[9px] text-white/25 font-normal">
+            {styleFilter === 'all' ? STYLE_TEMPLATES.length : STYLE_TEMPLATES.filter(t => getStyleCat(t.id) === styleFilter).length} styles
+          </span>
+        </SectionLabel>
+        {/* Category filter chips */}
+        <div className="flex gap-1 overflow-x-auto no-scrollbar pb-2 mb-2">
+          {STYLE_CATS.map(cat => (
+            <button key={cat.id} onClick={() => setStyleFilter(cat.id)}
+              className={`shrink-0 px-2.5 py-1 rounded-md text-[9.5px] font-semibold transition-all leading-none ${
+                styleFilter === cat.id
+                  ? 'bg-violet-600/70 text-white border border-violet-500/50'
+                  : 'bg-white/[0.04] text-white/35 border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/60'
+              }`}>
+              {cat.label}
             </button>
           ))}
+        </div>
+        <div className="grid grid-cols-4 gap-1.5">
+          {STYLE_TEMPLATES
+            .filter(t => styleFilter === 'all' || getStyleCat(t.id) === styleFilter)
+            .map(tmpl => (
+              <button key={tmpl.id} onClick={() => onChange(tmpl.overrides)}
+                className="flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-[9.5px] font-medium
+                  bg-white/[0.03] text-white/50 ring-1 ring-white/[0.06]
+                  hover:bg-white/[0.08] hover:text-white/80 hover:ring-brand-500/25
+                  transition-all active:scale-95">
+                <span className="text-lg leading-none">{tmpl.emoji}</span>
+                <span className="truncate w-full text-center px-1">{tmpl.name}</span>
+              </button>
+            ))}
         </div>
       </Card>
 
@@ -795,6 +868,16 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   /* ── FX tab ─────────────────────────────────────── */
   const renderFxTab = () => (
     <div className="space-y-3">
+      <SubTabs
+        tabs={[
+          { id: 'core' as const,     label: 'Core'     },
+          { id: 'overlays' as const, label: 'Overlays' },
+          { id: 'extra' as const,    label: 'Extra'    },
+        ]}
+        active={fxSub}
+        onChange={setFxSub}
+      />
+      {fxSub === 'core' && <>
       {state.frame !== 'none' && (
         <Card>
           <SectionLabel>Frame Tint</SectionLabel>
@@ -1717,6 +1800,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      </>}
+      {fxSub === 'overlays' && <>
       {/* Batch 9 FX */}
       <Card>
         <SectionLabel>Stripe Background</SectionLabel>
@@ -2558,6 +2643,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      </>}
+      {fxSub === 'extra' && <>
       {/* Batch 40 FX controls */}
       <Card>
         <SectionLabel>Solar Flare</SectionLabel>
@@ -4892,12 +4979,22 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         })}
         label="Clear All Effects"
       />
+      </>}
     </div>
   );
 
   /* ── Adjust tab ─────────────────────────────────── */
   const renderAdjustTab = () => (
     <div className="space-y-3">
+      <SubTabs
+        tabs={[
+          { id: 'tone' as const,    label: 'Tone'    },
+          { id: 'filters' as const, label: 'Filters' },
+        ]}
+        active={adjSub}
+        onChange={setAdjSub}
+      />
+      {adjSub === 'tone' && <>
       <Card>
         <SectionLabel>Tone</SectionLabel>
         <Slider label="Brightness" value={state.brightness}        min={50}  max={150} unit="%" onChange={v => onChange({ brightness: v })} />
@@ -5111,6 +5208,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         </div>
       </Card>
 
+      </>}
+      {adjSub === 'filters' && <>
       {/* Batch 17 adjust controls */}
       <Card>
         <SectionLabel>Solarize Effect</SectionLabel>
@@ -5589,6 +5688,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           </>
         )}
       </Card>
+      </>}
     </div>
   );
 
@@ -5651,6 +5751,14 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   /* ── Brand tab ──────────────────────────────────── */
   const renderBrandTab = () => (
     <div className="space-y-3">
+      <SubTabs
+        tabs={[
+          { id: 'text' as const,    label: 'Text'    },
+          { id: 'effects' as const, label: 'Effects' },
+        ]}
+        active={brandSub}
+        onChange={setBrandSub}
+      />
       <Card>
         <SectionLabel>Text Overlay</SectionLabel>
         <input type="text" placeholder="Title…" value={state.titleText}
@@ -5670,6 +5778,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             focus:bg-white/[0.09] outline-none transition-all" />
       </Card>
 
+      <div className={brandSub !== 'text' ? 'hidden' : ''}>
       {(state.titleText || state.subtitleText || state.bodyText) && (
         <>
           <Card>
@@ -5977,6 +6086,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             )}
           </Card>
 
+      <div className={brandSub === 'text' ? 'hidden' : 'space-y-3'}>
           {/* Batch 9 text controls */}
           <Card>
             <SectionLabel>Title Shadow</SectionLabel>
@@ -6699,6 +6809,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
               </div>
             ))}
           </Card>
+      </div>
         </>
       )}
 
@@ -6880,6 +6991,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
         <p className="text-[8.5px] text-white/20">Position uses the same Logo Position setting above</p>
       </Card>
+      </div>
     </div>
   );
 
