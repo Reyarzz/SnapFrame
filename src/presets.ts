@@ -874,6 +874,25 @@ export interface EditorState {
   canvasSepia: boolean;             // sepia tint on whole canvas
   frameBezel: boolean;              // thick inset bezel border
   frameBezelColor: string;
+  // Batch 30
+  bgTerrazzo: boolean;              // terrazzo/mosaic scattered pebble pattern
+  bgTerrazzoColor: string;
+  bgTerrazzoOpacity: number;
+  overlayPaintDrip: boolean;        // paint drip down from top edge
+  overlayPaintDripColor: string;
+  overlayPaintDripOpacity: number;
+  imageLensBlur: boolean;           // subtle lens/depth-of-field blur on image
+  titleGhost: boolean;              // ghost phantom offset shadow behind title
+  titleGhostColor: string;
+  bgSnakeskin: boolean;             // snakeskin diamond-scale pattern
+  bgSnakeskinColor: string;
+  bgSnakeskinOpacity: number;
+  overlayIce: boolean;              // ice/frost crystal tint overlay
+  overlayIceOpacity: number;
+  bgDenim: boolean;                 // denim diagonal weave texture
+  bgDenimOpacity: number;
+  textStencil: boolean;             // stencil-style wide-tracked title
+  canvasOldPaper: boolean;          // aged warm parchment tint on canvas
 }
 
 export interface StyleTemplate {
@@ -1886,6 +1905,25 @@ export const DEFAULT_STATE: EditorState = {
   canvasSepia: false,
   frameBezel: false,
   frameBezelColor: '#c8a06e',
+  // Batch 30
+  bgTerrazzo: false,
+  bgTerrazzoColor: '#8b5cf6',
+  bgTerrazzoOpacity: 18,
+  overlayPaintDrip: false,
+  overlayPaintDripColor: '#8b5cf6',
+  overlayPaintDripOpacity: 60,
+  imageLensBlur: false,
+  titleGhost: false,
+  titleGhostColor: '#8b5cf6',
+  bgSnakeskin: false,
+  bgSnakeskinColor: '#8b5cf6',
+  bgSnakeskinOpacity: 15,
+  overlayIce: false,
+  overlayIceOpacity: 25,
+  bgDenim: false,
+  bgDenimOpacity: 12,
+  textStencil: false,
+  canvasOldPaper: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2875,6 +2913,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 30 templates
+  {
+    id: 'terrazzo-modern',
+    name: 'Terrazzo',
+    emoji: '🪟',
+    overrides: {
+      background: 'linear-gradient(135deg, #f0f0f0 0%, #e8e8f8 100%)', backgroundId: 'light',
+      padding: 52, borderRadius: 16, shadow: 40,
+      bgTerrazzo: true, bgTerrazzoColor: '#8b5cf6', bgTerrazzoOpacity: 25,
+      canvasTapeCorners: true,
+      titleColor: '#2d1b4e',
+    },
+  },
+  {
+    id: 'ice-frost',
+    name: 'Ice',
+    emoji: '🧊',
+    overrides: {
+      background: 'linear-gradient(135deg, #e8f4ff 0%, #d0eeff 100%)', backgroundId: 'light',
+      padding: 56, borderRadius: 20, shadow: 40,
+      overlayIce: true, overlayIceOpacity: 35,
+      bgLattice: true, bgLatticeColor: '#93c5fd', bgLatticeOpacity: 15,
+      canvasInnerGlow: true, canvasInnerGlowColor: '#93c5fd',
+      titleColor: '#1e3a5f',
+    },
+  },
+  {
+    id: 'ghost-moody',
+    name: 'Ghost',
+    emoji: '👻',
+    overrides: {
+      background: 'linear-gradient(135deg, #050510 0%, #0f0520 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 70,
+      titleGhost: true, titleGhostColor: '#8b5cf6',
+      overlayIce: true, overlayIceOpacity: 10,
+      canvasOldPaper: true,
+      titleColor: '#e2d9f3',
+    },
+  },
+  {
+    id: 'denim-casual',
+    name: 'Denim',
+    emoji: '👖',
+    overrides: {
+      background: '#1a2a4a', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 8, shadow: 50,
+      bgDenim: true, bgDenimOpacity: 20,
+      overlayPaintDrip: true, overlayPaintDripColor: '#ec4899', overlayPaintDripOpacity: 50,
+      textStencil: true,
+      titleColor: '#ffffff',
     },
   },
   // Batch 29 templates

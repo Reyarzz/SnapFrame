@@ -2556,6 +2556,87 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 30 FX controls */}
+      <Card>
+        <SectionLabel>Terrazzo</SectionLabel>
+        <Toggle label="Enable" value={state.bgTerrazzo ?? false} onChange={v => onChange({ bgTerrazzo: v })}
+          desc="Terrazzo scattered pebble background" />
+        {(state.bgTerrazzo ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTerrazzoColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgTerrazzoColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTerrazzoOpacity ?? 18} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgTerrazzoOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Snakeskin</SectionLabel>
+        <Toggle label="Enable" value={state.bgSnakeskin ?? false} onChange={v => onChange({ bgSnakeskin: v })}
+          desc="Diamond snakeskin scale background" />
+        {(state.bgSnakeskin ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSnakeskinColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgSnakeskinColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSnakeskinOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgSnakeskinOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Denim Weave</SectionLabel>
+        <Toggle label="Enable" value={state.bgDenim ?? false} onChange={v => onChange({ bgDenim: v })}
+          desc="Denim diagonal weave texture background" />
+        {(state.bgDenim ?? false) && (
+          <Slider label="Opacity" value={state.bgDenimOpacity ?? 12} min={3} max={60} unit="%"
+            onChange={v => onChange({ bgDenimOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Ice Overlay</SectionLabel>
+        <Toggle label="Enable" value={state.overlayIce ?? false} onChange={v => onChange({ overlayIce: v })}
+          desc="Ice/frost blue tint overlay" />
+        {(state.overlayIce ?? false) && (
+          <Slider label="Intensity" value={state.overlayIceOpacity ?? 25} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayIceOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Paint Drip</SectionLabel>
+        <Toggle label="Enable" value={state.overlayPaintDrip ?? false} onChange={v => onChange({ overlayPaintDrip: v })}
+          desc="Paint drip drops from top edge" />
+        {(state.overlayPaintDrip ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.overlayPaintDripColor ?? '#8b5cf6'}
+                onChange={e => onChange({ overlayPaintDripColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.overlayPaintDripOpacity ?? 60} min={10} max={100} unit="%"
+              onChange={v => onChange({ overlayPaintDripOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Old Paper</SectionLabel>
+        <Toggle label="Enable" value={state.canvasOldPaper ?? false} onChange={v => onChange({ canvasOldPaper: v })}
+          desc="Aged warm parchment tint on canvas" />
+      </Card>
+
       {/* Batch 29 FX controls */}
       <Card>
         <SectionLabel>Marble BG</SectionLabel>
@@ -3862,6 +3943,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 30 adjust controls */}
+      <Card>
+        <SectionLabel>Lens Blur</SectionLabel>
+        <Toggle label="Enable" value={state.imageLensBlur ?? false} onChange={v => onChange({ imageLensBlur: v })}
+          desc="Subtle depth-of-field blur on image" />
+      </Card>
+
       {/* Batch 29 adjust controls */}
       <Card>
         <SectionLabel>Duotone</SectionLabel>
@@ -4743,6 +4831,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 30 text controls */}
+          <Card>
+            <SectionLabel>Ghost Shadow</SectionLabel>
+            <Toggle label="Enable" value={state.titleGhost ?? false} onChange={v => onChange({ titleGhost: v })}
+              desc="Phantom offset ghost shadow behind title" />
+            {(state.titleGhost ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleGhostColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ titleGhostColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <SectionLabel>Stencil</SectionLabel>
+            <Toggle label="Enable" value={state.textStencil ?? false} onChange={v => onChange({ textStencil: v })}
+              desc="Stencil-style wide tracked uppercase title" />
           </Card>
 
           {/* Batch 29 text controls */}

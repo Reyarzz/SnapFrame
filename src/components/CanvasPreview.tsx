@@ -733,6 +733,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 30
+    bgTerrazzo, bgTerrazzoColor, bgTerrazzoOpacity,
+    overlayPaintDrip, overlayPaintDripColor, overlayPaintDripOpacity,
+    imageLensBlur, titleGhost, titleGhostColor,
+    bgSnakeskin, bgSnakeskinColor, bgSnakeskinOpacity,
+    overlayIce, overlayIceOpacity,
+    bgDenim, bgDenimOpacity,
+    textStencil, canvasOldPaper,
     // Batch 29
     bgMarble, bgMarbleColor, bgMarbleOpacity,
     imageDuotone, imageDuotoneColor,
@@ -1105,6 +1113,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 30 — lens blur: subtle depth-of-field softening
+  if (imageLensBlur ?? false) imageFilterParts.push('blur(1.8px) brightness(103%)');
   // Batch 29 — duotone: grayscale + hue-shift approximation
   if (imageDuotone ?? false) imageFilterParts.push('grayscale(100%) sepia(80%) saturate(300%) hue-rotate(220deg) brightness(95%)');
   // Batch 29 — chalk: bright soft matte pastel effect
@@ -1594,6 +1604,14 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 30 — stencil: wide tracking + uppercase
+              if (textStencil ?? false) { ts.letterSpacing = '0.3em'; ts.textTransform = 'uppercase'; ts.fontWeight = 700; }
+              // Batch 30 — ghost: phantom offset shadow behind title
+              if (titleGhost ?? false) {
+                const gc = titleGhostColor ?? '#8b5cf6';
+                const existingShadow = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existingShadow}6px 6px 0px ${gc}55, 10px 10px 0px ${gc}22`;
+              }
               // Batch 29 — wavy underline on title
               if (textUnderlineWave ?? false) ts.textDecoration = 'underline wavy';
               // Batch 28 — force italic on title
@@ -2932,6 +2950,82 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 30 — terrazzo scattered pebble pattern */}
+        {(bgTerrazzo ?? false) && (() => {
+          const tc = encodeURIComponent(bgTerrazzoColor ?? '#8b5cf6');
+          const pebbles = [
+            [10,8,4,2],[28,15,3,1.5],[45,6,5,2.5],[62,20,3,1.5],[80,10,4,2],
+            [18,30,3,1.5],[35,40,5,2.5],[55,28,4,2],[72,35,3,1.5],[88,25,4,2],
+            [8,55,5,2.5],[25,62,3,1.5],[42,50,4,2],[60,65,3,1.5],[78,55,5,2.5],
+            [15,80,4,2],[32,75,3,1.5],[50,85,5,2.5],[68,78,4,2],[85,70,3,1.5],
+          ] as [number,number,number,number][];
+          const shapes = pebbles.map(([cx,cy,rx,ry]) =>
+            `%3Cellipse cx='${cx}' cy='${cy}' rx='${rx}' ry='${ry}' fill='${tc}' opacity='0.6'/%3E`
+          ).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E${shapes}%3C/svg%3E")`,
+              backgroundRepeat: 'repeat',
+              opacity: (bgTerrazzoOpacity ?? 18) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 30 — snakeskin diamond-scale pattern */}
+        {(bgSnakeskin ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='20'%3E%3Cpolygon points='15,1 29,10 15,19 1,10' fill='none' stroke='${encodeURIComponent(bgSnakeskinColor ?? '#8b5cf6')}' stroke-width='0.7' opacity='0.6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgSnakeskinOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 30 — denim diagonal weave */}
+        {(bgDenim ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cline x1='0' y1='8' x2='8' y2='0' stroke='%23ffffff' stroke-width='0.5' opacity='0.4'/%3E%3Cline x1='4' y1='8' x2='8' y2='4' stroke='%23ffffff' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='0' y1='4' x2='4' y2='0' stroke='%23ffffff' stroke-width='0.3' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgDenimOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 30 — ice/frost blue tint overlay */}
+        {(overlayIce ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[5]" style={{
+            background: `radial-gradient(ellipse at 30% 20%, rgba(180,220,255,${((overlayIceOpacity ?? 25) / 100) * 0.6}) 0%, rgba(200,230,255,${((overlayIceOpacity ?? 25) / 100) * 0.3}) 50%, transparent 80%)`,
+            mixBlendMode: 'screen',
+          }} />
+        )}
+
+        {/* Batch 30 — paint drip from top edge */}
+        {(overlayPaintDrip ?? false) && (() => {
+          const dc = encodeURIComponent(overlayPaintDripColor ?? '#8b5cf6');
+          const drips = [
+            `M5,0 Q6,12 5,20 Q4,30 6,35 L4,35 Q3,30 4,20 Q5,12 3,0Z`,
+            `M20,0 Q22,18 20,28 Q18,38 21,45 L19,45 Q17,38 19,28 Q21,18 18,0Z`,
+            `M40,0 Q41,10 40,18 Q39,25 41,30 L39,30 Q38,25 39,18 Q40,10 38,0Z`,
+            `M65,0 Q67,20 65,32 Q63,42 66,50 L64,50 Q62,42 64,32 Q66,20 63,0Z`,
+            `M85,0 Q86,14 85,22 Q84,30 86,36 L84,36 Q83,30 84,22 Q85,14 83,0Z`,
+          ].map(d => `%3Cpath d='${d}' fill='${dc}'/%3E`).join('');
+          return (
+            <div className="absolute inset-0 pointer-events-none z-[38]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='60' viewBox='0 0 100 60'%3E${drips}%3C/svg%3E")`,
+              backgroundRepeat: 'repeat-x',
+              backgroundPosition: 'top',
+              backgroundSize: '100px 60px',
+              opacity: (overlayPaintDripOpacity ?? 60) / 100,
+            }} />
+          );
+        })()}
+
+        {/* Batch 30 — aged warm parchment tint */}
+        {(canvasOldPaper ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[4]" style={{
+            background: 'rgba(180,140,80,0.12)',
+            mixBlendMode: 'multiply',
           }} />
         )}
 
