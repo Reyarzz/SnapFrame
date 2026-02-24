@@ -1081,6 +1081,34 @@ export interface EditorState {
   canvasBevel: boolean;             // beveled 3D raised edge effect
   textShadowSoft: boolean;          // soft diffused ambient text shadow
   textShadowSoftColor: string;
+  // Batch 39
+  bgMicrochip: boolean;             // PCB circuit trace line pattern
+  bgMicrochipColor: string;
+  bgMicrochipOpacity: number;
+  bgSeabed: boolean;                // underwater seabed sand ripple waves
+  bgSeabedColor: string;
+  bgSeabedOpacity: number;
+  bgCobweb: boolean;                // spider web radial thread pattern
+  bgCobwebColor: string;
+  bgCobwebOpacity: number;
+  bgGalaxy2: boolean;               // swirling galaxy arm spiral bands
+  bgGalaxy2Color: string;
+  bgGalaxy2Opacity: number;
+  bgTile2: boolean;                 // Moroccan star geometric tile
+  bgTile2Color: string;
+  bgTile2Opacity: number;
+  overlayRust: boolean;             // rusty aged patina texture overlay
+  overlayRustOpacity: number;
+  overlayConfetti2: boolean;        // colorful confetti scatter overlay
+  overlayConfetti2Opacity: number;
+  imageFaded: boolean;              // faded bleached vintage film look
+  frameMetal: boolean;              // metallic brushed inset frame
+  frameMetalColor: string;
+  canvasSatin: boolean;             // satin sheen diagonal highlight overlay
+  bgBolt: boolean;                  // electric bolt fill pattern
+  bgBoltColor: string;
+  bgBoltOpacity: number;
+  textRubber: boolean;              // rubber stamp distressed text style
 }
 
 export interface StyleTemplate {
@@ -2300,6 +2328,34 @@ export const DEFAULT_STATE: EditorState = {
   canvasBevel: false,
   textShadowSoft: false,
   textShadowSoftColor: '#8b5cf6',
+  // Batch 39
+  bgMicrochip: false,
+  bgMicrochipColor: '#00ff88',
+  bgMicrochipOpacity: 12,
+  bgSeabed: false,
+  bgSeabedColor: '#4a8fa0',
+  bgSeabedOpacity: 15,
+  bgCobweb: false,
+  bgCobwebColor: '#ffffff',
+  bgCobwebOpacity: 12,
+  bgGalaxy2: false,
+  bgGalaxy2Color: '#8b5cf6',
+  bgGalaxy2Opacity: 20,
+  bgTile2: false,
+  bgTile2Color: '#8b5cf6',
+  bgTile2Opacity: 15,
+  overlayRust: false,
+  overlayRustOpacity: 20,
+  overlayConfetti2: false,
+  overlayConfetti2Opacity: 30,
+  imageFaded: false,
+  frameMetal: false,
+  frameMetalColor: '#a0a0b0',
+  canvasSatin: false,
+  bgBolt: false,
+  bgBoltColor: '#f0e040',
+  bgBoltOpacity: 15,
+  textRubber: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -3289,6 +3345,59 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 39 templates
+  {
+    id: 'circuit-tech',
+    name: 'Circuit',
+    emoji: '🔌',
+    overrides: {
+      background: '#000d08', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 70,
+      bgMicrochip: true, bgMicrochipColor: '#00ff88', bgMicrochipOpacity: 15,
+      bgGrid3D: true, bgGrid3DColor: '#00ff88', bgGrid3DOpacity: 6,
+      frameGlow3D: true, frameGlow3DColor: '#00ff88',
+      titleNeonPulse: true, textRubber: false,
+    },
+  },
+  {
+    id: 'galaxy-swirl',
+    name: 'Galaxy 2',
+    emoji: '🌌',
+    overrides: {
+      background: 'linear-gradient(135deg, #000005 0%, #020012 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 70,
+      bgGalaxy2: true, bgGalaxy2Color: '#7c3aed', bgGalaxy2Opacity: 25,
+      bgAstro: true, bgAstroColor: '#ffffff', bgAstroOpacity: 20,
+      overlayBloom2: true, overlayBloom2Opacity: 30,
+      titleGradient: true, textGlowSoft: true,
+    },
+  },
+  {
+    id: 'moroccan-tile',
+    name: 'Moroccan',
+    emoji: '🕌',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0510 0%, #150820 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 50,
+      bgTile2: true, bgTile2Color: '#d4af37', bgTile2Opacity: 18,
+      bgIkat: true, bgIkatColor: '#c084fc', bgIkatOpacity: 10,
+      frameMetal: true, frameMetalColor: '#d4af37',
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'cobweb-gothic',
+    name: 'Gothic Web',
+    emoji: '🕸️',
+    overrides: {
+      background: '#050505', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 12, shadow: 70,
+      bgCobweb: true, bgCobwebColor: '#888888', bgCobwebOpacity: 15,
+      overlayRust: true, overlayRustOpacity: 20,
+      canvasBevel: true, imageGrayscale: 30,
+      titleFlicker: true,
     },
   },
   // Batch 38 templates

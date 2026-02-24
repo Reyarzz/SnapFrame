@@ -2558,6 +2558,155 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 39 FX controls */}
+      <Card>
+        <SectionLabel>Microchip</SectionLabel>
+        <Toggle label="Enable" value={state.bgMicrochip ?? false} onChange={v => onChange({ bgMicrochip: v })}
+          desc="PCB circuit trace line grid" />
+        {(state.bgMicrochip ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgMicrochipColor ?? '#00ff88'}
+                onChange={e => onChange({ bgMicrochipColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgMicrochipOpacity ?? 12} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgMicrochipOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Seabed</SectionLabel>
+        <Toggle label="Enable" value={state.bgSeabed ?? false} onChange={v => onChange({ bgSeabed: v })}
+          desc="Underwater sand ripple waves" />
+        {(state.bgSeabed ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgSeabedColor ?? '#4a8fa0'}
+                onChange={e => onChange({ bgSeabedColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgSeabedOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgSeabedOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Cobweb</SectionLabel>
+        <Toggle label="Enable" value={state.bgCobweb ?? false} onChange={v => onChange({ bgCobweb: v })}
+          desc="Radial spider web thread pattern" />
+        {(state.bgCobweb ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgCobwebColor ?? '#ffffff'}
+                onChange={e => onChange({ bgCobwebColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgCobwebOpacity ?? 12} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgCobwebOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Galaxy 2</SectionLabel>
+        <Toggle label="Enable" value={state.bgGalaxy2 ?? false} onChange={v => onChange({ bgGalaxy2: v })}
+          desc="Swirling galaxy arm spiral bands" />
+        {(state.bgGalaxy2 ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgGalaxy2Color ?? '#8b5cf6'}
+                onChange={e => onChange({ bgGalaxy2Color: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgGalaxy2Opacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgGalaxy2Opacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Moroccan Tile</SectionLabel>
+        <Toggle label="Enable" value={state.bgTile2 ?? false} onChange={v => onChange({ bgTile2: v })}
+          desc="8-point Moroccan star tile pattern" />
+        {(state.bgTile2 ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgTile2Color ?? '#8b5cf6'}
+                onChange={e => onChange({ bgTile2Color: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgTile2Opacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgTile2Opacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Electric Bolt</SectionLabel>
+        <Toggle label="Enable" value={state.bgBolt ?? false} onChange={v => onChange({ bgBolt: v })}
+          desc="Scattered electric bolt pattern" />
+        {(state.bgBolt ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgBoltColor ?? '#f0e040'}
+                onChange={e => onChange({ bgBoltColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgBoltOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgBoltOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Rust</SectionLabel>
+        <Toggle label="Enable" value={state.overlayRust ?? false} onChange={v => onChange({ overlayRust: v })}
+          desc="Aged rust patina texture overlay" />
+        {(state.overlayRust ?? false) && (
+          <Slider label="Opacity" value={state.overlayRustOpacity ?? 20} min={5} max={70} unit="%"
+            onChange={v => onChange({ overlayRustOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Confetti 2</SectionLabel>
+        <Toggle label="Enable" value={state.overlayConfetti2 ?? false} onChange={v => onChange({ overlayConfetti2: v })}
+          desc="Multi-color square confetti scatter" />
+        {(state.overlayConfetti2 ?? false) && (
+          <Slider label="Opacity" value={state.overlayConfetti2Opacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlayConfetti2Opacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Metal Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameMetal ?? false} onChange={v => onChange({ frameMetal: v })}
+          desc="Brushed metallic inset sheen frame" />
+        {(state.frameMetal ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameMetalColor ?? '#a0a0b0'}
+              onChange={e => onChange({ frameMetalColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Satin</SectionLabel>
+        <Toggle label="Enable" value={state.canvasSatin ?? false} onChange={v => onChange({ canvasSatin: v })}
+          desc="Diagonal satin sheen highlight" />
+      </Card>
+
       {/* Batch 38 FX controls */}
       <Card>
         <SectionLabel>Desert</SectionLabel>
@@ -4845,6 +4994,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 39 adjust controls */}
+      <Card>
+        <SectionLabel>Faded</SectionLabel>
+        <Toggle label="Enable" value={state.imageFaded ?? false} onChange={v => onChange({ imageFaded: v })}
+          desc="Bleached faded vintage film look" />
+      </Card>
+
       {/* Batch 38 adjust controls */}
       <Card>
         <SectionLabel>Dawn</SectionLabel>
@@ -5801,6 +5957,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
               </div>
             )}
+          </Card>
+
+          {/* Batch 39 text controls */}
+          <Card>
+            <SectionLabel>Rubber Stamp</SectionLabel>
+            <Toggle label="Enable" value={state.textRubber ?? false} onChange={v => onChange({ textRubber: v })}
+              desc="Distressed rubber stamp title style" />
           </Card>
 
           {/* Batch 38 text controls */}

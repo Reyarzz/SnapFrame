@@ -733,6 +733,17 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 39
+    bgMicrochip, bgMicrochipColor, bgMicrochipOpacity,
+    bgSeabed, bgSeabedColor, bgSeabedOpacity,
+    bgCobweb, bgCobwebColor, bgCobwebOpacity,
+    bgGalaxy2, bgGalaxy2Color, bgGalaxy2Opacity,
+    bgTile2, bgTile2Color, bgTile2Opacity,
+    overlayRust, overlayRustOpacity,
+    overlayConfetti2, overlayConfetti2Opacity,
+    imageFaded, frameMetal, frameMetalColor,
+    canvasSatin, bgBolt, bgBoltColor, bgBoltOpacity,
+    textRubber,
     // Batch 38
     bgDesert, bgDesertColor, bgDesertOpacity,
     bgArctic, bgArcticOpacity,
@@ -1051,6 +1062,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 39 — metallic frame: brushed metallic inset sheen border
+  if (frameMetal ?? false) {
+    const mc = frameMetalColor ?? '#a0a0b0';
+    const metalShadow = `inset 0 0 0 4px ${mc}, inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.4), inset 0 0 0 5px ${mc}80`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${metalShadow}` : metalShadow;
+  }
   // Batch 38 — vine frame: green leaf vine inset border
   if (frameVine ?? false) {
     const vc = frameVineColor ?? '#4a7c2f';
@@ -1249,6 +1266,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 39 — faded: bleached desaturated vintage film fade
+  if (imageFaded ?? false) imageFilterParts.push('brightness(115%) saturate(40%) contrast(80%) sepia(15%)');
   // Batch 38 — dawn: warm rosy golden-hour dawn filter
   if (imageDawn ?? false) imageFilterParts.push('sepia(20%) saturate(130%) brightness(108%) hue-rotate(-15deg) contrast(102%)');
   // Batch 37 — HDR: high dynamic range tone-mapping approximation
@@ -1760,6 +1779,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 39 — rubber stamp: wide tracking uppercase distressed look
+              if (textRubber ?? false) {
+                ts.textTransform = 'uppercase';
+                ts.letterSpacing = '0.15em';
+                ts.fontWeight = 900;
+                ts.opacity = 0.85;
+                ts.filter = 'url(#none) contrast(150%)';
+                const existing = ts.textShadow ? `${ts.textShadow}, ` : '';
+                ts.textShadow = `${existing}1px 1px 0 rgba(0,0,0,0.3), -1px -1px 0 rgba(0,0,0,0.1)`;
+              }
               // Batch 38 — soft shadow: diffused ambient shadow bloom
               if (textShadowSoft ?? false) {
                 const ssc = textShadowSoftColor ?? '#8b5cf6';
@@ -3191,6 +3220,88 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 39 — microchip: PCB circuit trace line grid */}
+        {(bgMicrochip ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect x='10' y='10' width='40' height='40' fill='none' stroke='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='30' y1='0' x2='30' y2='10' stroke='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='30' y1='50' x2='30' y2='60' stroke='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='0' y1='30' x2='10' y2='30' stroke='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.5'/%3E%3Cline x1='50' y1='30' x2='60' y2='30' stroke='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' stroke-width='0.4' opacity='0.5'/%3E%3Ccircle cx='30' cy='30' r='3' fill='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' opacity='0.4'/%3E%3Ccircle cx='10' cy='10' r='2' fill='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='2' fill='${encodeURIComponent(bgMicrochipColor ?? '#00ff88')}' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgMicrochipOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — seabed: underwater sand ripple wave lines */}
+        {(bgSeabed ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30'%3E%3Cpath d='M0 15 Q15 8 30 15 Q45 22 60 15 Q75 8 90 15 Q105 22 120 15' fill='none' stroke='${encodeURIComponent(bgSeabedColor ?? '#4a8fa0')}' stroke-width='0.7' opacity='0.5'/%3E%3Cpath d='M0 22 Q15 15 30 22 Q45 29 60 22 Q75 15 90 22 Q105 29 120 22' fill='none' stroke='${encodeURIComponent(bgSeabedColor ?? '#4a8fa0')}' stroke-width='0.5' opacity='0.35'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgSeabedOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — cobweb: radial spider web thread pattern */}
+        {(bgCobweb ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='40' y1='40' x2='40' y2='5' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='68' y2='22' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='75' y2='55' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='55' y2='75' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='22' y2='68' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='5' y2='55' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Cline x1='40' y1='40' x2='12' y2='22' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.3'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.25'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.2'/%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='${encodeURIComponent(bgCobwebColor ?? '#ffffff')}' stroke-width='0.3' opacity='0.15'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgCobwebOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — galaxy 2: swirling conic spiral arms */}
+        {(bgGalaxy2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, ${bgGalaxy2Color ?? '#8b5cf6'}22 20deg, transparent 40deg, transparent 80deg, ${bgGalaxy2Color ?? '#8b5cf6'}18 100deg, transparent 120deg, transparent 160deg, ${bgGalaxy2Color ?? '#8b5cf6'}22 180deg, transparent 200deg, transparent 240deg, ${bgGalaxy2Color ?? '#8b5cf6'}18 260deg, transparent 280deg, transparent 320deg, ${bgGalaxy2Color ?? '#8b5cf6'}22 340deg, transparent 360deg)`,
+            opacity: (bgGalaxy2Opacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — Moroccan tile 2: 8-point star pattern */}
+        {(bgTile2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpolygon points='20,2 24,16 38,16 27,24 31,38 20,30 9,38 13,24 2,16 16,16' fill='none' stroke='${encodeURIComponent(bgTile2Color ?? '#8b5cf6')}' stroke-width='0.7' opacity='0.55'/%3E%3Ccircle cx='20' cy='20' r='4' fill='none' stroke='${encodeURIComponent(bgTile2Color ?? '#8b5cf6')}' stroke-width='0.5' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgTile2Opacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — electric bolt fill: scattered bolt shapes */}
+        {(bgBolt ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120'%3E%3Cpolyline points='45,5 28,55 42,55 22,115' fill='none' stroke='${encodeURIComponent(bgBoltColor ?? '#f0e040')}' stroke-width='2' opacity='0.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgBoltOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — rust overlay: warm brown patina texture */}
+        {(overlayRust ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: [
+              'radial-gradient(ellipse 40% 30% at 15% 20%, rgba(139,80,20,0.3) 0%, transparent 60%)',
+              'radial-gradient(ellipse 35% 25% at 85% 70%, rgba(120,60,10,0.25) 0%, transparent 55%)',
+              'radial-gradient(ellipse 30% 20% at 60% 40%, rgba(100,50,15,0.2) 0%, transparent 50%)',
+            ].join(', '),
+            opacity: (overlayRustOpacity ?? 20) / 100,
+            mixBlendMode: 'multiply',
+          }} />
+        )}
+
+        {/* Batch 39 — confetti 2: multi-color tiny square confetti */}
+        {(overlayConfetti2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect x='8' y='12' width='5' height='5' fill='%23ff4080' opacity='0.8' transform='rotate(15 10 14)'/%3E%3Crect x='35' y='8' width='4' height='4' fill='%2300e5ff' opacity='0.7' transform='rotate(-20 37 10)'/%3E%3Crect x='62' y='25' width='6' height='6' fill='%23ffd700' opacity='0.8' transform='rotate(30 65 28)'/%3E%3Crect x='18' y='50' width='4' height='4' fill='%2300ff88' opacity='0.7' transform='rotate(-10 20 52)'/%3E%3Crect x='75' y='55' width='5' height='5' fill='%23ff4080' opacity='0.7' transform='rotate(25 77 57)'/%3E%3Crect x='45' y='70' width='6' height='6' fill='%2300e5ff' opacity='0.8' transform='rotate(-30 48 73)'/%3E%3Crect x='88' y='80' width='4' height='4' fill='%23ffd700' opacity='0.6' transform='rotate(10 90 82)'/%3E%3Crect x='10' y='85' width='5' height='5' fill='%2300ff88' opacity='0.7' transform='rotate(-15 12 87)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlayConfetti2Opacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 39 — satin: diagonal sheen highlight */}
+        {(canvasSatin ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[3]" style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.08) 60%, rgba(255,255,255,0.02) 80%, rgba(255,255,255,0.05) 100%)',
           }} />
         )}
 
