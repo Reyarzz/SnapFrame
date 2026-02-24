@@ -912,6 +912,25 @@ export interface EditorState {
   bgTartanPlaidColor: string;
   bgTartanPlaidOpacity: number;
   canvasBloom: boolean;             // soft bloom glow on canvas center
+  // Batch 32
+  bgKaleidoscope: boolean;          // kaleidoscope radial symmetry background
+  bgKaleidoscopeColor: string;
+  bgKaleidoscopeOpacity: number;
+  overlaySparkle: boolean;          // sparkle star dots overlay
+  overlaySparkleOpacity: number;
+  imageSketch: boolean;             // pencil sketch outline filter
+  titleNeonBox: boolean;            // neon glowing box around title
+  titleNeonBoxColor: string;
+  bgPavingStones: boolean;          // paving stone grid background
+  bgPavingStonesColor: string;
+  bgPavingStonesOpacity: number;
+  imageDaylight: boolean;           // bright daylight enhancement filter
+  bgFloral: boolean;                // floral/petal radial pattern background
+  bgFloralColor: string;
+  bgFloralOpacity: number;
+  textExtraBold: boolean;           // extra bold/black weight on title
+  canvasSplash: boolean;            // ink/paint splash corner accent
+  canvasSplashColor: string;
 }
 
 export interface StyleTemplate {
@@ -1962,6 +1981,25 @@ export const DEFAULT_STATE: EditorState = {
   bgTartanPlaidColor: '#8b5cf6',
   bgTartanPlaidOpacity: 15,
   canvasBloom: false,
+  // Batch 32
+  bgKaleidoscope: false,
+  bgKaleidoscopeColor: '#8b5cf6',
+  bgKaleidoscopeOpacity: 20,
+  overlaySparkle: false,
+  overlaySparkleOpacity: 30,
+  imageSketch: false,
+  titleNeonBox: false,
+  titleNeonBoxColor: '#00ffff',
+  bgPavingStones: false,
+  bgPavingStonesColor: '#8b5cf6',
+  bgPavingStonesOpacity: 12,
+  imageDaylight: false,
+  bgFloral: false,
+  bgFloralColor: '#ec4899',
+  bgFloralOpacity: 15,
+  textExtraBold: false,
+  canvasSplash: false,
+  canvasSplashColor: '#8b5cf6',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2951,6 +2989,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 32 templates
+  {
+    id: 'kaleidoscope-vivid',
+    name: 'Kaleidoscope',
+    emoji: '🔮',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0015 0%, #150025 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 20, shadow: 60,
+      bgKaleidoscope: true, bgKaleidoscopeColor: '#a78bfa', bgKaleidoscopeOpacity: 30,
+      overlaySparkle: true, overlaySparkleOpacity: 35,
+      canvasBloom: true, titleGradient: true,
+    },
+  },
+  {
+    id: 'sketch-minimal',
+    name: 'Sketch',
+    emoji: '✏️',
+    overrides: {
+      background: '#f8f5f0', backgroundId: 'light',
+      padding: 52, borderRadius: 8, shadow: 30,
+      imageSketch: true,
+      bgPavingStones: true, bgPavingStonesColor: '#6b7280', bgPavingStonesOpacity: 8,
+      titleColor: '#111111', titleFont: 'monospace',
+      textExtraBold: true,
+    },
+  },
+  {
+    id: 'floral-garden',
+    name: 'Floral',
+    emoji: '🌸',
+    overrides: {
+      background: 'linear-gradient(135deg, #fff0f8 0%, #ffe8f5 100%)', backgroundId: 'light',
+      padding: 56, borderRadius: 20, shadow: 40,
+      bgFloral: true, bgFloralColor: '#ec4899', bgFloralOpacity: 20,
+      canvasSplash: true, canvasSplashColor: '#ec4899',
+      imageDaylight: true, canvasBloom: true,
+      titleColor: '#9d174d',
+    },
+  },
+  {
+    id: 'neon-box-frame',
+    name: 'Neon Box',
+    emoji: '📺',
+    overrides: {
+      background: '#000000', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 0, shadow: 50,
+      titleNeonBox: true, titleNeonBoxColor: '#00ffff',
+      overlayMatrix: true, overlayMatrixOpacity: 15,
+      canvasBorderGlow: true, canvasBorderGlowColor: '#00ffff',
+      titleColor: '#00ffff', titleFont: 'monospace',
     },
   },
   // Batch 31 templates

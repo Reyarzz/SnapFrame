@@ -733,6 +733,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 32
+    bgKaleidoscope, bgKaleidoscopeColor, bgKaleidoscopeOpacity,
+    overlaySparkle, overlaySparkleOpacity,
+    imageSketch, titleNeonBox, titleNeonBoxColor,
+    bgPavingStones, bgPavingStonesColor, bgPavingStonesOpacity,
+    imageDaylight, bgFloral, bgFloralColor, bgFloralOpacity,
+    textExtraBold, canvasSplash, canvasSplashColor,
     // Batch 31
     bgTieDye, bgTieDyeColor, bgTieDyeOpacity,
     overlayMatrix, overlayMatrixOpacity,
@@ -1124,6 +1131,10 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 32 — sketch: grayscale + high contrast edge look
+  if (imageSketch ?? false) imageFilterParts.push('grayscale(100%) contrast(300%) brightness(140%) invert(100%) blur(0.4px)');
+  // Batch 32 — daylight: bright vivid sunlit enhancement
+  if (imageDaylight ?? false) imageFilterParts.push('brightness(115%) saturate(130%) contrast(105%)');
   // Batch 31 — neon edge: high-contrast invert approximation
   if (imageNeonEdge ?? false) imageFilterParts.push('contrast(400%) brightness(180%) invert(80%) hue-rotate(120deg) saturate(300%)');
   // Batch 31 — bokeh: soft dreamy light circles approximation
@@ -1619,6 +1630,16 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 32 — extra bold/black weight
+              if (textExtraBold ?? false) ts.fontWeight = 900;
+              // Batch 32 — neon glowing box around title
+              if (titleNeonBox ?? false) {
+                const nbc = titleNeonBoxColor ?? '#00ffff';
+                ts.border = `2px solid ${nbc}`;
+                ts.padding = '6px 14px';
+                ts.boxShadow = `0 0 10px ${nbc}, 0 0 20px ${nbc}60, inset 0 0 10px ${nbc}20`;
+                ts.borderRadius = 4;
+              }
               // Batch 31 — cursive/script font on title
               if (textCursive ?? false) ts.fontFamily = 'Georgia, "Times New Roman", cursive, serif';
               // Batch 31 — flickering neon animation
@@ -2969,6 +2990,51 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 32 — kaleidoscope radial symmetry */}
+        {(bgKaleidoscope ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: [
+              `conic-gradient(from 0deg at 50% 50%, ${bgKaleidoscopeColor ?? '#8b5cf6'}88 0deg, transparent 30deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}55 60deg, transparent 90deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}88 120deg, transparent 150deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}55 180deg, transparent 210deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}88 240deg, transparent 270deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}55 300deg, transparent 330deg, ${bgKaleidoscopeColor ?? '#8b5cf6'}88 360deg)`,
+            ].join(', '),
+            opacity: (bgKaleidoscopeOpacity ?? 20) / 100,
+          }} />
+        )}
+
+        {/* Batch 32 — floral petal radial pattern */}
+        {(bgFloral ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(0 30 30)'/%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(60 30 30)'/%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(120 30 30)'/%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(180 30 30)'/%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(240 30 30)'/%3E%3Cellipse cx='30' cy='12' rx='6' ry='10' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.5' transform='rotate(300 30 30)'/%3E%3Ccircle cx='30' cy='30' r='5' fill='${encodeURIComponent(bgFloralColor ?? '#ec4899')}' opacity='0.7'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgFloralOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 32 — paving stone grid */}
+        {(bgPavingStones ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25'%3E%3Crect x='1' y='1' width='38' height='23' fill='none' stroke='${encodeURIComponent(bgPavingStonesColor ?? '#8b5cf6')}' stroke-width='0.8' rx='1'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgPavingStonesOpacity ?? 12) / 100,
+          }} />
+        )}
+
+        {/* Batch 32 — sparkle star dots */}
+        {(overlaySparkle ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ctext x='10' y='15' font-size='10' fill='%23ffffff' opacity='0.9'%3E✦%3C/text%3E%3Ctext x='55' y='30' font-size='7' fill='%23ffffff' opacity='0.6'%3E✧%3C/text%3E%3Ctext x='25' y='55' font-size='12' fill='%23ffffff' opacity='0.8'%3E✦%3C/text%3E%3Ctext x='65' y='65' font-size='8' fill='%23ffffff' opacity='0.5'%3E✦%3C/text%3E%3Ctext x='5' y='70' font-size='6' fill='%23ffffff' opacity='0.7'%3E✧%3C/text%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (overlaySparkleOpacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 32 — ink splash corner accent */}
+        {(canvasSplash ?? false) && (
+          <div className="absolute pointer-events-none z-[3]" style={{
+            top: 0, left: 0, width: '35%', height: '35%',
+            background: `radial-gradient(ellipse 80% 80% at 0% 0%, ${canvasSplashColor ?? '#8b5cf6'}60 0%, ${canvasSplashColor ?? '#8b5cf6'}20 40%, transparent 70%)`,
           }} />
         )}
 

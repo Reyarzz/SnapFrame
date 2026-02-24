@@ -2556,6 +2556,85 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 32 FX controls */}
+      <Card>
+        <SectionLabel>Kaleidoscope</SectionLabel>
+        <Toggle label="Enable" value={state.bgKaleidoscope ?? false} onChange={v => onChange({ bgKaleidoscope: v })}
+          desc="Kaleidoscope conic radial background" />
+        {(state.bgKaleidoscope ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgKaleidoscopeColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgKaleidoscopeColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgKaleidoscopeOpacity ?? 20} min={5} max={70} unit="%"
+              onChange={v => onChange({ bgKaleidoscopeOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Floral BG</SectionLabel>
+        <Toggle label="Enable" value={state.bgFloral ?? false} onChange={v => onChange({ bgFloral: v })}
+          desc="Floral petal radial pattern background" />
+        {(state.bgFloral ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgFloralColor ?? '#ec4899'}
+                onChange={e => onChange({ bgFloralColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgFloralOpacity ?? 15} min={3} max={60} unit="%"
+              onChange={v => onChange({ bgFloralOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Paving Stones</SectionLabel>
+        <Toggle label="Enable" value={state.bgPavingStones ?? false} onChange={v => onChange({ bgPavingStones: v })}
+          desc="Paving stone rectangular grid background" />
+        {(state.bgPavingStones ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgPavingStonesColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgPavingStonesColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgPavingStonesOpacity ?? 12} min={3} max={50} unit="%"
+              onChange={v => onChange({ bgPavingStonesOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Sparkle</SectionLabel>
+        <Toggle label="Enable" value={state.overlaySparkle ?? false} onChange={v => onChange({ overlaySparkle: v })}
+          desc="Sparkle star dots overlay" />
+        {(state.overlaySparkle ?? false) && (
+          <Slider label="Opacity" value={state.overlaySparkleOpacity ?? 30} min={5} max={80} unit="%"
+            onChange={v => onChange({ overlaySparkleOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Ink Splash</SectionLabel>
+        <Toggle label="Enable" value={state.canvasSplash ?? false} onChange={v => onChange({ canvasSplash: v })}
+          desc="Ink/paint splash corner accent" />
+        {(state.canvasSplash ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.canvasSplashColor ?? '#8b5cf6'}
+              onChange={e => onChange({ canvasSplashColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 31 FX controls */}
       <Card>
         <SectionLabel>Tie Dye</SectionLabel>
@@ -4024,6 +4103,19 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 32 adjust controls */}
+      <Card>
+        <SectionLabel>Sketch</SectionLabel>
+        <Toggle label="Enable" value={state.imageSketch ?? false} onChange={v => onChange({ imageSketch: v })}
+          desc="Pencil sketch outline filter" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Daylight</SectionLabel>
+        <Toggle label="Enable" value={state.imageDaylight ?? false} onChange={v => onChange({ imageDaylight: v })}
+          desc="Bright vivid daylight enhancement" />
+      </Card>
+
       {/* Batch 31 adjust controls */}
       <Card>
         <SectionLabel>Neon Edge</SectionLabel>
@@ -4923,6 +5015,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 32 text controls */}
+          <Card>
+            <SectionLabel>Extra Bold</SectionLabel>
+            <Toggle label="Enable" value={state.textExtraBold ?? false} onChange={v => onChange({ textExtraBold: v })}
+              desc="Extra bold/black font weight on title" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Neon Box</SectionLabel>
+            <Toggle label="Enable" value={state.titleNeonBox ?? false} onChange={v => onChange({ titleNeonBox: v })}
+              desc="Glowing neon border box around title" />
+            {(state.titleNeonBox ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.titleNeonBoxColor ?? '#00ffff'}
+                  onChange={e => onChange({ titleNeonBoxColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>
