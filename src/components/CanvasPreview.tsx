@@ -733,6 +733,15 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     overlayVHS, overlayVHSIntensity,
     tiltShiftImage, tiltShiftImageBlur, tiltShiftImageCenter,
     imagePerspective,
+    // Batch 33
+    bgStitching, bgStitchingColor, bgStitchingOpacity,
+    titleWave, bgSunrise, bgSunriseOpacity,
+    frameGlow3D, frameGlow3DColor,
+    bgMosaic, bgMosaicColor, bgMosaicOpacity,
+    overlayVignette2, overlayVignette2Opacity,
+    textOutlineDouble, textOutlineDoubleColor,
+    bgGeometric3D, bgGeometric3DColor, bgGeometric3DOpacity,
+    imageEnhance,
     // Batch 32
     bgKaleidoscope, bgKaleidoscopeColor, bgKaleidoscopeOpacity,
     overlaySparkle, overlaySparkleOpacity,
@@ -989,6 +998,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
     const paintShadow = `inset 3px 3px 0 ${psc}, inset -3px -3px 0 ${psc}, inset 6px -2px 0 ${psc}80, inset -2px 6px 0 ${psc}80`;
     canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${paintShadow}` : paintShadow;
   }
+  // Batch 33 — 3D glow frame: raised inset with multi-stop glow giving depth
+  if (frameGlow3D ?? false) {
+    const gc = frameGlow3DColor ?? '#8b5cf6';
+    const glow3d = `inset 0 0 0 2px ${gc}, inset 2px 2px 8px ${gc}60, inset -2px -2px 8px ${gc}30, 0 0 20px ${gc}50, 0 0 40px ${gc}20`;
+    canvasStyle.boxShadow = canvasStyle.boxShadow ? `${canvasStyle.boxShadow}, ${glow3d}` : glow3d;
+  }
   // Batch 26 — double stroke: two concentric inset border rings
   if (frameDoubleStroke ?? false) {
     const dsc = frameDoubleStrokeColor ?? '#8b5cf6';
@@ -1131,6 +1146,8 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
   if (imageEdgeGlow ?? false) imageFilterParts.push(`drop-shadow(0 0 ${imageEdgeGlowBlur ?? 24}px ${imageEdgeGlowColor ?? '#8b5cf6'}) drop-shadow(0 0 ${(imageEdgeGlowBlur ?? 24) * 0.5}px ${imageEdgeGlowColor ?? '#8b5cf6'})`);
   // Batch 17 — solarize approximation
   if (imageSolarize ?? false) imageFilterParts.push('contrast(150%) brightness(110%) invert(50%) saturate(180%) brightness(90%) invert(50%)');
+  // Batch 33 — enhance: clarity boost with sharpened micro-contrast
+  if (imageEnhance ?? false) imageFilterParts.push('contrast(118%) brightness(106%) saturate(115%) drop-shadow(0 0 0.5px rgba(0,0,0,0.3))');
   // Batch 32 — sketch: grayscale + high contrast edge look
   if (imageSketch ?? false) imageFilterParts.push('grayscale(100%) contrast(300%) brightness(140%) invert(100%) blur(0.4px)');
   // Batch 32 — daylight: bright vivid sunlit enhancement
@@ -1630,6 +1647,13 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             )}
             {titleText && (() => {
               const ts = getTextStyle(titleSize, titleColor, titleWeight === 'normal' ? 400 : 700, true);
+              // Batch 33 — double outline: layered text-stroke trick for doubled ring
+              if (textOutlineDouble ?? false) {
+                const doc = textOutlineDoubleColor ?? '#8b5cf6';
+                ts.WebkitTextStroke = `3px ${doc}`;
+                ts.textShadow = `0 0 0 6px ${doc}60`;
+                ts.paintOrder = 'stroke fill';
+              }
               // Batch 32 — extra bold/black weight
               if (textExtraBold ?? false) ts.fontWeight = 900;
               // Batch 32 — neon glowing box around title
@@ -1706,6 +1730,19 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
               // Batch 21 — flip title horizontally
               if (titleFlipText ?? false) ts.transform = 'scaleX(-1)';
               const skewStyle = (titleSkew ?? 0) !== 0 ? { transform: `skewX(${titleSkew}deg)`, display: 'inline-block' } : {};
+              // Batch 33 — wave title: each character vertically offset in a sin wave
+              if (titleWave ?? false) {
+                const justify = textAlignVal === 'center' ? 'center' : textAlignVal === 'right' ? 'flex-end' : 'flex-start';
+                return (
+                  <div style={{ ...ts, ...skewStyle, display: 'flex', flexWrap: 'wrap', justifyContent: justify, background: undefined, WebkitBackgroundClip: undefined, WebkitTextFillColor: undefined }}>
+                    {titleText.split('').map((ch, i) => (
+                      <span key={i} style={{ display: 'inline-block', transform: `translateY(${(Math.sin(i * 1.2) * 6).toFixed(1)}px) rotate(${(Math.sin(i * 0.8) * 3).toFixed(1)}deg)` }}>
+                        {ch === ' ' ? '\u00a0' : ch}
+                      </span>
+                    ))}
+                  </div>
+                );
+              }
               // Batch 28 — split two-tone title (first half one color, second half another)
               if (titleSplit ?? false) {
                 const half = Math.ceil(titleText.length / 2);
@@ -2990,6 +3027,50 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ state, canvasRef }) => {
             WebkitBackdropFilter: `blur(${backdropBlurCardBlur ?? 12}px)`,
             opacity: (backdropBlurCardOpacity ?? 80) / 100,
             pointerEvents: 'none',
+          }} />
+        )}
+
+        {/* Batch 33 — stitching: dashed border stitched-edge pattern */}
+        {(bgStitching ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[2]" style={{
+            outline: `3px dashed ${bgStitchingColor ?? '#8b5cf6'}`,
+            outlineOffset: '-10px',
+            borderRadius: 4,
+            opacity: (bgStitchingOpacity ?? 40) / 100,
+          }} />
+        )}
+
+        {/* Batch 33 — sunrise gradient sky sweep */}
+        {(bgSunrise ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: 'linear-gradient(to top, #ff6b35cc 0%, #f7931eaa 25%, #ffd700aa 50%, #87ceebaa 75%, #1a1a4e44 100%)',
+            opacity: (bgSunriseOpacity ?? 30) / 100,
+          }} />
+        )}
+
+        {/* Batch 33 — mosaic colored tile grid */}
+        {(bgMosaic ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Crect x='0' y='0' width='9' height='9' fill='${encodeURIComponent(bgMosaicColor ?? '#8b5cf6')}' opacity='0.6'/%3E%3Crect x='11' y='0' width='9' height='9' fill='${encodeURIComponent(bgMosaicColor ?? '#8b5cf6')}' opacity='0.35'/%3E%3Crect x='0' y='11' width='9' height='9' fill='${encodeURIComponent(bgMosaicColor ?? '#8b5cf6')}' opacity='0.4'/%3E%3Crect x='11' y='11' width='9' height='9' fill='${encodeURIComponent(bgMosaicColor ?? '#8b5cf6')}' opacity='0.6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgMosaicOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 33 — geometric 3D isometric grid */}
+        {(bgGeometric3D ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpolygon points='30,5 55,20 55,50 30,65 5,50 5,20' fill='none' stroke='${encodeURIComponent(bgGeometric3DColor ?? '#8b5cf6')}' stroke-width='0.8' opacity='0.6'/%3E%3Cline x1='30' y1='5' x2='30' y2='35' stroke='${encodeURIComponent(bgGeometric3DColor ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.3'/%3E%3Cline x1='5' y1='20' x2='30' y2='35' stroke='${encodeURIComponent(bgGeometric3DColor ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.3'/%3E%3Cline x1='55' y1='20' x2='30' y2='35' stroke='${encodeURIComponent(bgGeometric3DColor ?? '#8b5cf6')}' stroke-width='0.4' opacity='0.3'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            opacity: (bgGeometric3DOpacity ?? 15) / 100,
+          }} />
+        )}
+
+        {/* Batch 33 — vignette 2: dark edges soft radial fade */}
+        {(overlayVignette2 ?? false) && (
+          <div className="absolute inset-0 pointer-events-none z-[9]" style={{
+            background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%)',
+            opacity: (overlayVignette2Opacity ?? 50) / 100,
           }} />
         )}
 

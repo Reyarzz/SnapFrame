@@ -2556,6 +2556,95 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 33 FX controls */}
+      <Card>
+        <SectionLabel>Stitching</SectionLabel>
+        <Toggle label="Enable" value={state.bgStitching ?? false} onChange={v => onChange({ bgStitching: v })}
+          desc="Dashed stitched-border craft effect" />
+        {(state.bgStitching ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgStitchingColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgStitchingColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgStitchingOpacity ?? 40} min={10} max={80} unit="%"
+              onChange={v => onChange({ bgStitchingOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Sunrise</SectionLabel>
+        <Toggle label="Enable" value={state.bgSunrise ?? false} onChange={v => onChange({ bgSunrise: v })}
+          desc="Warm sunrise color gradient sky overlay" />
+        {(state.bgSunrise ?? false) && (
+          <Slider label="Opacity" value={state.bgSunriseOpacity ?? 30} min={5} max={70} unit="%"
+            onChange={v => onChange({ bgSunriseOpacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Mosaic</SectionLabel>
+        <Toggle label="Enable" value={state.bgMosaic ?? false} onChange={v => onChange({ bgMosaic: v })}
+          desc="Colored tile mosaic background pattern" />
+        {(state.bgMosaic ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgMosaicColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgMosaicColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgMosaicOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgMosaicOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Geo 3D</SectionLabel>
+        <Toggle label="Enable" value={state.bgGeometric3D ?? false} onChange={v => onChange({ bgGeometric3D: v })}
+          desc="Isometric hexagonal 3D geometric grid" />
+        {(state.bgGeometric3D ?? false) && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+              <input type="color" value={state.bgGeometric3DColor ?? '#8b5cf6'}
+                onChange={e => onChange({ bgGeometric3DColor: e.target.value })}
+                className="w-8 h-8 rounded-lg cursor-pointer" />
+            </div>
+            <Slider label="Opacity" value={state.bgGeometric3DOpacity ?? 15} min={5} max={60} unit="%"
+              onChange={v => onChange({ bgGeometric3DOpacity: v })} />
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Vignette 2</SectionLabel>
+        <Toggle label="Enable" value={state.overlayVignette2 ?? false} onChange={v => onChange({ overlayVignette2: v })}
+          desc="Dark edge radial vignette overlay" />
+        {(state.overlayVignette2 ?? false) && (
+          <Slider label="Opacity" value={state.overlayVignette2Opacity ?? 50} min={10} max={90} unit="%"
+            onChange={v => onChange({ overlayVignette2Opacity: v })} />
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>Glow 3D Frame</SectionLabel>
+        <Toggle label="Enable" value={state.frameGlow3D ?? false} onChange={v => onChange({ frameGlow3D: v })}
+          desc="3D-depth multi-glow inset frame" />
+        {(state.frameGlow3D ?? false) && (
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+            <input type="color" value={state.frameGlow3DColor ?? '#8b5cf6'}
+              onChange={e => onChange({ frameGlow3DColor: e.target.value })}
+              className="w-8 h-8 rounded-lg cursor-pointer" />
+          </div>
+        )}
+      </Card>
+
       {/* Batch 32 FX controls */}
       <Card>
         <SectionLabel>Kaleidoscope</SectionLabel>
@@ -4103,6 +4192,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         )}
       </Card>
 
+      {/* Batch 33 adjust controls */}
+      <Card>
+        <SectionLabel>Enhance</SectionLabel>
+        <Toggle label="Enable" value={state.imageEnhance ?? false} onChange={v => onChange({ imageEnhance: v })}
+          desc="Clarity + contrast micro-enhancement filter" />
+      </Card>
+
       {/* Batch 32 adjust controls */}
       <Card>
         <SectionLabel>Sketch</SectionLabel>
@@ -5015,6 +5111,27 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 <input type="color" value={state.subtitleGradientColor2 ?? '#ec4899'}
                   onChange={e => onChange({ subtitleGradientColor2: e.target.value })}
                   className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent" />
+              </div>
+            )}
+          </Card>
+
+          {/* Batch 33 text controls */}
+          <Card>
+            <SectionLabel>Wave Title</SectionLabel>
+            <Toggle label="Enable" value={state.titleWave ?? false} onChange={v => onChange({ titleWave: v })}
+              desc="Each character in a flowing wave pattern" />
+          </Card>
+
+          <Card>
+            <SectionLabel>Double Outline</SectionLabel>
+            <Toggle label="Enable" value={state.textOutlineDouble ?? false} onChange={v => onChange({ textOutlineDouble: v })}
+              desc="Doubled ring outline stroke on title" />
+            {(state.textOutlineDouble ?? false) && (
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-white/50 w-16 flex-shrink-0">Color</span>
+                <input type="color" value={state.textOutlineDoubleColor ?? '#8b5cf6'}
+                  onChange={e => onChange({ textOutlineDoubleColor: e.target.value })}
+                  className="w-8 h-8 rounded-lg cursor-pointer" />
               </div>
             )}
           </Card>

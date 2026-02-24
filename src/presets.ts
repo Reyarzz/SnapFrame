@@ -931,6 +931,26 @@ export interface EditorState {
   textExtraBold: boolean;           // extra bold/black weight on title
   canvasSplash: boolean;            // ink/paint splash corner accent
   canvasSplashColor: string;
+  // Batch 33
+  bgStitching: boolean;             // stitched border lines around canvas
+  bgStitchingColor: string;
+  bgStitchingOpacity: number;
+  titleWave: boolean;               // wave/ripple sine-offset text layout
+  bgSunrise: boolean;               // warm sunrise gradient background layer
+  bgSunriseOpacity: number;
+  frameGlow3D: boolean;             // 3D perspective drop glow frame
+  frameGlow3DColor: string;
+  bgMosaic: boolean;                // small colorful mosaic tile pattern
+  bgMosaicColor: string;
+  bgMosaicOpacity: number;
+  overlayVignette2: boolean;        // second stronger edge vignette overlay
+  overlayVignette2Opacity: number;
+  textOutlineDouble: boolean;       // double outline stroke on title
+  textOutlineDoubleColor: string;
+  bgGeometric3D: boolean;           // isometric 3D cube pattern background
+  bgGeometric3DColor: string;
+  bgGeometric3DOpacity: number;
+  imageEnhance: boolean;            // smart enhance: clarity + micro-contrast
 }
 
 export interface StyleTemplate {
@@ -2000,6 +2020,26 @@ export const DEFAULT_STATE: EditorState = {
   textExtraBold: false,
   canvasSplash: false,
   canvasSplashColor: '#8b5cf6',
+  // Batch 33
+  bgStitching: false,
+  bgStitchingColor: '#8b5cf6',
+  bgStitchingOpacity: 30,
+  titleWave: false,
+  bgSunrise: false,
+  bgSunriseOpacity: 30,
+  frameGlow3D: false,
+  frameGlow3DColor: '#8b5cf6',
+  bgMosaic: false,
+  bgMosaicColor: '#8b5cf6',
+  bgMosaicOpacity: 15,
+  overlayVignette2: false,
+  overlayVignette2Opacity: 50,
+  textOutlineDouble: false,
+  textOutlineDoubleColor: '#8b5cf6',
+  bgGeometric3D: false,
+  bgGeometric3DColor: '#8b5cf6',
+  bgGeometric3DOpacity: 15,
+  imageEnhance: false,
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
@@ -2989,6 +3029,58 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
       padding: 48, borderRadius: 16, shadow: 60,
       canvasRibbon: true, canvasRibbonText: 'SALE', canvasRibbonBg: '#ec4899',
       titleGradient: true, accentLine: true, accentLineColor: '#ec4899',
+    },
+  },
+  // Batch 33 templates
+  {
+    id: 'sunrise-warmth',
+    name: 'Sunrise',
+    emoji: '🌅',
+    overrides: {
+      background: 'linear-gradient(160deg, #0d0500 0%, #1a0800 100%)', backgroundId: 'solid-black',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgSunrise: true, bgSunriseOpacity: 40,
+      overlayLightLeak2: true, overlayLightLeak2Opacity: 30,
+      canvasBloom: true, imageDaylight: true,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'mosaic-art',
+    name: 'Mosaic',
+    emoji: '🎭',
+    overrides: {
+      background: 'linear-gradient(135deg, #0a0018 0%, #180028 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 12, shadow: 50,
+      bgMosaic: true, bgMosaicColor: '#a78bfa', bgMosaicOpacity: 22,
+      bgGeometric3D: true, bgGeometric3DColor: '#7c3aed', bgGeometric3DOpacity: 10,
+      overlayVignette2: true, overlayVignette2Opacity: 40,
+      titleGradient: true,
+    },
+  },
+  {
+    id: 'stitched-craft',
+    name: 'Stitched',
+    emoji: '🧶',
+    overrides: {
+      background: '#1a0a28', backgroundId: 'solid-black',
+      padding: 60, borderRadius: 12, shadow: 50,
+      bgStitching: true, bgStitchingColor: '#a78bfa', bgStitchingOpacity: 40,
+      textOutlineDouble: true, textOutlineDoubleColor: '#a78bfa',
+      titleColor: '#e2d9f3', titleFont: 'serif',
+      imageEnhance: true,
+    },
+  },
+  {
+    id: 'geo-3d-future',
+    name: 'Geo 3D',
+    emoji: '🔷',
+    overrides: {
+      background: 'linear-gradient(135deg, #020215 0%, #050528 100%)', backgroundId: 'midnight',
+      padding: 52, borderRadius: 16, shadow: 60,
+      bgGeometric3D: true, bgGeometric3DColor: '#4d96ff', bgGeometric3DOpacity: 22,
+      frameGlow3D: true, frameGlow3DColor: '#4d96ff',
+      titleWave: true, titleGradient: true,
     },
   },
   // Batch 32 templates
