@@ -50,23 +50,36 @@ const DropZone: React.FC<DropZoneProps> = ({ onImageLoad }) => {
 
   return (
     <div
-      className={`
-        relative flex flex-col items-center justify-center
-        w-full max-w-2xl mx-auto
-        border-2 border-dashed rounded-2xl
-        transition-all duration-300 cursor-pointer
-        min-h-[340px]
-        ${isDragging
-          ? 'border-brand-500 bg-brand-500/10 scale-[1.02]'
-          : 'border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]'
-        }
-      `}
+      className="relative flex flex-col items-center justify-center w-full mx-auto cursor-pointer transition-all duration-200"
+      style={{
+        minHeight: '320px',
+        borderRadius: '12px',
+        border: isDragging
+          ? '1.5px dashed rgba(124,58,237,0.60)'
+          : '1.5px dashed rgba(255,255,255,0.10)',
+        background: isDragging
+          ? 'rgba(124,58,237,0.06)'
+          : 'rgba(255,255,255,0.015)',
+        transform: isDragging ? 'scale(1.01)' : 'scale(1)',
+      }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onPaste={handlePaste}
       onClick={() => fileInputRef.current?.click()}
       tabIndex={0}
+      onMouseEnter={e => {
+        if (!isDragging) {
+          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.18)';
+          (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.025)';
+        }
+      }}
+      onMouseLeave={e => {
+        if (!isDragging) {
+          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.10)';
+          (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.015)';
+        }
+      }}
     >
       <input
         ref={fileInputRef}
@@ -79,35 +92,35 @@ const DropZone: React.FC<DropZoneProps> = ({ onImageLoad }) => {
         }}
       />
 
-      <div className={`
-        w-20 h-20 rounded-2xl flex items-center justify-center mb-6
-        transition-all duration-300
-        ${isDragging
-          ? 'bg-brand-500/20 scale-110'
-          : 'bg-white/5'
-        }
-      `}>
-        {isDragging ? (
-          <ImageIcon className="w-10 h-10 text-brand-400" />
-        ) : (
-          <Upload className="w-10 h-10 text-white/40" />
-        )}
+      <div className="flex flex-col items-center gap-5 px-8 py-12 select-none">
+        <div
+          className="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200"
+          style={{
+            background: isDragging ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+          {isDragging
+            ? <ImageIcon className="w-7 h-7" style={{ color: '#a78bfa' }} />
+            : <Upload className="w-7 h-7" style={{ color: 'rgba(228,228,231,0.35)' }} />}
+        </div>
+
+        <div className="text-center">
+          <p className="text-[15px] font-semibold mb-1.5" style={{ color: isDragging ? '#c4b5fd' : 'rgba(228,228,231,0.75)' }}>
+            {isDragging ? 'Drop to open' : 'Drop image here'}
+          </p>
+          <p className="text-[12px]" style={{ color: 'rgba(228,228,231,0.30)' }}>
+            PNG, JPG, WebP — or click to browse
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2" style={{ color: 'rgba(228,228,231,0.22)' }}>
+          <kbd className="px-2 py-0.5 rounded text-[10px] font-mono"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>
+            Ctrl+V
+          </kbd>
+          <span className="text-[11px]">paste from clipboard</span>
+        </div>
       </div>
-
-      <h3 className="text-xl font-semibold text-white/90 mb-2">
-        {isDragging ? 'Drop your image here' : 'Drop image or click to upload'}
-      </h3>
-      <p className="text-sm text-white/40 mb-4">
-        PNG, JPG, WebP — or paste from clipboard (Ctrl+V)
-      </p>
-
-      <div className="flex items-center gap-3 text-xs text-white/30">
-        <kbd className="px-2 py-1 rounded bg-white/10 font-mono">Ctrl+V</kbd>
-        <span>to paste from clipboard</span>
-      </div>
-
-      {/* Decorative glow */}
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-brand-500/20 via-pink-500/20 to-brand-500/20 opacity-0 hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl" />
     </div>
   );
 };

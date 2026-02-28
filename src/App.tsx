@@ -221,42 +221,42 @@ const App: React.FC = () => {
     <div className="noise w-full min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-40 glass">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
-              <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-                <rect x="6" y="8" width="20" height="14" rx="2" fill="white" opacity="0.9" />
-                <path d="M10 24h12" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-5 py-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-[#7c3aed] flex items-center justify-center flex-shrink-0">
+              <svg width="13" height="13" viewBox="0 0 32 32" fill="none">
+                <rect x="4" y="7" width="24" height="16" rx="3" fill="white" opacity="0.92"/>
+                <path d="M9 26h14" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
               </svg>
             </div>
-            <span className="font-bold text-lg text-white tracking-tight">SnapFrame</span>
+            <span className="font-semibold text-[14px] text-white/90 tracking-tight">SnapFrame</span>
             {state.isPro && (
-              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 text-[10px] font-bold ring-1 ring-amber-500/30">
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/20">
                 PRO
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {!state.isPro && (
               <button
                 onClick={handleUpgrade}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium
-                  bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-300
-                  hover:from-amber-500/20 hover:to-orange-500/20 transition-all
-                  ring-1 ring-amber-500/20"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium
+                  text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10 transition-all border border-amber-500/15 hover:border-amber-500/30"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                Go Pro
+                <Sparkles className="w-3 h-3" />
+                Upgrade
               </button>
             )}
-            <button
-              onClick={scrollToEditor}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-500/20 text-brand-300
-                hover:bg-brand-500/30 transition-all"
-            >
-              Open Editor
-            </button>
+            {!state.image && (
+              <button
+                onClick={scrollToEditor}
+                className="px-3 py-1.5 rounded-md text-[12px] font-medium text-white/50
+                  hover:text-white/80 hover:bg-white/[0.06] transition-all border border-white/[0.07] hover:border-white/[0.12]"
+              >
+                Try It
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -276,24 +276,30 @@ const App: React.FC = () => {
           /* Side-by-side layout: canvas left, controls right */
           <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-4.25rem)]">
             {/* Canvas preview area */}
-            <div className="flex-1 min-w-0 flex flex-col">
-              <div className="lg:sticky lg:top-[4.25rem] flex flex-col p-3 sm:p-5 gap-3">
+            <div className="flex-1 min-w-0 flex flex-col bg-[#080809]">
+              <div className="lg:sticky lg:top-[4.25rem] flex flex-col p-3 sm:p-4 gap-3">
                 {/* Toolbar */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-white/40">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    {state.fileName || 'Untitled'}
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 flex-shrink-0" />
+                    <span className="text-[11px] text-white/40 font-mono truncate max-w-[180px]">{state.fileName || 'untitled'}</span>
                   </div>
-                  {isExporting && (
-                    <div className="flex items-center gap-2 text-xs text-brand-400">
-                      <div className="w-3 h-3 border-2 border-brand-400/30 border-t-brand-400 rounded-full animate-spin" />
-                      Exporting…
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {isExporting && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-white/40 mr-2">
+                        <div className="w-3 h-3 border border-white/20 border-t-white/60 rounded-full animate-spin" />
+                        Exporting…
+                      </div>
+                    )}
+                    <button onClick={handleRemoveImage} title="New image"
+                      className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-all border border-white/[0.06] hover:border-white/[0.10]">
+                      ← New
+                    </button>
+                  </div>
                 </div>
 
                 {/* Preview container */}
-                <div className="rounded-2xl overflow-hidden ring-1 ring-white/[0.08] bg-[#08080f] checkerboard">
+                <div className="rounded-xl overflow-hidden border border-[rgba(255,255,255,0.07)] bg-[#0a0a0c]">
                   <div className="flex items-center justify-center min-h-[260px] sm:min-h-[420px] lg:min-h-[520px] p-4 sm:p-6">
                     <CanvasPreview state={state} canvasRef={canvasRef} />
                   </div>
@@ -326,41 +332,39 @@ const App: React.FC = () => {
       {/* How it works */}
       {!state.image && (
         <>
-          <section className="flex flex-col items-center py-24 px-4">
-            <div className="w-full max-w-5xl">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-white mb-3">
+          <section className="flex flex-col items-center py-20 px-4">
+            <div className="w-full max-w-4xl">
+              <div className="text-center mb-14">
+                <h2 className="text-2xl font-bold text-white/90 mb-2">
                   Three steps. That's it.
                 </h2>
-                <p className="text-white/40 max-w-md mx-auto">
-                  No account, no learning curve, no waiting.
+                <p className="text-[14px] text-white/35">
+                  No account. No learning curve. No waiting.
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-12">
+              <div className="grid md:grid-cols-3 gap-px bg-white/[0.05] rounded-xl overflow-hidden border border-white/[0.05]">
                 {[
                   {
-                    step: '1',
+                    step: '01',
                     title: 'Drop your screenshot',
-                    desc: 'Drag and drop any image, or paste directly from your clipboard with Ctrl+V.',
+                    desc: 'Drag & drop any image, or paste from clipboard with Ctrl+V.',
                   },
                   {
-                    step: '2',
-                    title: 'Pick a style',
-                    desc: 'Choose from 20+ gradient backgrounds, add device frames, shadows, rounded corners.',
+                    step: '02',
+                    title: 'Apply a style',
+                    desc: 'Choose from 20+ backgrounds, device frames, shadows, and effects.',
                   },
                   {
-                    step: '3',
+                    step: '03',
                     title: 'Export',
-                    desc: 'Download as PNG, JPEG, or WebP at 2x resolution. Ready to share anywhere.',
+                    desc: 'Download as PNG, JPEG, or WebP at 2x resolution, or copy to clipboard.',
                   },
                 ].map((item, i) => (
-                  <div key={i} className="text-center">
-                    <div className="w-11 h-11 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center mx-auto mb-5">
-                      <span className="text-sm font-bold text-white/60">{item.step}</span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                    <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+                  <div key={i} className="bg-[#0e0e12] p-8">
+                    <span className="block text-[11px] font-bold text-brand-600/70 tracking-[0.15em] uppercase mb-4">{item.step}</span>
+                    <h3 className="text-[15px] font-semibold text-white/85 mb-2">{item.title}</h3>
+                    <p className="text-[13px] text-white/35 leading-relaxed">{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -368,47 +372,45 @@ const App: React.FC = () => {
           </section>
 
           {/* Features */}
-          <section className="flex flex-col items-center py-20 px-4 border-t border-white/5">
+          <section className="flex flex-col items-center py-16 px-4 border-t border-white/[0.04]">
             <div className="w-full max-w-3xl text-center">
-              <h2 className="text-2xl font-bold text-white mb-8">
-                All included, all free
-              </h2>
+              <p className="text-[11px] font-bold text-white/25 tracking-[0.15em] uppercase mb-6">Everything included, free</p>
 
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="flex flex-wrap justify-center gap-2">
                 {[
                   '20+ gradients', 'Custom colors', 'Browser frames', 'macOS frames',
-                  'iPhone mockup', 'Shadows', 'Rounded corners', '3D tilt',
-                  'Text overlay', 'Canvas presets', 'PNG / JPEG / WebP', '2x resolution',
+                  'iPhone mockup', 'Shadows & glows', 'Rounded corners', '3D tilt',
+                  'Text overlay', 'Canvas presets', 'PNG / JPEG / WebP', '2× resolution',
                   'Quick styles', 'Copy to clipboard', 'Background images', 'Undo / Redo',
                   'Keyboard shortcuts',
                 ].map((label, i) => (
-                  <span key={i} className="px-4 py-2 rounded-full text-sm text-white/50 bg-white/[0.03] ring-1 ring-white/[0.06]">
+                  <span key={i} className="px-3 py-1.5 rounded-md text-[12px] text-white/40 bg-white/[0.03] border border-white/[0.05]">
                     {label}
                   </span>
                 ))}
               </div>
 
-              <p className="text-white/25 text-sm mt-6">
-                Pay once to remove the watermark. That's it.
+              <p className="text-white/20 text-[12px] mt-6">
+                Pay once ($9.99) to remove the watermark.
               </p>
             </div>
           </section>
 
           {/* Final CTA */}
-          <section className="flex flex-col items-center py-24 px-4">
-            <div className="w-full max-w-md text-center">
+          <section className="flex flex-col items-center py-20 px-4">
+            <div className="w-full max-w-sm text-center">
               <button
                 onClick={scrollToEditor}
-                className="group px-8 py-4 rounded-2xl font-bold text-white text-lg
-                  bg-gradient-to-r from-brand-500 to-pink-500 hover:from-brand-600 hover:to-pink-600
-                  transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/25 hover:scale-105
-                  inline-flex items-center gap-3"
+                className="group w-full px-6 py-3.5 rounded-xl font-semibold text-white text-[15px]
+                  bg-[#7c3aed] hover:bg-[#6d28d9]
+                  transition-all duration-200 hover:shadow-xl hover:shadow-violet-900/40
+                  inline-flex items-center justify-center gap-2.5"
               >
-                <Sparkles className="w-5 h-5" />
-                Try It Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <Sparkles className="w-4 h-4" />
+                Open Editor
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
-              <p className="text-white/20 text-xs mt-4">No signup required</p>
+              <p className="text-white/20 text-[11px] mt-3">No signup required</p>
             </div>
           </section>
         </>

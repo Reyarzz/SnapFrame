@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Palette, Download, Sparkles, RotateCcw,
-  Smartphone, Globe, MonitorSmartphone, X, Type,
-  SlidersHorizontal, Maximize, Copy, Check,
+  Smartphone, Globe, MonitorSmartphone, X,
+  Maximize, Copy, Check,
   Undo2, Redo2, Wand2, ImagePlus, Trash2,
-  RotateCw, Layers, Terminal,
+  Layers, Terminal,
   Monitor, Tablet, Share2, Shuffle,
   Camera, Newspaper, Laptop, Grid3X3,
   Tv2, BookOpen,
@@ -33,14 +33,11 @@ interface ControlsPanelProps {
 }
 
 const TABS = [
-  { id: 'style',     label: 'Style',   Icon: Wand2 },
-  { id: 'bg',        label: 'BG',      Icon: Palette },
-  { id: 'layout',    label: 'Layout',  Icon: Maximize },
-  { id: 'fx',        label: 'FX',      Icon: Layers },
-  { id: 'adjust',    label: 'Adjust',  Icon: SlidersHorizontal },
-  { id: 'transform', label: '3D',      Icon: RotateCw },
-  { id: 'brand',     label: 'Brand',   Icon: Type },
-  { id: 'export',    label: 'Export',  Icon: Download },
+  { id: 'style',  label: 'Style',  Icon: Wand2 },
+  { id: 'bg',     label: 'BG',     Icon: Palette },
+  { id: 'layout', label: 'Layout', Icon: Maximize },
+  { id: 'fx',     label: 'FX',     Icon: Layers },
+  { id: 'export', label: 'Export', Icon: Download },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
@@ -100,9 +97,9 @@ const Slider: React.FC<{
   }, [min, max, onChange, value]);
 
   return (
-    <div className="space-y-[6px]">
+    <div className="space-y-[5px]">
       <div className="flex items-center justify-between">
-        <span className="text-[11.5px] text-white/50 tracking-tight font-medium">{label}</span>
+        <span className="text-[11px] font-medium" style={{ color: 'rgba(228,228,231,0.65)' }}>{label}</span>
         <div className="flex items-center gap-1">
           <input
             type="number" min={min} max={max} step={step}
@@ -110,17 +107,18 @@ const Slider: React.FC<{
             onChange={e => setRaw(e.target.value)}
             onBlur={e => commit(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') commit((e.target as HTMLInputElement).value); }}
-            className="no-spinner w-12 text-right text-[11px] text-white/75 font-mono tabular-nums
-              bg-white/[0.06] border border-white/[0.08] px-1.5 py-0.5 rounded-lg outline-none
-              focus:border-brand-500/50 focus:bg-white/[0.10] transition-all"
+            className="no-spinner w-11 text-right text-[10.5px] font-mono tabular-nums
+              outline-none transition-all rounded-md px-1.5 py-0.5"
+            style={{ color: 'rgba(228,228,231,0.80)', background: '#1a1a20', border: '1px solid rgba(255,255,255,0.08)' }}
+            onFocus={e => { (e.target as HTMLInputElement).style.borderColor = 'rgba(124,58,237,0.5)'; }}
           />
-          {unit && <span className="text-[10px] text-white/20 w-3 flex-shrink-0 select-none">{unit}</span>}
+          {unit && <span className="text-[9.5px] w-3 flex-shrink-0 select-none" style={{ color: 'rgba(228,228,231,0.22)' }}>{unit}</span>}
         </div>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => { const v = Number(e.target.value); setRaw(String(v)); onChange(v); }}
         className="w-full"
-        style={{ '--track-fill': `linear-gradient(to right, #6d28d9 0%, #8b5cf6 ${pct}%, #1a1a30 ${pct}%)` } as React.CSSProperties}
+        style={{ '--track-fill': `linear-gradient(to right, #6d28d9 0%, #7c3aed ${pct}%, #1c1c22 ${pct}%)` } as React.CSSProperties}
       />
     </div>
   );
@@ -129,41 +127,43 @@ const Slider: React.FC<{
 const Toggle: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void; desc?: string }> = ({ label, value, onChange, desc }) => (
   <div className="flex items-center justify-between gap-3 py-0.5">
     <div className="min-w-0">
-      <span className="text-[12px] text-white/60 leading-none font-medium">{label}</span>
-      {desc && <p className="text-[10px] text-white/25 leading-snug mt-0.5">{desc}</p>}
+      <span className="text-[11.5px] font-medium leading-none" style={{ color: 'rgba(228,228,231,0.72)' }}>{label}</span>
+      {desc && <p className="text-[10px] leading-snug mt-0.5" style={{ color: 'rgba(228,228,231,0.28)' }}>{desc}</p>}
     </div>
     <button onClick={() => onChange(!value)} role="switch" aria-checked={value}
-      className={`relative w-[38px] h-[22px] rounded-full transition-all duration-200 flex-shrink-0 ${
-        value
-          ? 'bg-gradient-to-r from-violet-700 to-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.4)]'
-          : 'bg-white/[0.08] border border-white/[0.07]'
-      }`}>
-      <div className={`absolute top-[3px] w-[16px] h-[16px] rounded-full shadow-lg transition-all duration-200 ${
-        value ? 'left-[19px] bg-white' : 'left-[3px] bg-white/50'}`} />
+      className={`relative w-9 h-[20px] rounded-full transition-all duration-200 flex-shrink-0 ${
+        value ? '' : ''
+      }`}
+      style={value ? { background: '#7c3aed' } : { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.09)' }}>
+      <div className={`absolute top-[2px] w-[16px] h-[16px] rounded-full shadow-md transition-all duration-200 ${
+        value ? 'left-[18px] bg-white' : 'left-[2px]'}`}
+        style={value ? {} : { background: 'rgba(255,255,255,0.45)' }} />
     </button>
   </div>
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode; action?: React.ReactNode }> = ({ children, action }) => (
   <div className="flex items-center gap-2 pb-1">
-    <p className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-white/30 select-none shrink-0">{children}</p>
-    {action ?? <div className="flex-1 h-px bg-gradient-to-r from-white/[0.08] to-transparent" />}
+    <p className="text-[9px] font-bold uppercase tracking-[0.14em] select-none shrink-0" style={{ color: 'rgba(228,228,231,0.40)' }}>{children}</p>
+    {action ?? <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.07), transparent)' }} />}
   </div>
 );
 
 const Card: React.FC<{ children: React.ReactNode; className?: string; highlight?: boolean }> = ({ children, className = '', highlight = false }) => (
-  <div className={`rounded-xl p-4 space-y-3.5 transition-all duration-150 ${
-    highlight
-      ? 'bg-violet-600/[0.08] ring-1 ring-violet-500/25 shadow-[inset_0_1px_0_rgba(139,92,246,0.12)]'
-      : 'bg-white/[0.035] border border-white/[0.06] hover:bg-white/[0.055] hover:border-white/[0.10]'
-  } ${className}`}>
+  <div className={`rounded-lg p-3.5 space-y-3 transition-all duration-150 ${className}`}
+    style={highlight
+      ? { background: 'rgba(124,58,237,0.07)', border: '1px solid rgba(124,58,237,0.22)' }
+      : { background: '#141419', border: '1px solid rgba(255,255,255,0.07)' }}>
     {children}
   </div>
 );
 
 const ResetBtn: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Reset' }) => (
   <button onClick={onClick}
-    className="w-full py-1.5 rounded-lg text-[9px] font-semibold text-white/18 hover:text-white/45 hover:bg-white/[0.04] transition-all flex items-center justify-center gap-1 border border-transparent hover:border-white/[0.05] tracking-wide uppercase">
+    className="w-full py-1.5 rounded-md text-[9px] font-semibold transition-all flex items-center justify-center gap-1 tracking-wide uppercase"
+    style={{ color: 'rgba(228,228,231,0.22)', border: '1px solid rgba(255,255,255,0.05)' }}
+    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.50)'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)'; }}
+    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.22)'; (e.currentTarget as HTMLButtonElement).style.background = ''; }}>
     <span className="text-[10px] leading-none">↺</span> {label}
   </button>
 );
@@ -187,11 +187,10 @@ const ColorDots: React.FC<{
 
 const QuickChip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
   <button onClick={onClick}
-    className={`px-2.5 py-1.5 rounded-lg text-[10.5px] font-semibold transition-all duration-100 leading-none ${
-      active
-        ? 'bg-violet-600/20 text-violet-300 border border-violet-500/40 shadow-[0_0_6px_rgba(139,92,246,0.2)]'
-        : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.07] hover:text-white/55 hover:border-white/[0.12]'
-    }`}>
+    className="px-2 py-1.5 rounded-md text-[10px] font-semibold transition-all duration-100 leading-none"
+    style={active
+      ? { background: 'rgba(124,58,237,0.18)', color: '#c4b5fd', border: '1px solid rgba(124,58,237,0.38)' }
+      : { background: 'rgba(255,255,255,0.03)', color: 'rgba(228,228,231,0.45)', border: '1px solid rgba(255,255,255,0.07)' }}>
     {children}
   </button>
 );
@@ -202,14 +201,13 @@ function SubTabs<T extends string>({ tabs, active, onChange }: {
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex gap-1 mb-4 bg-white/[0.04] rounded-lg p-1 shrink-0">
+    <div className="flex gap-0.5 mb-3.5 p-0.5 shrink-0 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }}>
       {tabs.map(t => (
         <button key={t.id} onClick={() => onChange(t.id)}
-          className={`flex-1 py-1.5 text-[10.5px] font-semibold rounded-md transition-all leading-none ${
-            active === t.id
-              ? 'bg-violet-600/80 text-white shadow-sm'
-              : 'text-white/35 hover:text-white/65 hover:bg-white/[0.05]'
-          }`}>
+          className="flex-1 py-1.5 text-[10px] font-semibold rounded-md transition-all leading-none"
+          style={active === t.id
+            ? { background: '#7c3aed', color: '#fff' }
+            : { color: 'rgba(228,228,231,0.38)' }}>
           {t.label}
         </button>
       ))}
@@ -226,7 +224,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>('style');
   const [styleFilter, setStyleFilter] = useState('all');
-  const [fxSub, setFxSub] = useState<'core'|'overlays'|'extra'>('core');
+  const [fxSub, setFxSub] = useState<'core'|'color'|'overlays'|'brand'>('core');
   const [brandSub, setBrandSub] = useState<'text'|'effects'>('text');
   const [adjSub, setAdjSub] = useState<'tone'|'filters'>('tone');
   const bgImageInputRef = useRef<HTMLInputElement>(null);
@@ -869,6 +867,49 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           desc="Composition guide overlay (preview only)" />
         <Toggle label="Corner Dots" value={state.cornerDots ?? false} onChange={v => onChange({ cornerDots: v })} />
       </Card>
+
+      <Card>
+        <SectionLabel>3D Transform</SectionLabel>
+        <Slider label="Tilt X"   value={state.tiltX}                   min={-30} max={30}  unit="°" onChange={v => onChange({ tiltX: v })} />
+        <Slider label="Tilt Y"   value={state.tiltY}                   min={-30} max={30}  unit="°" onChange={v => onChange({ tiltY: v })} />
+        <Slider label="Scale"    value={Math.round(state.scale * 100)} min={50}  max={150} unit="%" onChange={v => onChange({ scale: v / 100 })} />
+        <Slider label="Rotation" value={state.rotation}                min={-45} max={45}  unit="°" onChange={v => onChange({ rotation: v })} />
+        <Slider label="Skew X"   value={state.skewX ?? 0}              min={-30} max={30}  unit="°" onChange={v => onChange({ skewX: v })} />
+        <Slider label="Skew Y"   value={state.skewY ?? 0}              min={-30} max={30}  unit="°" onChange={v => onChange({ skewY: v })} />
+        <ResetBtn onClick={() => onChange({ tiltX: 0, tiltY: 0, scale: 1, rotation: 0, skewX: 0, skewY: 0 })} label="Reset Transform" />
+      </Card>
+
+      <Card>
+        <SectionLabel>Perspective Presets</SectionLabel>
+        <div className="grid grid-cols-3 gap-1.5">
+          {[
+            { name: 'Flat',      tiltX: 0,   tiltY: 0,   skewX: 0 },
+            { name: 'Left',      tiltX: 0,   tiltY: 12,  skewX: 0 },
+            { name: 'Right',     tiltX: 0,   tiltY: -12, skewX: 0 },
+            { name: 'Top',       tiltX: -12, tiltY: 0,   skewX: 0 },
+            { name: 'Bottom',    tiltX: 12,  tiltY: 0,   skewX: 0 },
+            { name: 'Isometric', tiltX: 15,  tiltY: -15, skewX: 0 },
+          ].map(p => (
+            <QuickChip key={p.name}
+              active={state.tiltX === p.tiltX && state.tiltY === p.tiltY && (state.skewX ?? 0) === p.skewX}
+              onClick={() => onChange({ tiltX: p.tiltX, tiltY: p.tiltY, skewX: p.skewX })}>
+              {p.name}
+            </QuickChip>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <SectionLabel>Reflection</SectionLabel>
+        <Toggle label="Mirror Reflection" value={state.reflection} onChange={v => onChange({ reflection: v })} />
+        {state.reflection && (
+          <>
+            <Slider label="Opacity" value={state.reflectionOpacity ?? 35} min={5} max={100} unit="%" onChange={v => onChange({ reflectionOpacity: v })} />
+            <Slider label="Height"  value={state.reflectionHeight ?? 60}  min={10} max={100} unit="%" onChange={v => onChange({ reflectionHeight: v })} />
+            <Slider label="Gap"     value={state.reflectionGap ?? 2}      min={0}  max={40}  unit="px" onChange={v => onChange({ reflectionGap: v })} />
+          </>
+        )}
+      </Card>
     </div>
   );
 
@@ -877,9 +918,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     <div className="space-y-3">
       <SubTabs
         tabs={[
-          { id: 'core' as const,     label: 'Core'     },
-          { id: 'overlays' as const, label: 'Overlays' },
-          { id: 'extra' as const,    label: 'Extra'    },
+          { id: 'core' as const,     label: 'Core'    },
+          { id: 'color' as const,    label: 'Color'   },
+          { id: 'overlays' as const, label: 'Overlay' },
+          { id: 'brand' as const,    label: 'Brand'   },
         ]}
         active={fxSub}
         onChange={setFxSub}
@@ -2651,7 +2693,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </Card>
 
       </>}
-      {fxSub === 'extra' && <>
+      {fxSub === 'overlays' && <>
       {/* Batch 40 FX controls */}
       <Card>
         <SectionLabel>Solar Flare</SectionLabel>
@@ -4987,6 +5029,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         label="Clear All Effects"
       />
       </>}
+      {fxSub === 'color' && renderAdjustTab()}
+      {fxSub === 'brand' && renderBrandTab()}
     </div>
   );
 
@@ -7127,54 +7171,52 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'style':     return renderStyleTab();
-      case 'bg':        return renderBgTab();
-      case 'layout':    return renderLayoutTab();
-      case 'fx':        return renderFxTab();
-      case 'adjust':    return renderAdjustTab();
-      case 'transform': return renderTransformTab();
-      case 'brand':     return renderBrandTab();
-      case 'export':    return renderExportTab();
+      case 'style':  return renderStyleTab();
+      case 'bg':     return renderBgTab();
+      case 'layout': return renderLayoutTab();
+      case 'fx':     return renderFxTab();
+      case 'export': return renderExportTab();
     }
   };
 
   const fmt = state.exportFormat ?? 'png';
 
   return (
-    <div className="w-full lg:w-[24rem] xl:w-[26rem] shrink-0 flex flex-col sf-panel
-      lg:border-l border-white/[0.06] lg:h-[calc(100vh-4.25rem)] lg:overflow-hidden">
+    <div className="w-full lg:w-[22rem] xl:w-[24rem] shrink-0 flex flex-col sf-panel
+      lg:border-l lg:h-[calc(100vh-4.25rem)] lg:overflow-hidden"
+      style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
 
       {/* ── Header ── */}
-      <div className="shrink-0 px-5 pt-5 pb-4 border-b border-white/[0.05]">
-        <div className="flex items-center gap-3">
-          {/* Logomark */}
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-600 to-pink-500 flex items-center justify-center shadow-lg shadow-brand-600/30 flex-shrink-0">
-            <svg width="15" height="15" viewBox="0 0 32 32" fill="none">
+      <div className="shrink-0 px-4 pt-4 pb-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-md bg-[#7c3aed] flex items-center justify-center flex-shrink-0">
+            <svg width="13" height="13" viewBox="0 0 32 32" fill="none">
               <rect x="4" y="7" width="24" height="16" rx="3" fill="white" opacity="0.92"/>
-              <circle cx="11" cy="15" r="4" fill="none" stroke="rgba(100,50,200,0.9)" strokeWidth="2"/>
-              <rect x="18" y="12" width="7" height="1.5" rx="0.75" fill="rgba(100,50,200,0.7)"/>
-              <rect x="18" y="15.5" width="5" height="1.5" rx="0.75" fill="rgba(100,50,200,0.5)"/>
-              <path d="M9 25h14" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+              <path d="M9 26h14" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
             </svg>
           </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="font-black text-[15px] text-white tracking-[-0.02em] leading-none">SnapFrame</span>
-            <span className="text-[9px] text-white/25 tracking-[0.1em] uppercase leading-tight">Studio</span>
-          </div>
+          <span className="font-semibold text-[13px] text-white/85 tracking-tight leading-none">SnapFrame</span>
           {state.isPro && (
-            <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-[8.5px] font-bold ring-1 ring-amber-500/25">
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider border"
+              style={{ background: 'rgba(245,158,11,0.12)', color: '#fbbf24', borderColor: 'rgba(245,158,11,0.20)' }}>
               PRO
             </span>
           )}
           <div className="flex-1" />
           {/* Undo / Redo */}
-          <div className="flex items-center gap-0.5 bg-white/[0.04] rounded-xl p-1">
+          <div className="flex items-center gap-0.5 rounded-lg p-0.5" style={{ background: 'rgba(255,255,255,0.04)' }}>
             <button onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl+Z)"
-              className="w-6 h-6 flex items-center justify-center rounded-lg text-white/35 hover:text-white/75 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
+              className="w-6 h-6 flex items-center justify-center rounded-md transition-all disabled:opacity-20 disabled:pointer-events-none"
+              style={{ color: 'rgba(228,228,231,0.45)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.85)'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.45)'; (e.currentTarget as HTMLButtonElement).style.background = ''; }}>
               <Undo2 className="w-3 h-3" />
             </button>
             <button onClick={onRedo} disabled={!canRedo} title="Redo"
-              className="w-6 h-6 flex items-center justify-center rounded-lg text-white/35 hover:text-white/75 hover:bg-white/[0.07] transition-all disabled:opacity-20 disabled:pointer-events-none">
+              className="w-6 h-6 flex items-center justify-center rounded-md transition-all disabled:opacity-20 disabled:pointer-events-none"
+              style={{ color: 'rgba(228,228,231,0.45)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.85)'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.45)'; (e.currentTarget as HTMLButtonElement).style.background = ''; }}>
               <Redo2 className="w-3 h-3" />
             </button>
           </div>
@@ -7182,20 +7224,23 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="shrink-0 flex bg-[#04040c] border-b border-white/[0.05] overflow-x-auto no-scrollbar px-2 py-1.5 gap-1">
+      <div className="shrink-0 flex overflow-x-auto no-scrollbar px-3 py-2 gap-0.5"
+        style={{ background: '#0a0a0d', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id;
           return (
             <button key={id} onClick={() => setActiveTab(id)}
-              className={`relative flex-1 min-w-[3rem] flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all duration-150 ${
-                isActive
-                  ? 'bg-violet-600/15 text-violet-300 shadow-[0_0_10px_rgba(139,92,246,0.15)]'
-                  : 'text-white/22 hover:text-white/50 hover:bg-white/[0.04]'
-              }`}>
-              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-violet-400' : ''}`} />
-              <span className={`text-[7.5px] font-bold uppercase tracking-[0.12em] leading-none ${isActive ? 'text-violet-300/90' : ''}`}>{label}</span>
+              className="relative flex-1 min-w-0 flex flex-col items-center gap-1 py-2 px-2 rounded-lg transition-all duration-150"
+              style={isActive
+                ? { background: 'rgba(124,58,237,0.16)', color: '#c4b5fd' }
+                : { color: 'rgba(228,228,231,0.32)' }}
+              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.62)'; }}
+              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.32)'; }}>
+              <Icon className="w-[13px] h-[13px]" />
+              <span className="text-[7px] font-bold uppercase tracking-[0.10em] leading-none">{label}</span>
               {isActive && (
-                <div className="absolute bottom-0.5 left-3 right-3 h-[1.5px] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 opacity-70" />
+                <div className="absolute bottom-0.5 left-3 right-3 h-[1.5px] rounded-full"
+                  style={{ background: 'linear-gradient(to right, #7c3aed, #a78bfa)' }} />
               )}
             </button>
           );
@@ -7203,58 +7248,63 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       </div>
 
       {/* ── Scrollable content ── */}
-      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-3 py-3.5 space-y-2.5">
+      <div className="flex-1 lg:overflow-y-auto overflow-x-hidden px-2.5 py-3 space-y-2">
         {renderTabContent()}
       </div>
 
       {/* ── Bottom action bar ── */}
       {activeTab !== 'export' && (
-        <div className="shrink-0 border-t border-white/[0.05] px-3 pt-3 pb-3.5 space-y-2 bg-[#04040c]">
-          {/* Primary export row */}
+        <div className="shrink-0 px-2.5 pt-2.5 pb-3 space-y-1.5"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#0a0a0d' }}>
+          {/* Primary export */}
           <button onClick={() => onExport(fmt)} disabled={isExporting}
-            className="w-full py-2.5 rounded-xl font-bold text-white text-[12.5px]
-              bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600
-              hover:from-violet-600 hover:via-violet-500 hover:to-fuchsia-500
-              transition-all duration-200 shadow-[0_4px_20px_rgba(109,40,217,0.35)] hover:shadow-[0_4px_24px_rgba(109,40,217,0.5)]
-              flex items-center justify-center gap-2 active:scale-[0.98]
-              disabled:opacity-50 disabled:cursor-not-allowed tracking-tight">
+            className="w-full py-2.5 rounded-lg font-semibold text-white text-[12px]
+              transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]
+              disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: '#7c3aed', boxShadow: '0 2px 12px rgba(109,40,217,0.35)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#6d28d9'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#7c3aed'; }}>
             {isExporting ? (
-              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Exporting…</>
+              <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Exporting…</>
             ) : (
-              <><Download className="w-4 h-4" />Export Image</>
+              <><Download className="w-3.5 h-3.5" />Export Image</>
             )}
           </button>
           {/* Secondary row */}
-          <div className="flex gap-1.5">
+          <div className="flex gap-1">
             <button onClick={onCopy} title="Copy to clipboard"
-              className={`flex-1 py-2 rounded-lg text-[10.5px] font-semibold transition-all flex items-center justify-center gap-1.5 border ${
-                copySuccess
-                  ? 'bg-emerald-500/12 text-emerald-300 border-emerald-500/25'
-                  : 'bg-white/[0.04] text-white/35 border-white/[0.07] hover:bg-white/[0.08] hover:text-white/60 hover:border-white/[0.12]'
-              }`}>
-              {copySuccess ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
+              className="flex-1 py-2 rounded-md text-[10px] font-semibold transition-all flex items-center justify-center gap-1.5"
+              style={copySuccess
+                ? { background: 'rgba(16,185,129,0.12)', color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.22)' }
+                : { background: 'rgba(255,255,255,0.04)', color: 'rgba(228,228,231,0.40)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              {copySuccess ? <><Check className="w-3 h-3" />Copied</> : <><Copy className="w-3 h-3" />Copy</>}
             </button>
             <button onClick={() => setActiveTab('export')} title="Export settings"
-              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/30
-                border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/55 transition-all">
+              className="px-2.5 py-2 rounded-md transition-all"
+              style={{ color: 'rgba(228,228,231,0.35)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.65)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.35)'; }}>
               <Grid3X3 className="w-3.5 h-3.5" />
             </button>
             <button onClick={onReset} title="Reset all settings"
-              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/25
-                border border-white/[0.07] hover:bg-white/[0.08] hover:text-white/50 transition-all">
+              className="px-2.5 py-2 rounded-md transition-all"
+              style={{ color: 'rgba(228,228,231,0.30)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.60)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.30)'; }}>
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
             <button onClick={onRemoveImage} title="Remove image"
-              className="px-2.5 py-2 rounded-lg text-[11px] bg-white/[0.04] text-white/22
-                border border-white/[0.07] hover:bg-red-500/08 hover:text-red-400/60 hover:border-red-500/20 transition-all">
+              className="px-2.5 py-2 rounded-md transition-all"
+              style={{ color: 'rgba(228,228,231,0.25)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(248,113,113,0.70)'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(228,228,231,0.25)'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)'; }}>
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
           {state.watermark && (
             <button onClick={onUpgrade}
-              className="w-full py-2 rounded-xl text-[10.5px] font-semibold
-                bg-amber-500/10 text-amber-300/80 hover:bg-amber-500/18 transition-all
-                flex items-center justify-center gap-1.5 ring-1 ring-amber-500/20">
+              className="w-full py-2 rounded-md text-[10px] font-semibold transition-all flex items-center justify-center gap-1.5"
+              style={{ background: 'rgba(245,158,11,0.08)', color: 'rgba(251,191,36,0.80)', border: '1px solid rgba(245,158,11,0.18)' }}>
               <Sparkles className="w-3 h-3" /> Remove Watermark — $9.99
             </button>
           )}

@@ -1138,6 +1138,51 @@ export interface EditorState {
   textPressure: boolean;            // pressed embossed relief text style
   canvasGlow3: boolean;             // pulsing neon outer halo glow
   canvasGlow3Color: string;
+  // Batch 41
+  bgDNA: boolean;                   // double helix DNA strand pattern
+  bgDNAColor: string;
+  bgDNAOpacity: number;
+  bgGlassBlocks: boolean;           // frosted glass tile mosaic
+  bgGlassBlocksColor: string;
+  bgGlassBlocksOpacity: number;
+  bgFractal: boolean;               // fractal geometry recursive pattern
+  bgFractalColor: string;
+  bgFractalOpacity: number;
+  bgPlaid: boolean;                 // tartan plaid crosshatch pattern
+  bgPlaidColor: string;
+  bgPlaidOpacity: number;
+  bgLace: boolean;                  // delicate lace filigree pattern
+  bgLaceColor: string;
+  bgLaceOpacity: number;
+  overlayLens: boolean;             // optical lens flare glass effect
+  overlayLensOpacity: number;
+  overlayPetals: boolean;           // falling flower petal overlay
+  overlayPetalsOpacity: number;
+  imageCinema: boolean;             // cinema color grade look
+  imageFisheye: boolean;            // barrel / fisheye distortion emulation
+  frameChain: boolean;              // chain link border frame
+  frameChainColor: string;
+  frameMirror: boolean;             // mirror reflection border frame
+  canvasVHS2: boolean;              // VHS static scan-line canvas effect
+  textNoise: boolean;               // grainy static noise text fill
+  textSplit: boolean;               // horizontal split dual-color text
+  // Major features — Multi-shadow stack (shadow2 base fields exist as doubleShadow/shadow2Color/X/Y/Blur)
+  shadow2Opacity: number;
+  shadow3: boolean;
+  shadow3Color: string;
+  shadow3X: number;
+  shadow3Y: number;
+  shadow3Blur: number;
+  shadow3Opacity: number;
+  // Major features — Canvas animation
+  canvasAnim: string;               // 'none'|'float'|'pulse'|'tilt'|'breathe'
+  // Major features — Perspective ground shadow
+  perspShadow: boolean;
+  perspShadowColor: string;
+  perspShadowBlur: number;
+  perspShadowOpacity: number;
+  // Major features — SVG image filters
+  imageSvgFilter: string;           // 'none'|'emboss'|'edge'|'sketch'|'thermal'|'halftone'
 }
 
 export interface StyleTemplate {
@@ -2414,6 +2459,48 @@ export const DEFAULT_STATE: EditorState = {
   textPressure: false,
   canvasGlow3: false,
   canvasGlow3Color: '#8b5cf6',
+  // Batch 41
+  bgDNA: false,
+  bgDNAColor: '#00ccff',
+  bgDNAOpacity: 15,
+  bgGlassBlocks: false,
+  bgGlassBlocksColor: '#a78bfa',
+  bgGlassBlocksOpacity: 12,
+  bgFractal: false,
+  bgFractalColor: '#7c3aed',
+  bgFractalOpacity: 18,
+  bgPlaid: false,
+  bgPlaidColor: '#dc2626',
+  bgPlaidOpacity: 20,
+  bgLace: false,
+  bgLaceColor: '#ffffff',
+  bgLaceOpacity: 15,
+  overlayLens: false,
+  overlayLensOpacity: 30,
+  overlayPetals: false,
+  overlayPetalsOpacity: 25,
+  imageCinema: false,
+  imageFisheye: false,
+  frameChain: false,
+  frameChainColor: '#c0c0c0',
+  frameMirror: false,
+  canvasVHS2: false,
+  textNoise: false,
+  textSplit: false,
+  // Major features
+  shadow2Opacity: 40,
+  shadow3: false,
+  shadow3Color: '#8b5cf6',
+  shadow3X: -10,
+  shadow3Y: 10,
+  shadow3Blur: 30,
+  shadow3Opacity: 30,
+  canvasAnim: 'none',
+  perspShadow: false,
+  perspShadowColor: '#000000',
+  perspShadowBlur: 40,
+  perspShadowOpacity: 50,
+  imageSvgFilter: 'none',
 };
 
 export const STYLE_TEMPLATES: StyleTemplate[] = [
